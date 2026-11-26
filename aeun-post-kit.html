@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AEUN Post Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0B1F3A;
+    --blue:#1D6FF2;
+    --teal:#00C2A8;
+    --amber:#FFB020;
+    --light:#F4F7FB;
+    --body:#334155;
+    --bg:#F4F7FB;
+    --card:#ffffff;
+    --card-border:#dbe4f0;
+    --heading:#0B1F3A;
+    --muted:#64748b;
+    --input-bg:#ffffff;
+    --input-border:#cbd5e1;
+    --chip-bg:#e8eef7;
+    --chip-text:#0B1F3A;
+    --text-box:#f8fafc;
+    --shadow:0 2px 10px rgba(11,31,58,.08);
+    --toast-bg:#0B1F3A;
+    --toast-text:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#081830;
+      --card:#10294e;
+      --card-border:#1e3a5f;
+      --heading:#f1f5f9;
+      --body:#dbe4f0;
+      --muted:#94a7c0;
+      --input-bg:#0B1F3A;
+      --input-border:#2b4a73;
+      --chip-bg:#1a3560;
+      --chip-text:#dbe4f0;
+      --text-box:#0B1F3A;
+      --shadow:0 2px 10px rgba(0,0,0,.35);
+      --toast-bg:#FFB020;
+      --toast-text:#0B1F3A;
+    }
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    font-family:"Hind Siliguri", system-ui, sans-serif;
+    background:var(--bg);
+    color:var(--body);
+    font-size:16px;
+    line-height:1.55;
+  }
+  .wrap{ max-width:720px; margin:0 auto; padding:14px 14px 48px; }
+
+  /* ---------- Intro / download ---------- */
+  .intro{
+    background:var(--navy);
+    color:#e8eef7;
+    border-radius:14px;
+    padding:18px 16px 16px;
+    margin-bottom:16px;
+  }
+  .intro h1{
+    margin:0 0 4px;
+    font-size:24px;
+    font-weight:700;
+    color:#ffffff;
+    line-height:1.3;
+  }
+  .intro p{ margin:0 0 14px; font-size:15px; color:#bcd0ea; }
+  .btn-download{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    min-height:52px;
+    background:var(--amber);
+    color:#0B1F3A;
+    border:none; border-radius:10px;
+    font-family:inherit; font-size:17px; font-weight:700;
+    cursor:pointer;
+    padding:12px 16px;
+  }
+  .btn-download:active{ transform:scale(.99); }
+  .intro .note{ margin:10px 0 0; font-size:13px; color:#8fb0d8; }
+
+  /* ---------- Sections ---------- */
+  section.card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .sec-head{ display:flex; align-items:center; gap:10px; margin:0 0 4px; }
+  .sec-num{
+    flex:0 0 auto;
+    width:30px; height:30px;
+    border-radius:9px;
+    background:var(--blue); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:16px;
+  }
+  .sec-num.teal{ background:var(--teal); }
+  .sec-num.amber{ background:var(--amber); color:#0B1F3A; }
+  h2{ margin:0; font-size:19px; font-weight:700; color:var(--heading); line-height:1.35; }
+  .sec-sub{ margin:2px 0 14px 40px; font-size:14px; color:var(--muted); }
+
+  /* ---------- Form ---------- */
+  label.f-label{
+    display:block;
+    font-weight:600; font-size:15px; color:var(--heading);
+    margin:14px 0 6px;
+  }
+  label.f-label:first-of-type{ margin-top:6px; }
+  label.f-label .opt{ font-weight:400; color:var(--muted); font-size:13px; }
+  input[type="text"], input[type="tel"], textarea{
+    width:100%;
+    min-height:48px;
+    padding:11px 12px;
+    font-family:inherit; font-size:16px;
+    color:var(--body);
+    background:var(--input-bg);
+    border:1.5px solid var(--input-border);
+    border-radius:10px;
+    outline:none;
+  }
+  textarea{ min-height:72px; resize:vertical; }
+  input:focus, textarea:focus{ border-color:var(--blue); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:480px){ .row2{ grid-template-columns:1fr; } }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:2px; }
+  .chip{
+    min-height:44px;
+    padding:9px 14px;
+    border-radius:999px;
+    border:1.5px solid var(--input-border);
+    background:var(--chip-bg);
+    color:var(--chip-text);
+    font-family:inherit; font-size:15px; font-weight:600;
+    cursor:pointer;
+  }
+  .chip.selected{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    .chip.selected{ background:var(--blue); border-color:var(--blue); }
+  }
+
+  .btn-primary{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; min-height:54px;
+    margin-top:18px;
+    background:var(--blue); color:#fff;
+    border:none; border-radius:11px;
+    font-family:inherit; font-size:17px; font-weight:700;
+    cursor:pointer; padding:12px 16px;
+  }
+  .btn-primary:active{ transform:scale(.99); }
+  .btn-ghost{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    min-height:44px;
+    padding:9px 14px;
+    background:transparent;
+    border:1.5px solid var(--input-border);
+    border-radius:10px;
+    color:var(--body);
+    font-family:inherit; font-size:14px; font-weight:600;
+    cursor:pointer;
+  }
+  .form-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  .save-hint{ font-size:13px; color:var(--muted); }
+
+  /* ---------- Caption / reply cards ---------- */
+  .post-card{
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:14px;
+    margin-top:12px;
+    background:var(--card);
+  }
+  .post-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .badge{
+    display:inline-block;
+    padding:4px 11px;
+    border-radius:999px;
+    font-size:13px; font-weight:700;
+  }
+  .badge.offer{ background:#e3edff; color:#1450b4; }
+  .badge.story{ background:#d9f7f1; color:#00705f; }
+  .badge.urgent{ background:#ffedd5; color:#9a5200; }
+  .badge.tags{ background:#e8eef7; color:#0B1F3A; }
+  @media (prefers-color-scheme: dark){
+    .badge.offer{ background:#173a6e; color:#a9c8ff; }
+    .badge.story{ background:#0d3d36; color:#7fe8d8; }
+    .badge.urgent{ background:#4d3205; color:#ffd08a; }
+    .badge.tags{ background:#1a3560; color:#dbe4f0; }
+  }
+  .char-count{ font-size:12px; color:var(--muted); }
+  .post-text{
+    background:var(--text-box);
+    border:1px solid var(--card-border);
+    border-radius:10px;
+    padding:12px;
+    font-size:15px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.65;
+  }
+  .btn-copy{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    width:100%; min-height:48px;
+    margin-top:10px;
+    background:var(--teal); color:#06281f;
+    border:none; border-radius:10px;
+    font-family:inherit; font-size:16px; font-weight:700;
+    cursor:pointer; padding:10px 14px;
+  }
+  .btn-copy.copied{ background:var(--amber); color:#0B1F3A; }
+  .btn-copy:active{ transform:scale(.99); }
+
+  .empty-state{
+    border:1.5px dashed var(--input-border);
+    border-radius:12px;
+    padding:22px 14px;
+    text-align:center;
+    color:var(--muted);
+    font-size:15px;
+    margin-top:12px;
+  }
+  .regen-row{ margin-top:12px; display:none; }
+  .regen-row.show{ display:block; }
+  .regen-row .btn-ghost{ width:100%; }
+
+  .qa-card{
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:13px 14px;
+    margin-top:12px;
+  }
+  .qa-q{ font-weight:700; color:var(--heading); font-size:16px; margin:0 0 8px; }
+  .qa-card .post-text{ font-size:14.5px; }
+  .qa-card .btn-copy{ min-height:44px; font-size:15px; }
+
+  footer{
+    text-align:center;
+    font-size:13px; color:var(--muted);
+    padding:6px 0 0;
+  }
+  footer strong{ color:var(--heading); }
+
+  /* ---------- Toast ---------- */
+  #toast{
+    position:fixed;
+    left:50%; bottom:22px;
+    transform:translateX(-50%) translateY(80px);
+    background:var(--toast-bg); color:var(--toast-text);
+    padding:12px 20px;
+    border-radius:999px;
+    font-size:15px; font-weight:600;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none;
+    transition:transform .25s ease, opacity .25s ease;
+    z-index:50;
+    max-width:92vw; text-align:center;
+  }
+  #toast.show{ transform:translateX(-50%) translateY(0); opacity:1; }
+  @media (prefers-reduced-motion: reduce){
+    #toast{ transition:none; }
+    .btn-download:active, .btn-primary:active, .btn-copy:active{ transform:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ======= Intro + Download ======= -->
+  <div class="intro">
+    <h1>AEUN Post Kit</h1>
+    <p>ফেসবুক বিক্রেতাদের জন্য — পণ্যের তথ্য দিলেই তৈরি বাংলা পোস্টের ক্যাপশন, হ্যাশট্যাগ আর কাস্টমারের প্রশ্নের তৈরি উত্তর।</p>
+    <button type="button" class="btn-download" id="btnDownload">📥 ডাউনলোড করুন</button>
+    <p class="note">এক ক্লিকে এই পেজটাই HTML ফাইল হিসেবে ফোনে সেভ হবে — পরে ইন্টারনেট ছাড়াও খুলে ব্যবহার করা যাবে। আপনার দোকানের তথ্য এই ফোনের ব্রাউজারেই সেভ থাকে।</p>
+  </div>
+
+  <!-- ======= 1. Product info ======= -->
+  <section class="card" aria-labelledby="h-form">
+    <div class="sec-head"><span class="sec-num">১</span><h2 id="h-form">পণ্যের তথ্য দিন</h2></div>
+    <p class="sec-sub">একবার লিখলেই ক্যাপশন আর সব উত্তর নিজে নিজে তৈরি হয়ে যাবে।</p>
+
+    <span class="f-label" id="catLabel">পণ্যের ধরন (ক্যাটাগরি)</span>
+    <div class="chips" id="chips" role="group" aria-labelledby="catLabel">
+      <button type="button" class="chip selected" data-cat="saree">শাড়ি / পোশাক</button>
+      <button type="button" class="chip" data-cat="cosmetics">কসমেটিকস</button>
+      <button type="button" class="chip" data-cat="food">খাবার</button>
+      <button type="button" class="chip" data-cat="electronics">ইলেকট্রনিকস</button>
+      <button type="button" class="chip" data-cat="shoes">জুতা / ব্যাগ</button>
+      <button type="button" class="chip" data-cat="other">অন্যান্য</button>
+    </div>
+    <input type="hidden" id="fCategory" value="saree" />
+
+    <label class="f-label" for="fProduct">পণ্যের নাম</label>
+    <input type="text" id="fProduct" placeholder="যেমন: হাতে বোনা জামদানি শাড়ি" autocomplete="off" />
+
+    <div class="row2">
+      <div>
+        <label class="f-label" for="fPrice">দাম (টাকা)</label>
+        <input type="text" id="fPrice" inputmode="numeric" placeholder="যেমন: 1250" autocomplete="off" />
+      </div>
+      <div>
+        <label class="f-label" for="fOffer">অফার / ছাড় <span class="opt">(ঐচ্ছিক)</span></label>
+        <input type="text" id="fOffer" placeholder="যেমন: ২০% ছাড়, সাথে ফ্রি ডেলিভারি" autocomplete="off" />
+      </div>
+    </div>
+
+    <label class="f-label" for="fDelivery">ডেলিভারি তথ্য</label>
+    <input type="text" id="fDelivery" placeholder="যেমন: ঢাকায় ৬০ টাকা, ঢাকার বাইরে ১২০ টাকা" autocomplete="off" />
+
+    <label class="f-label" for="fDetails">পণ্যের বিবরণ <span class="opt">(ঐচ্ছিক — রং, সাইজ, উপাদান ইত্যাদি)</span></label>
+    <textarea id="fDetails" placeholder="যেমন: রং — লাল, নীল, সবুজ; কাপড়: সুতি; সাইজ: ফ্রি"></textarea>
+
+    <div class="row2">
+      <div>
+        <label class="f-label" for="fShop">দোকানের নাম</label>
+        <input type="text" id="fShop" placeholder="যেমন: রুমানা ফ্যাশন হাউস" autocomplete="off" />
+      </div>
+      <div>
+        <label class="f-label" for="fPhone">মোবাইল নম্বর <span class="opt">(ঐচ্ছিক)</span></label>
+        <input type="tel" id="fPhone" placeholder="যেমন: 01XXXXXXXXX" autocomplete="off" />
+      </div>
+    </div>
+
+    <button type="button" class="btn-primary" id="btnGenerate">✨ ক্যাপশন তৈরি করুন</button>
+    <div class="form-foot">
+      <span class="save-hint" id="saveHint">তথ্য লিখলেই এই ফোনে অটো-সেভ হয়ে যাবে।</span>
+      <button type="button" class="btn-ghost" id="btnClear">সব তথ্য মুছুন</button>
+    </div>
+  </section>
+
+  <!-- ======= 2. Captions ======= -->
+  <section class="card" aria-labelledby="h-captions">
+    <div class="sec-head"><span class="sec-num teal">২</span><h2 id="h-captions">তৈরি ক্যাপশন</h2></div>
+    <p class="sec-sub">তিনটি আলাদা ধাঁচে — পছন্দেরটা কপি করে ফেসবুক পোস্টে বসিয়ে দিন।</p>
+
+    <div id="captionArea">
+      <div class="empty-state">উপরে পণ্যের তথ্য দিয়ে<br />“ক্যাপশন তৈরি করুন” বোতামে চাপুন —<br />৩ ধরনের ক্যাপশন এখানে আসবে।</div>
+    </div>
+    <div class="regen-row" id="regenRow">
+      <button type="button" class="btn-ghost" id="btnRegen">🔄 অন্য ধাঁচে আবার সাজান</button>
+    </div>
+
+    <div id="tagArea"></div>
+  </section>
+
+  <!-- ======= 3. Reply library ======= -->
+  <section class="card" aria-labelledby="h-replies">
+    <div class="sec-head"><span class="sec-num amber">৩</span><h2 id="h-replies">তৈরি উত্তর — কাস্টমারের প্রশ্নে</h2></div>
+    <p class="sec-sub">প্রতিদিনের সাধারণ প্রশ্নের উত্তর আপনার দাম, ডেলিভারি আর দোকানের নাম দিয়ে সাজানো। কপি করে ইনবক্সে পাঠিয়ে দিন।</p>
+    <div id="replyArea"></div>
+  </section>
+
+  <footer>তৈরি করেছে <strong>AEUN</strong> — AI Engineering &amp; Utility Network</footer>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var LS_KEY = "aeun_postkit_v1";
+  var variant = 0;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    chips: $("chips"), category: $("fCategory"),
+    product: $("fProduct"), price: $("fPrice"), offer: $("fOffer"),
+    delivery: $("fDelivery"), details: $("fDetails"),
+    shop: $("fShop"), phone: $("fPhone"),
+    captionArea: $("captionArea"), tagArea: $("tagArea"),
+    replyArea: $("replyArea"), regenRow: $("regenRow"),
+    saveHint: $("saveHint"), toast: $("toast")
+  };
+
+  /* ---------- Bengali digits ---------- */
+  var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+  function toBn(s){
+    return String(s == null ? "" : s).replace(/[0-9]/g, function(d){ return BN[+d]; });
+  }
+  function trim(s){ return (s || "").replace(/\s+/g, " ").trim(); }
+
+  /* ---------- Category data ---------- */
+  var CATS = {
+    saree: {
+      benefit: "ভালো মানের পোশাক শুধু সাজ নয় — আত্মবিশ্বাসও বাড়িয়ে দেয়। তাই কাপড় আর কাজের মানে আমরা কোনো আপস করি না।",
+      tags: ["#শাড়ি","#বাংলারশাড়ি","#ফ্যাশন","#অনলাইনশপিং","#নতুনকালেকশন","#SareeLover","#BangladeshFashion","#OnlineShoppingBD","#DhakaFashion","#NewCollection"]
+    },
+    cosmetics: {
+      benefit: "ত্বকের যত্নে ভুল পণ্য মানেই ক্ষতি — তাই আমরা দিই শুধু আসল আর বিশ্বস্ত পণ্য, যাতে নিশ্চিন্তে ব্যবহার করতে পারেন।",
+      tags: ["#কসমেটিকস","#স্কিনকেয়ার","#বিউটিটিপস","#অনলাইনশপিং","#আসলপণ্য","#SkinCareBD","#BeautyBD","#OriginalCosmetics","#MakeupBD","#OnlineShoppingBD"]
+    },
+    food: {
+      benefit: "ঘরের স্বাদ আর পরিষ্কার-পরিচ্ছন্ন মান — এই দুটোই আমাদের কাছে সবার আগে। প্রতিটা অর্ডার তৈরি হয় যত্ন আর ভালোবাসা দিয়ে।",
+      tags: ["#খাবার","#হোমমেডখাবার","#বাংলাখাবার","#ফুডলাভার","#অনলাইনশপিং","#HomemadeFood","#OnlineFoodBD","#FoodieBD","#DhakaFood"]
+    },
+    electronics: {
+      benefit: "দৈনন্দিন জীবন সহজ করতে ভালো একটা গ্যাজেটের জুড়ি নেই — আর আমরা প্রতিটা পণ্য নিজে যাচাই করে তবেই পাঠাই।",
+      tags: ["#গ্যাজেট","#ইলেকট্রনিকস","#টেক","#অনলাইনশপিং","#নতুনগ্যাজেট","#GadgetBD","#ElectronicsBD","#TechBD","#OnlineShoppingBD"]
+    },
+    shoes: {
+      benefit: "স্টাইল আর আরাম — দুটো একসাথে পাওয়াটাই আসল কথা। তাই ডিজাইনের পাশাপাশি টেকসই মানটাও আমরা নিশ্চিত করি।",
+      tags: ["#জুতা","#ব্যাগ","#ফ্যাশন","#স্টাইল","#অনলাইনশপিং","#ShoesBD","#BagCollection","#FashionBD","#OnlineShoppingBD","#NewCollection"]
+    },
+    other: {
+      benefit: "ভালো জিনিস, সঠিক দামে — এই সহজ প্রতিশ্রুতিটাই আমরা ধরে রাখতে চাই, প্রতিটা অর্ডারে।",
+      tags: ["#অনলাইনশপিং","#বাংলাদেশ","#ঢাকা","#নতুনকালেকশন","#OnlineShoppingBD","#Bangladesh","#CashOnDelivery","#NewArrival"]
+    }
+  };
+  var COMMON_TAGS = ["#CashOnDelivery","#OnlineShoppingBD"];
+
+  /* ---------- Current values / context ---------- */
+  function ctx(){
+    var cat = els.category.value || "other";
+    if(!CATS[cat]) cat = "other";
+    var product = trim(els.product.value);
+    var price = trim(els.price.value);
+    var offer = trim(els.offer.value);
+    var delivery = trim(els.delivery.value);
+    var details = trim(els.details.value);
+    var shop = trim(els.shop.value);
+    var phone = trim(els.phone.value);
+    return {
+      cat: cat,
+      benefit: CATS[cat].benefit,
+      product: product || "[পণ্যের নাম]",
+      hasProduct: !!product,
+      price: price ? toBn(price) + " টাকা" : "[দাম]",
+      hasPrice: !!price,
+      offer: offer,
+      offerLine: offer ? "🎁 অফার: " + offer : "",
+      offerBit: offer ? ("এখন চলছে বিশেষ অফার — " + offer + "। ") : "",
+      delivery: delivery || "সারা দেশে হোম ডেলিভারি দেওয়া হয়",
+      hasDelivery: !!delivery,
+      details: details,
+      shop: shop || "[দোকানের নাম]",
+      hasShop: !!shop,
+      phone: phone,
+      phoneLine: phone ? (" অথবা কল করুন: " + toBn(phone)) : ""
+    };
+  }
+
+  function lines(arr){
+    return arr.filter(function(x){ return x !== null && x !== ""; }).join("\n");
+  }
+
+  /* ---------- Caption templates ---------- */
+  function captionOffer(c){
+    if(variant % 2 === 0){
+      return lines([
+        "🔥 দারুণ অফার! 🔥",
+        "",
+        c.product,
+        "💰 দাম মাত্র " + c.price,
+        c.offerLine,
+        c.details ? "📌 বিবরণ: " + c.details : "",
+        "",
+        "🚚 ডেলিভারি: " + c.delivery,
+        "✅ ক্যাশ অন ডেলিভারি সুবিধা আছে — পণ্য হাতে পেয়ে টাকা দিন",
+        "",
+        "অর্ডার করতে এখনই ইনবক্স করুন" + c.phoneLine + "।",
+        "দেরি না করে আজই অর্ডার করুন!",
+        "",
+        "— " + c.shop
+      ]);
+    }
+    return lines([
+      "✨ নতুন কালেকশন হাজির! ✨",
+      "",
+      c.product,
+      "💰 মূল্য: " + c.price,
+      c.offerLine,
+      c.details ? "📌 " + c.details : "",
+      "",
+      "🚚 " + c.delivery,
+      "✅ ক্যাশ অন ডেলিভারি আছে — আগে পণ্য দেখুন, তারপর টাকা দিন",
+      "",
+      "অর্ডার করতে কমেন্টে “অর্ডার” লিখুন অথবা ইনবক্স করুন" + c.phoneLine + "।",
+      "",
+      "— " + c.shop + " | বিশ্বাস আর মানের ঠিকানা"
+    ]);
+  }
+
+  function captionStory(c){
+    if(variant % 2 === 0){
+      return lines([
+        "প্রতিদিন ইনবক্সে একটা প্রশ্ন বারবার আসে — “ভালো মানের জিনিসটা কোথায় পাবো, ঠকবো না তো?”",
+        "",
+        "সেই ভাবনা থেকেই " + c.shop + " নিয়ে এলো — " + c.product + "।",
+        c.benefit,
+        "",
+        "দাম রেখেছি মাত্র " + c.price + " — যাতে সবাই নিশ্চিন্তে নিতে পারেন। " + c.offerBit,
+        c.details ? "📌 বিবরণ: " + c.details : "",
+        "🚚 " + c.delivery + "। সাথে ক্যাশ অন ডেলিভারি সুবিধা তো আছেই।",
+        "",
+        "পছন্দ হলে ইনবক্সে আপনার নাম, ঠিকানা আর মোবাইল নম্বর পাঠিয়ে দিন — বাকি দায়িত্ব আমাদের। ❤️",
+        "",
+        "ভালোবাসা আর আস্থার জন্য ধন্যবাদ — " + c.shop
+      ]);
+    }
+    return lines([
+      "একজন কাস্টমার সেদিন বললেন — “আগে অনেক জায়গা থেকে কিনে ঠকেছি, এবার যেন ভালো হয়।”",
+      "",
+      "এই আস্থাটুকু ধরে রাখতেই আমাদের প্রতিটা পণ্য বাছাই করা হয় যত্নে। এবারের সংগ্রহে আছে — " + c.product + "।",
+      c.benefit,
+      "",
+      "💰 দাম: " + c.price + (c.offer ? " | 🎁 " + c.offer : ""),
+      c.details ? "📌 " + c.details : "",
+      "🚚 " + c.delivery,
+      "",
+      "অর্ডার করতে ইনবক্স করুন" + c.phoneLine + " — পণ্য হাতে পেয়ে টাকা দিলেই হবে।",
+      "",
+      "— " + c.shop + ", আপনার আস্থাই আমাদের শক্তি।"
+    ]);
+  }
+
+  function captionUrgent(c){
+    if(variant % 2 === 0){
+      return lines([
+        "⚠️ স্টক প্রায় শেষ! ⚠️",
+        "",
+        c.product + " — যারা এতদিন চেয়েছিলেন, তাদের জন্য এটাই শেষ সুযোগ!",
+        "মাত্র কয়েকটি পিস বাকি আছে, আগের অর্ডারগুলো পাঠানো শুরু হয়ে গেছে।",
+        "",
+        "💰 দাম: " + c.price,
+        c.offerLine,
+        "🚚 " + c.delivery,
+        "",
+        "স্টক শেষ হয়ে গেলে এই দামে আর পাওয়া যাবে না।",
+        "এখনই ইনবক্স করে অর্ডার কনফার্ম করুন" + c.phoneLine + "!",
+        "",
+        "— " + c.shop
+      ]);
+    }
+    return lines([
+      "⏰ শেষ মুহূর্তের ঘোষণা! ⏰",
+      "",
+      c.product + " এর স্টক শেষের পথে — হাতে গোনা কয়েকটা মাত্র আছে!",
+      "",
+      "💰 মাত্র " + c.price + (c.offer ? " — সাথে " + c.offer : ""),
+      c.details ? "📌 " + c.details : "",
+      "🚚 " + c.delivery,
+      "",
+      "যারা আগে আসবেন, তারাই পাবেন — পরে আফসোস করে লাভ হবে না!",
+      "এখনই ইনবক্স করুন" + c.phoneLine + "।",
+      "",
+      "— " + c.shop
+    ]);
+  }
+
+  function hashtagText(c){
+    var tags = CATS[c.cat].tags.slice();
+    COMMON_TAGS.forEach(function(t){ if(tags.indexOf(t) === -1) tags.push(t); });
+    if(c.hasShop){
+      var shopTag = "#" + c.shop.replace(/\s+/g, "");
+      if(tags.indexOf(shopTag) === -1) tags.push(shopTag);
+    }
+    return tags.join(" ");
+  }
+
+  /* ---------- Reply templates ---------- */
+  function buildReplies(c){
+    var priceAns = c.hasPrice ? ("দাম মাত্র " + c.price) : "দামটা পোস্টে দেওয়া আছে, তবু জানিয়ে দিচ্ছি — ইনবক্সে জিজ্ঞেস করলেই সঠিক দামটা বলে দিচ্ছি";
+    return [
+      {
+        q: "দাম কত?",
+        a: lines([
+          "আসসালামু আলাইকুম! 😊",
+          c.product + " — " + priceAns + "।" + (c.offer ? " এখন অফার চলছে: " + c.offer + "।" : ""),
+          "অর্ডার করতে চাইলে ইনবক্সে আপনার নাম, ঠিকানা আর মোবাইল নম্বর পাঠিয়ে দিন।",
+          "ধন্যবাদ! — " + c.shop
+        ])
+      },
+      {
+        q: "ডেলিভারি চার্জ কত?",
+        a: lines([
+          "আসসালামু আলাইকুম! 🚚",
+          c.hasDelivery ? ("ডেলিভারি তথ্য: " + c.delivery + "।") : "ডেলিভারি চার্জ এলাকা অনুযায়ী নির্ধারণ হয় — আপনার ঠিকানাটা পাঠালে সঠিক চার্জটা এখনই জানিয়ে দিচ্ছি।",
+          "অর্ডার কনফার্ম করতে ইনবক্স করুন, বাকিটা আমরা বুঝিয়ে দিচ্ছি।",
+          "— " + c.shop
+        ])
+      },
+      {
+        q: "ক্যাশ অন ডেলিভারি আছে?",
+        a: lines([
+          "জি, অবশ্যই আছে! ✅",
+          "পণ্য হাতে পেয়ে ডেলিভারি ম্যানকে টাকা পরিশোধ করলেই হবে — আগে পুরো টাকা দেওয়ার দরকার নেই।",
+          "শুধু অর্ডার কনফার্ম করতে ডেলিভারি চার্জটা অগ্রিম পাঠাতে হয়, এতে আপনার অর্ডারটা নিশ্চিত থাকে।",
+          "— " + c.shop
+        ])
+      },
+      {
+        q: "অর্ডার করব কীভাবে?",
+        a: lines([
+          "অর্ডার করা খুবই সহজ! 🛒",
+          "১) ইনবক্সে আপনার নাম লিখুন",
+          "২) পুরো ঠিকানা দিন (বাসা/হোল্ডিং, রোড, এলাকা, জেলা)",
+          "৩) মোবাইল নম্বর দিন",
+          "আমরা কল করে অর্ডার কনফার্ম করে দেব, ইনশাআল্লাহ।",
+          "ধন্যবাদ! — " + c.shop
+        ])
+      },
+      {
+        q: "রিটার্ন হবে?",
+        a: lines([
+          "পণ্যে কোনো ত্রুটি থাকলে অবশ্যই বদলি / রিটার্ন হবে। ✅",
+          "শর্ত একটাই — ডেলিভারি ম্যানের সামনে পণ্যটা চেক করে নেবেন; সমস্যা থাকলে তখনই জানাবেন, আমরা সাথে সাথে ব্যবস্থা নেব।",
+          "তবে ব্যবহৃত পণ্য রিটার্ন হয় না। আস্থা রাখুন — " + c.shop + " সবসময় আপনার পাশে আছে।"
+        ])
+      },
+      {
+        q: "ডেলিভারি পেতে কতদিন লাগবে?",
+        a: lines([
+          "অর্ডার কনফার্মের পর ঢাকার ভিতরে সাধারণত ২৪–৪৮ ঘণ্টা, আর ঢাকার বাইরে ২–৪ দিনের মধ্যে ডেলিভারি পেয়ে যাবেন। 🚚",
+          "কোনো কারণে দেরি হলে আমরা নিজে থেকেই আপডেট জানিয়ে দেব।",
+          "— " + c.shop
+        ])
+      },
+      {
+        q: "অগ্রিম টাকা লাগবে?",
+        a: lines([
+          "শুধু ডেলিভারি চার্জটা অগ্রিম লাগে — বাকি " + (c.hasPrice ? c.price : "টাকা") + " পণ্য হাতে পেয়ে দিলেই হবে। 😊",
+          "এটা ভুয়া অর্ডার ঠেকানোর জন্য, যাতে আপনার অর্ডারটা নিশ্চিতভাবে আপনার কাছেই পৌঁছায়।",
+          "— " + c.shop
+        ])
+      },
+      {
+        q: "আর কোনো কালার / সাইজ আছে?",
+        a: lines([
+          "জি, আরও কালার / সাইজ আছে! 🎨",
+          "আপনি কোনটা চান জানালে ছবিসহ পাঠিয়ে দিচ্ছি। পছন্দেরটা স্টক শেষ হওয়ার আগেই ইনবক্স করুন।",
+          "— " + c.shop
+        ])
+      }
+    ];
+  }
+
+  /* ---------- Rendering ---------- */
+  function copyBtnHTML(){
+    return '<button type="button" class="btn-copy">📋 কপি করুন</button>';
+  }
+
+  function renderCaptions(){
+    var c = ctx();
+    var items = [
+      { badge: "সরাসরি অফার", cls: "offer", text: captionOffer(c) },
+      { badge: "গল্পের ধাঁচ", cls: "story", text: captionStory(c) },
+      { badge: "জরুরি / সীমিত স্টক", cls: "urgent", text: captionUrgent(c) }
+    ];
+    var html = "";
+    items.forEach(function(it){
+      html += '<div class="post-card">'
+        + '<div class="post-top"><span class="badge ' + it.cls + '">' + it.badge + '</span>'
+        + '<span class="char-count">' + toBn(it.text.length) + ' অক্ষর</span></div>'
+        + '<div class="post-text"></div>'
+        + copyBtnHTML()
+        + '</div>';
+    });
+    els.captionArea.innerHTML = html;
+    var cards = els.captionArea.querySelectorAll(".post-card");
+    items.forEach(function(it, i){
+      cards[i].querySelector(".post-text").textContent = it.text;
+      wireCopy(cards[i].querySelector(".btn-copy"), it.text);
+    });
+    els.regenRow.classList.add("show");
+
+    var tags = hashtagText(c);
+    els.tagArea.innerHTML = '<div class="post-card">'
+      + '<div class="post-top"><span class="badge tags">🏷️ হ্যাশট্যাগ</span>'
+      + '<span class="char-count">ক্যাপশনের শেষে বসান</span></div>'
+      + '<div class="post-text"></div>'
+      + copyBtnHTML()
+      + '</div>';
+    var tagCard = els.tagArea.querySelector(".post-card");
+    tagCard.querySelector(".post-text").textContent = tags;
+    wireCopy(tagCard.querySelector(".btn-copy"), tags);
+  }
+
+  function renderReplies(){
+    var c = ctx();
+    var replies = buildReplies(c);
+    var html = "";
+    replies.forEach(function(r){
+      html += '<div class="qa-card">'
+        + '<p class="qa-q">❓ “' + r.q + '”</p>'
+        + '<div class="post-text"></div>'
+        + copyBtnHTML()
+        + '</div>';
+    });
+    els.replyArea.innerHTML = html;
+    var cards = els.replyArea.querySelectorAll(".qa-card");
+    replies.forEach(function(r, i){
+      cards[i].querySelector(".post-text").textContent = r.a;
+      wireCopy(cards[i].querySelector(".btn-copy"), r.a);
+    });
+  }
+
+  /* ---------- Copy ---------- */
+  function wireCopy(btn, text){
+    btn.addEventListener("click", function(){
+      copyText(text, btn);
+    });
+  }
+  function copyText(text, btn){
+    function done(){
+      showToast("কপি হয়েছে ✓ এখন পেস্ট করে ব্যবহার করুন");
+      if(btn){
+        var old = btn.textContent;
+        btn.textContent = "✓ কপি হয়েছে";
+        btn.classList.add("copied");
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove("copied"); }, 1600);
+      }
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch(e){ showToast("কপি হয়নি — লেখাটা চেপে ধরে কপি করুন"); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ---------- Toast ---------- */
+  var toastTimer = null;
+  function showToast(msg){
+    els.toast.textContent = msg;
+    els.toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ els.toast.classList.remove("show"); }, 2200);
+  }
+
+  /* ---------- Save / load (localStorage) ---------- */
+  function save(){
+    var data = {
+      category: els.category.value,
+      product: els.product.value,
+      price: els.price.value,
+      offer: els.offer.value,
+      delivery: els.delivery.value,
+      details: els.details.value,
+      shop: els.shop.value,
+      phone: els.phone.value
+    };
+    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
+    els.saveHint.textContent = "✓ এই ফোনে সেভ হয়েছে";
+  }
+  function load(){
+    var data = null;
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if(raw) data = JSON.parse(raw);
+    } catch(e){}
+    if(!data) return;
+    if(data.category && CATS[data.category]){
+      els.category.value = data.category;
+      selectChip(data.category);
+    }
+    if(typeof data.product === "string") els.product.value = data.product;
+    if(typeof data.price === "string") els.price.value = data.price;
+    if(typeof data.offer === "string") els.offer.value = data.offer;
+    if(typeof data.delivery === "string") els.delivery.value = data.delivery;
+    if(typeof data.details === "string") els.details.value = data.details;
+    if(typeof data.shop === "string") els.shop.value = data.shop;
+    if(typeof data.phone === "string") els.phone.value = data.phone;
+  }
+
+  /* ---------- Category chips ---------- */
+  function selectChip(cat){
+    var chips = els.chips.querySelectorAll(".chip");
+    chips.forEach(function(ch){
+      ch.classList.toggle("selected", ch.getAttribute("data-cat") === cat);
+    });
+  }
+  els.chips.addEventListener("click", function(e){
+    var btn = e.target.closest(".chip");
+    if(!btn) return;
+    var cat = btn.getAttribute("data-cat");
+    els.category.value = cat;
+    selectChip(cat);
+    save();
+    renderReplies();
+    if(els.regenRow.classList.contains("show")) renderCaptions();
+  });
+
+  /* ---------- Live updates ---------- */
+  var inputTimer = null;
+  [els.product, els.price, els.offer, els.delivery, els.details, els.shop, els.phone].forEach(function(inp){
+    inp.addEventListener("input", function(){
+      save();
+      clearTimeout(inputTimer);
+      inputTimer = setTimeout(function(){
+        renderReplies();
+        if(els.regenRow.classList.contains("show")) renderCaptions();
+      }, 350);
+    });
+  });
+
+  /* ---------- Generate / regenerate ---------- */
+  $("btnGenerate").addEventListener("click", function(){
+    var c = ctx();
+    variant = 0;
+    renderCaptions();
+    if(!c.hasProduct || !c.hasShop || !c.hasPrice){
+      showToast("পণ্যের নাম, দাম আর দোকানের নাম দিলে ক্যাপশন আরও সুন্দর হবে");
+    } else {
+      showToast("ক্যাপশন তৈরি ✓ পছন্দেরটা কপি করুন");
+    }
+    els.captionArea.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("btnRegen").addEventListener("click", function(){
+    variant++;
+    renderCaptions();
+    showToast("নতুন ধাঁচে সাজানো হয়েছে ✓");
+  });
+
+  /* ---------- Clear ---------- */
+  $("btnClear").addEventListener("click", function(){
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    [els.product, els.price, els.offer, els.delivery, els.details, els.shop, els.phone].forEach(function(i){ i.value = ""; });
+    els.category.value = "saree";
+    selectChip("saree");
+    els.captionArea.innerHTML = '<div class="empty-state">উপরে পণ্যের তথ্য দিয়ে<br />“ক্যাপশন তৈরি করুন” বোতামে চাপুন —<br />৩ ধরনের ক্যাপশন এখানে আসবে।</div>';
+    els.tagArea.innerHTML = "";
+    els.regenRow.classList.remove("show");
+    els.saveHint.textContent = "তথ্য লিখলেই এই ফোনে অটো-সেভ হয়ে যাবে।";
+    renderReplies();
+    showToast("সব তথ্য মোছা হয়েছে");
+  });
+
+  /* ---------- Download this page itself ---------- */
+  $("btnDownload").addEventListener("click", function(){
+    var clone = document.documentElement.cloneNode(true);
+    // Bake current values into the downloaded copy so it opens with the shop's data filled in.
+    var fields = ["fCategory","fProduct","fPrice","fOffer","fDelivery","fDetails","fShop","fPhone"];
+    fields.forEach(function(id){
+      var live = $(id);
+      var copy = clone.querySelector("#" + id);
+      if(live && copy){
+        if(live.tagName === "TEXTAREA") copy.textContent = live.value;
+        else copy.setAttribute("value", live.value);
+      }
+    });
+    var liveChips = els.chips.querySelectorAll(".chip");
+    var cloneChips = clone.querySelectorAll("#chips .chip");
+    liveChips.forEach(function(ch, i){
+      if(cloneChips[i]) cloneChips[i].className = ch.className;
+    });
+    var html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "aeun-post-kit.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    showToast("ডাউনলোড শুরু হয়েছে ✓");
+  });
+
+  /* ---------- Init ---------- */
+  load();
+  renderReplies();
+  if(trim(els.product.value) || trim(els.shop.value)){
+    renderCaptions();
+  }
+})();
+</script>
+</body>
+</html>

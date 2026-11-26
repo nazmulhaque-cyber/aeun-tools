@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AEUN Baki Khata — বাকির খাতা</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+    --bg:#F4F7FB; --card:#FFFFFF; --ink:#0B1F3A; --body:#334155; --muted:#64748B;
+    --line:#E2E8F0; --red:#DC2626; --red-bg:#FEF2F2; --green:#059669; --green-bg:#ECFDF5;
+    --input-bg:#FFFFFF; --shadow:0 2px 10px rgba(11,31,58,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0A1628; --card:#12233F; --ink:#F1F5F9; --body:#CBD5E1; --muted:#94A3B8;
+      --line:#1E3A5F; --red-bg:#3B1220; --green-bg:#0B2E26; --input-bg:#0F2038;
+      --shadow:0 2px 10px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--body);line-height:1.55}
+  button,input,select,textarea{font-family:inherit;font-size:1rem}
+  button,[role="button"]{min-height:44px;cursor:pointer}
+  input,select,textarea{min-height:44px}
+  .wrap{max-width:660px;margin:0 auto;padding:0 14px 90px}
+
+  /* ---------- Header ---------- */
+  header.top{background:var(--navy);color:#fff;padding:18px 14px 20px;border-bottom:4px solid var(--amber)}
+  .top-in{max-width:660px;margin:0 auto}
+  .brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .brand h1{margin:0;font-size:1.55rem;font-weight:700;line-height:1.25;color:#fff}
+  .brand h1 .en{font-size:.82rem;font-weight:600;letter-spacing:.14em;color:var(--amber);display:block;text-transform:uppercase}
+  .brand p{margin:4px 0 0;font-size:.92rem;color:#C7D6EA}
+  .dl-btn{flex-shrink:0;background:var(--amber);color:#0B1F3A;border:none;border-radius:10px;padding:10px 14px;font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+  .dl-btn:active{transform:scale(.97)}
+
+  /* ---------- Summary ---------- */
+  .summary{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-top:16px;padding:16px 18px;display:flex;gap:14px;align-items:stretch}
+  .sum-main{flex:1.4}
+  .sum-main .lbl{font-size:.9rem;color:var(--muted);font-weight:600}
+  .sum-main .amt{font-size:2rem;font-weight:700;color:var(--red);line-height:1.15;margin-top:2px}
+  .sum-side{flex:1;border-left:1px dashed var(--line);padding-left:14px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+  .sum-side div{font-size:.92rem}
+  .sum-side b{color:var(--ink);font-size:1.05rem}
+
+  /* ---------- Shop setting ---------- */
+  .shop-card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-top:12px;padding:12px 14px}
+  .shop-card summary{min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--ink);cursor:pointer;list-style:none}
+  .shop-card summary::-webkit-details-marker{display:none}
+  .shop-card summary .chev{margin-left:auto;color:var(--muted)}
+  .shop-body{padding-top:6px}
+  .shop-body label{font-size:.9rem;font-weight:600;color:var(--ink);display:block;margin-bottom:6px}
+  .row{display:flex;gap:8px}
+  .row input{flex:1}
+  .hint{font-size:.85rem;color:var(--muted);margin:8px 0 0}
+
+  /* ---------- Forms / inputs ---------- */
+  input[type="text"],input[type="tel"],input[type="number"],input[type="date"],input[type="search"],textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--input-bg);color:var(--ink);outline:none}
+  input:focus,textarea:focus{border-color:var(--blue)}
+  textarea{min-height:44px;resize:vertical}
+  label.f{font-size:.92rem;font-weight:600;color:var(--ink);display:block;margin:12px 0 5px}
+  label.f:first-child{margin-top:0}
+
+  .btn{border:none;border-radius:10px;padding:11px 16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:1rem}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-teal{background:var(--teal);color:#04241E}
+  .btn-ghost{background:transparent;color:var(--blue);border:1.5px solid var(--line)}
+  .btn-wa{background:#25D366;color:#06351A}
+  .btn-red-ghost{background:transparent;color:var(--red);border:1.5px solid var(--line)}
+  .btn:active{transform:scale(.98)}
+  .btn-block{width:100%}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{display:flex;gap:8px;margin-top:18px}
+  .toolbar .search{flex:1;position:relative}
+  .toolbar .search input{padding-left:38px}
+  .toolbar .search span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .add-btn{white-space:nowrap}
+
+  /* ---------- Customer cards ---------- */
+  .list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+  .cust{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px}
+  .cust-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .cust-name{font-size:1.12rem;font-weight:700;color:var(--ink);line-height:1.3}
+  .cust-phone{font-size:.92rem;color:var(--muted);margin-top:1px}
+  .due{text-align:right;flex-shrink:0}
+  .due .d-lbl{font-size:.78rem;color:var(--muted);font-weight:600}
+  .due .d-amt{font-size:1.3rem;font-weight:700;color:var(--red);line-height:1.2}
+  .due .d-amt.zero{color:var(--green)}
+  .cust-meta{font-size:.85rem;color:var(--muted);margin-top:6px}
+  .cust-actions{display:flex;gap:8px;margin-top:12px}
+  .cust-actions .btn{flex:1;padding:9px 8px;font-size:.95rem}
+
+  .empty{background:var(--card);border:1.5px dashed var(--line);border-radius:14px;margin-top:14px;padding:34px 20px;text-align:center}
+  .empty .big{font-size:2.4rem}
+  .empty h2{margin:8px 0 4px;color:var(--ink);font-size:1.2rem}
+  .empty p{margin:0;color:var(--muted);font-size:.95rem}
+
+  /* ---------- Panels / modal ---------- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-top:14px;padding:16px}
+  .panel h2{margin:0 0 4px;color:var(--ink);font-size:1.15rem}
+  .overlay{position:fixed;inset:0;background:rgba(4,12,24,.55);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .overlay.open{display:flex}
+  .sheet{background:var(--card);width:100%;max-width:660px;border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto}
+  .sheet h2{margin:0 0 6px;color:var(--ink);font-size:1.2rem}
+  .sheet .acts{display:flex;gap:8px;margin-top:16px}
+  .sheet .acts .btn{flex:1}
+  @media(min-width:640px){.overlay{align-items:center}.sheet{border-radius:16px}}
+
+  /* ---------- Detail view ---------- */
+  .back-btn{background:none;border:none;color:var(--blue);font-weight:700;font-size:1rem;padding:10px 4px;display:inline-flex;align-items:center;gap:5px}
+  .detail-head{background:var(--navy);color:#fff;border-radius:14px;padding:18px;margin-top:6px}
+  .detail-head .nm{font-size:1.35rem;font-weight:700;line-height:1.3}
+  .detail-head .ph{color:#C7D6EA;font-size:.95rem;margin-top:2px}
+  .detail-head .due-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;gap:10px;flex-wrap:wrap}
+  .detail-head .due-lbl{font-size:.88rem;color:#C7D6EA}
+  .detail-head .due-big{font-size:1.9rem;font-weight:700;color:var(--amber);line-height:1.15}
+  .detail-head .due-big.zero{color:var(--teal)}
+  .type-toggle{display:flex;gap:8px;margin-top:4px}
+  .type-toggle button{flex:1;border-radius:10px;border:1.5px solid var(--line);background:var(--input-bg);color:var(--body);font-weight:700;padding:11px 6px}
+  .type-toggle button.sel-due{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+  .type-toggle button.sel-pay{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+  .hist{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+  .entry{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+  .entry .e-ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;font-weight:700}
+  .entry.due .e-ic{background:var(--red-bg);color:var(--red)}
+  .entry.pay .e-ic{background:var(--green-bg);color:var(--green)}
+  .entry .e-main{flex:1;min-width:0}
+  .entry .e-top{display:flex;justify-content:space-between;gap:8px}
+  .entry .e-type{font-weight:700;color:var(--ink)}
+  .entry .e-amt{font-weight:700;white-space:nowrap}
+  .entry.due .e-amt{color:var(--red)}
+  .entry.pay .e-amt{color:var(--green)}
+  .entry .e-note{font-size:.92rem;color:var(--body);word-break:break-word}
+  .entry .e-date{font-size:.82rem;color:var(--muted)}
+  .entry .e-del{background:none;border:none;color:var(--muted);font-size:1.05rem;padding:6px;min-height:36px;min-width:36px}
+  .sec-title{font-size:1.08rem;font-weight:700;color:var(--ink);margin:20px 0 0}
+
+  /* ---------- Toast ---------- */
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:10px;font-weight:600;font-size:.95rem;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:transform .25s ease;z-index:99;max-width:92vw;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:var(--muted);font-size:.85rem;margin-top:26px}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand-row">
+      <div class="brand">
+        <h1><span class="en">AEUN Baki Khata</span>বাকির খাতা</h1>
+        <p>দোকানের বাকির হিসাব — সহজ, পরিষ্কার, সবসময় হাতের কাছে</p>
+      </div>
+      <button class="dl-btn" id="btnDownload" type="button">📥 ডাউনলোড করুন</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ HOME VIEW ============ -->
+  <section id="homeView">
+    <div class="summary">
+      <div class="sum-main">
+        <div class="lbl">মোট বাকি (সব কাস্টমার)</div>
+        <div class="amt" id="totalDue">৳০</div>
+      </div>
+      <div class="sum-side">
+        <div>মোট কাস্টমার: <b id="totalCust">০</b> জন</div>
+        <div>বাকি আছে: <b id="dueCust">০</b> জনের কাছে</div>
+      </div>
+    </div>
+
+    <details class="shop-card" id="shopDetails">
+      <summary>🏪 দোকানের সেটিংস <span class="chev">▾</span></summary>
+      <div class="shop-body">
+        <label for="shopName">দোকানের নাম</label>
+        <div class="row">
+          <input type="text" id="shopName" placeholder="যেমন: রহিম স্টোর" autocomplete="off">
+          <button class="btn btn-blue" id="btnSaveShop" type="button">সেভ করুন</button>
+        </div>
+        <p class="hint">এই নামটা WhatsApp রিমাইন্ডার মেসেজে যাবে, যাতে কাস্টমার বুঝতে পারেন কোন দোকান থেকে মেসেজ এসেছে।</p>
+      </div>
+    </details>
+
+    <div class="toolbar">
+      <div class="search">
+        <span>🔍</span>
+        <input type="search" id="searchInput" placeholder="কাস্টমারের নাম খুঁজুন…" autocomplete="off">
+      </div>
+      <button class="btn btn-blue add-btn" id="btnAddCust" type="button">＋ নতুন কাস্টমার</button>
+    </div>
+
+    <div id="custList" class="list"></div>
+    <div id="emptyState" class="empty hidden">
+      <div class="big">📒</div>
+      <h2>এখনো কোনো কাস্টমার নেই</h2>
+      <p>“＋ নতুন কাস্টমার” বোতামে চাপ দিয়ে প্রথম কাস্টমার যোগ করুন,<br>তারপর তার বাকি আর পরিশোধের হিসাব রাখুন।</p>
+    </div>
+    <div id="noResult" class="empty hidden">
+      <div class="big">🔍</div>
+      <h2>কাউকে পাওয়া গেল না</h2>
+      <p>এই নামে কোনো কাস্টমার নেই। অন্য নামে খুঁজে দেখুন।</p>
+    </div>
+  </section>
+
+  <!-- ============ DETAIL VIEW ============ -->
+  <section id="detailView" class="hidden">
+    <button class="back-btn" id="btnBack" type="button">← সব কাস্টমার</button>
+    <div class="detail-head">
+      <div class="nm" id="dName">—</div>
+      <div class="ph" id="dPhone">—</div>
+      <div class="due-row">
+        <div>
+          <div class="due-lbl">বর্তমান বাকি</div>
+          <div class="due-big" id="dDue">৳০</div>
+        </div>
+        <button class="btn btn-wa" id="btnWaDetail" type="button">💬 WhatsApp রিমাইন্ডার</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>নতুন হিসাব যোগ করুন</h2>
+      <div class="type-toggle" role="group" aria-label="হিসাবের ধরন">
+        <button type="button" id="typeDue" class="sel-due">➕ বাকি নিল</button>
+        <button type="button" id="typePay">✔ টাকা দিল</button>
+      </div>
+      <label class="f" for="eAmount">টাকার পরিমাণ (৳)</label>
+      <input type="number" id="eAmount" inputmode="decimal" min="0" placeholder="যেমন: ৫০০">
+      <label class="f" for="eNote">নোট (কী কিনল / কেন)</label>
+      <input type="text" id="eNote" placeholder="যেমন: চাল, ডাল, তেল" autocomplete="off">
+      <label class="f" for="eDate">তারিখ</label>
+      <input type="date" id="eDate">
+      <div style="margin-top:14px">
+        <button class="btn btn-blue btn-block" id="btnAddEntry" type="button">হিসাব যোগ করুন</button>
+      </div>
+    </div>
+
+    <h3 class="sec-title">📜 পুরো হিসাবের ইতিহাস</h3>
+    <div id="histList" class="hist"></div>
+    <div id="histEmpty" class="empty hidden">
+      <div class="big">🧾</div>
+      <h2>এখনো কোনো হিসাব নেই</h2>
+      <p>উপরের ফর্ম থেকে প্রথম বাকি বা পরিশোধের হিসাব যোগ করুন।</p>
+    </div>
+
+    <div style="margin-top:22px">
+      <button class="btn btn-red-ghost btn-block" id="btnDeleteCust" type="button">🗑 এই কাস্টমার মুছে ফেলুন</button>
+    </div>
+  </section>
+
+  <footer class="foot">AEUN Baki Khata • আপনার সব হিসাব এই ফোনের ব্রাউজারেই সেভ থাকে</footer>
+</div>
+
+<!-- ============ ADD CUSTOMER SHEET ============ -->
+<div class="overlay" id="custOverlay">
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="নতুন কাস্টমার">
+    <h2>নতুন কাস্টমার যোগ করুন</h2>
+    <label class="f" for="cName">কাস্টমারের নাম *</label>
+    <input type="text" id="cName" placeholder="যেমন: করিম উদ্দিন" autocomplete="off">
+    <label class="f" for="cPhone">মোবাইল নম্বর (WhatsApp)</label>
+    <input type="tel" id="cPhone" inputmode="tel" placeholder="যেমন: 01XXXXXXXXX" autocomplete="off">
+    <p class="hint">মোবাইল নম্বর দিলে WhatsApp রিমাইন্ডার পাঠানো যাবে।</p>
+    <div class="acts">
+      <button class="btn btn-ghost" id="btnCancelCust" type="button">বাতিল</button>
+      <button class="btn btn-blue" id="btnSaveCust" type="button">কাস্টমার যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM SHEET ============ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="নিশ্চিত করুন">
+    <h2 id="confirmTitle">নিশ্চিত করুন</h2>
+    <p id="confirmText" style="margin:4px 0 0"></p>
+    <div class="acts">
+      <button class="btn btn-ghost" id="btnConfirmNo" type="button">না, থাক</button>
+      <button class="btn" id="btnConfirmYes" type="button" style="background:var(--red);color:#fff">হ্যাঁ, মুছুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "aeun_baki_khata_v1";
+  var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+  var MONTHS_BN = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+
+  function toBn(str){ return String(str).replace(/[0-9]/g, function(d){ return BN[+d]; }); }
+  function money(n){
+    var neg = n < 0; var v = Math.abs(Math.round(n*100)/100);
+    var s = (v % 1 === 0) ? String(Math.round(v)) : v.toFixed(2);
+    var parts = s.split(".");
+    parts[0] = Number(parts[0]).toLocaleString("en-IN");
+    return (neg ? "−" : "") + "৳" + toBn(parts.join("."));
+  }
+  function fmtDate(iso){
+    if(!iso) return "";
+    var p = iso.split("-"); if(p.length !== 3) return toBn(iso);
+    var d = new Date(+p[0], +p[1]-1, +p[2]);
+    return toBn(d.getDate()) + " " + MONTHS_BN[d.getMonth()] + " " + toBn(d.getFullYear());
+  }
+  function todayISO(){
+    var d = new Date();
+    var m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+  /* ---------- State ---------- */
+  var state = { shopName: "", customers: [] };
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var parsed = JSON.parse(raw); if(parsed && Array.isArray(parsed.customers)){ state = parsed; } }
+  }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  function custDue(c){
+    var t = 0;
+    (c.entries||[]).forEach(function(e){ t += (e.type === "pay" ? -e.amount : e.amount); });
+    return t;
+  }
+  function lastActivity(c){
+    if(!c.entries || !c.entries.length) return null;
+    var sorted = c.entries.slice().sort(function(a,b){ return (b.date||"").localeCompare(a.date||"") || (b.ts||0)-(a.ts||0); });
+    return sorted[0];
+  }
+  function waNumber(phone){
+    var d = String(phone||"").replace(/[^0-9]/g,"");
+    if(!d) return "";
+    if(d.indexOf("880") === 0) return d;
+    if(d.charAt(0) === "0") return "88" + d;
+    return d;
+  }
+  function openWhatsApp(c){
+    var num = waNumber(c.phone);
+    if(!num){ toast("এই কাস্টমারের মোবাইল নম্বর দেওয়া নেই"); return; }
+    var due = custDue(c);
+    var shop = state.shopName ? state.shopName : "আমাদের দোকান";
+    var msg;
+    if(due > 0){
+      msg = "আসসালামু আলাইকুম " + c.name + ",\n" + shop + " থেকে বলছি। আমাদের খাতায় আপনার বাকি আছে " + money(due) + "। অনুগ্রহ করে আপনার সুবিধামতো সময়ে টাকাটা পরিশোধ করলে আমরা কৃতজ্ঞ থাকব।\nধন্যবাদ।";
+    } else {
+      msg = "আসসালামু আলাইকুম " + c.name + ",\n" + shop + " থেকে বলছি। আপনার আগের সব বাকি পরিশোধ হয়ে গেছে, আলহামদুলিল্লাহ। ধন্যবাদ।";
+    }
+    window.open("https://wa.me/" + num + "?text=" + encodeURIComponent(msg), "_blank");
+  }
+
+  /* ---------- Toast ---------- */
+  var toastTimer = null;
+  function toast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2400);
+  }
+
+  /* ---------- Confirm ---------- */
+  var confirmCb = null;
+  function askConfirm(title, text, cb){
+    document.getElementById("confirmTitle").textContent = title;
+    document.getElementById("confirmText").textContent = text;
+    confirmCb = cb;
+    document.getElementById("confirmOverlay").classList.add("open");
+  }
+  document.getElementById("btnConfirmNo").addEventListener("click", function(){
+    document.getElementById("confirmOverlay").classList.remove("open"); confirmCb = null;
+  });
+  document.getElementById("btnConfirmYes").addEventListener("click", function(){
+    document.getElementById("confirmOverlay").classList.remove("open");
+    if(confirmCb){ var cb = confirmCb; confirmCb = null; cb(); }
+  });
+
+  /* ---------- Home render ---------- */
+  var searchQ = "";
+  function renderHome(){
+    var total = 0, dueCount = 0;
+    state.customers.forEach(function(c){ var d = custDue(c); total += Math.max(d,0); if(d > 0) dueCount++; });
+    document.getElementById("totalDue").textContent = money(total);
+    document.getElementById("totalCust").textContent = toBn(state.customers.length);
+    document.getElementById("dueCust").textContent = toBn(dueCount);
+
+    var list = document.getElementById("custList");
+    var empty = document.getElementById("emptyState");
+    var noRes = document.getElementById("noResult");
+    list.innerHTML = "";
+
+    if(state.customers.length === 0){ empty.classList.remove("hidden"); noRes.classList.add("hidden"); return; }
+    empty.classList.add("hidden");
+
+    var filtered = state.customers.filter(function(c){ return !searchQ || c.name.toLowerCase().indexOf(searchQ) !== -1; });
+    if(filtered.length === 0){ noRes.classList.remove("hidden"); return; }
+    noRes.classList.add("hidden");
+
+    filtered.sort(function(a,b){ return custDue(b) - custDue(a); });
+    filtered.forEach(function(c){
+      var d = custDue(c);
+      var last = lastActivity(c);
+      var card = document.createElement("div");
+      card.className = "cust";
+      var meta = last ? ("সর্বশেষ: " + (last.type === "pay" ? "টাকা দিল " : "বাকি নিল ") + money(last.amount) + " • " + fmtDate(last.date)) : "এখনো কোনো হিসাব যোগ হয়নি";
+      card.innerHTML =
+        '<div class="cust-top">' +
+          '<div><div class="cust-name">' + esc(c.name) + '</div>' +
+          (c.phone ? '<div class="cust-phone">📱 ' + esc(toBn(c.phone)) + '</div>' : '') + '</div>' +
+          '<div class="due"><div class="d-lbl">বাকি</div><div class="d-amt' + (d <= 0 ? ' zero' : '') + '">' + (d <= 0 ? money(0) : money(d)) + '</div></div>' +
+        '</div>' +
+        '<div class="cust-meta">' + esc(meta) + '</div>' +
+        '<div class="cust-actions">' +
+          '<button class="btn btn-blue" type="button" data-act="detail">📖 হিসাব দেখুন</button>' +
+          '<button class="btn btn-wa" type="button" data-act="wa">💬 রিমাইন্ডার</button>' +
+        '</div>';
+      card.querySelector('[data-act="detail"]').addEventListener("click", function(){ openDetail(c.id); });
+      card.querySelector('[data-act="wa"]').addEventListener("click", function(){ openWhatsApp(c); });
+      list.appendChild(card);
+    });
+  }
+
+  /* ---------- Detail ---------- */
+  var currentId = null, entryType = "due";
+  function getCust(id){ for(var i=0;i<state.customers.length;i++){ if(state.customers[i].id === id) return state.customers[i]; } return null; }
+
+  function setType(t){
+    entryType = t;
+    document.getElementById("typeDue").className = (t === "due" ? "sel-due" : "");
+    document.getElementById("typePay").className = (t === "pay" ? "sel-pay" : "");
+  }
+  document.getElementById("typeDue").addEventListener("click", function(){ setType("due"); });
+  document.getElementById("typePay").addEventListener("click", function(){ setType("pay"); });
+
+  function openDetail(id){
+    currentId = id;
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("detailView").classList.remove("hidden");
+    document.getElementById("eAmount").value = "";
+    document.getElementById("eNote").value = "";
+    document.getElementById("eDate").value = todayISO();
+    setType("due");
+    renderDetail();
+    window.scrollTo(0,0);
+  }
+  function closeDetail(){
+    currentId = null;
+    document.getElementById("detailView").classList.add("hidden");
+    document.getElementById("homeView").classList.remove("hidden");
+    renderHome();
+    window.scrollTo(0,0);
+  }
+  document.getElementById("btnBack").addEventListener("click", closeDetail);
+
+  function renderDetail(){
+    var c = getCust(currentId); if(!c){ closeDetail(); return; }
+    var d = custDue(c);
+    document.getElementById("dName").textContent = c.name;
+    document.getElementById("dPhone").textContent = c.phone ? ("📱 " + toBn(c.phone)) : "মোবাইল নম্বর দেওয়া নেই";
+    var dueEl = document.getElementById("dDue");
+    dueEl.textContent = d > 0 ? money(d) : (d < 0 ? money(-d) + " বেশি দেওয়া আছে" : money(0) + " — পরিশোধ সম্পূর্ণ ✔");
+    dueEl.className = "due-big" + (d <= 0 ? " zero" : "");
+
+    var hist = document.getElementById("histList");
+    var he = document.getElementById("histEmpty");
+    hist.innerHTML = "";
+    var entries = (c.entries||[]).slice().sort(function(a,b){ return (b.date||"").localeCompare(a.date||"") || (b.ts||0)-(a.ts||0); });
+    if(entries.length === 0){ he.classList.remove("hidden"); return; }
+    he.classList.add("hidden");
+    entries.forEach(function(e){
+      var row = document.createElement("div");
+      row.className = "entry " + (e.type === "pay" ? "pay" : "due");
+      row.innerHTML =
+        '<div class="e-ic">' + (e.type === "pay" ? "✔" : "+") + '</div>' +
+        '<div class="e-main">' +
+          '<div class="e-top"><span class="e-type">' + (e.type === "pay" ? "টাকা দিল" : "বাকি নিল") + '</span>' +
+          '<span class="e-amt">' + (e.type === "pay" ? "− " : "+ ") + money(e.amount) + '</span></div>' +
+          (e.note ? '<div class="e-note">' + esc(e.note) + '</div>' : '') +
+          '<div class="e-date">' + esc(fmtDate(e.date)) + '</div>' +
+        '</div>' +
+        '<button class="e-del" type="button" title="মুছুন" aria-label="এই হিসাব মুছুন">🗑</button>';
+      row.querySelector(".e-del").addEventListener("click", function(){
+        askConfirm("এই হিসাবটা মুছবেন?", (e.type === "pay" ? "টাকা দিল " : "বাকি নিল ") + money(e.amount) + " — এই হিসাবটা মুছে যাবে।", function(){
+          c.entries = c.entries.filter(function(x){ return x.id !== e.id; });
+          save(); renderDetail(); toast("হিসাব মোছা হয়েছে");
+        });
+      });
+      hist.appendChild(row);
+    });
+  }
+
+  document.getElementById("btnWaDetail").addEventListener("click", function(){
+    var c = getCust(currentId); if(c) openWhatsApp(c);
+  });
+
+  document.getElementById("btnAddEntry").addEventListener("click", function(){
+    var c = getCust(currentId); if(!c) return;
+    var amt = parseFloat(document.getElementById("eAmount").value);
+    if(!amt || amt <= 0){ toast("সঠিক টাকার পরিমাণ লিখুন"); document.getElementById("eAmount").focus(); return; }
+    var note = document.getElementById("eNote").value.trim();
+    var date = document.getElementById("eDate").value || todayISO();
+    c.entries = c.entries || [];
+    c.entries.push({ id: uid(), type: entryType, amount: amt, note: note, date: date, ts: Date.now() });
+    save();
+    document.getElementById("eAmount").value = "";
+    document.getElementById("eNote").value = "";
+    renderDetail();
+    toast(entryType === "pay" ? "পরিশোধ যোগ হয়েছে ✔" : "বাকি যোগ হয়েছে ✔");
+  });
+
+  document.getElementById("btnDeleteCust").addEventListener("click", function(){
+    var c = getCust(currentId); if(!c) return;
+    askConfirm("কাস্টমার মুছে ফেলবেন?", c.name + "-এর সব হিসাবসহ পুরো তথ্য মুছে যাবে। এটা ফেরত আনা যাবে না।", function(){
+      state.customers = state.customers.filter(function(x){ return x.id !== c.id; });
+      save(); closeDetail(); toast("কাস্টমার মোছা হয়েছে");
+    });
+  });
+
+  /* ---------- Add customer ---------- */
+  var overlay = document.getElementById("custOverlay");
+  document.getElementById("btnAddCust").addEventListener("click", function(){
+    document.getElementById("cName").value = "";
+    document.getElementById("cPhone").value = "";
+    overlay.classList.add("open");
+    setTimeout(function(){ document.getElementById("cName").focus(); }, 60);
+  });
+  document.getElementById("btnCancelCust").addEventListener("click", function(){ overlay.classList.remove("open"); });
+  overlay.addEventListener("click", function(ev){ if(ev.target === overlay) overlay.classList.remove("open"); });
+  document.getElementById("confirmOverlay").addEventListener("click", function(ev){
+    if(ev.target === this){ this.classList.remove("open"); confirmCb = null; }
+  });
+  document.getElementById("btnSaveCust").addEventListener("click", function(){
+    var name = document.getElementById("cName").value.trim();
+    var phone = document.getElementById("cPhone").value.trim();
+    if(!name){ toast("কাস্টমারের নাম লিখুন"); document.getElementById("cName").focus(); return; }
+    var c = { id: uid(), name: name, phone: phone, entries: [] };
+    state.customers.push(c);
+    save(); overlay.classList.remove("open");
+    renderHome(); toast("কাস্টমার যোগ হয়েছে ✔");
+    openDetail(c.id);
+  });
+
+  /* ---------- Search ---------- */
+  document.getElementById("searchInput").addEventListener("input", function(){
+    searchQ = this.value.trim().toLowerCase();
+    renderHome();
+  });
+
+  /* ---------- Shop name ---------- */
+  var shopInput = document.getElementById("shopName");
+  shopInput.value = state.shopName || "";
+  if(state.shopName){ document.getElementById("shopDetails").removeAttribute("open"); } else { document.getElementById("shopDetails").setAttribute("open",""); }
+  document.getElementById("btnSaveShop").addEventListener("click", function(){
+    state.shopName = shopInput.value.trim();
+    save(); toast("দোকানের নাম সেভ হয়েছে ✔");
+  });
+
+  /* ---------- Download self ---------- */
+  document.getElementById("btnDownload").addEventListener("click", function(){
+    var html = "<!doctype html>\n" + document.documentElement.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "aeun-baki-khata.html";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    toast("ফাইল ডাউনলোড হচ্ছে 📥");
+  });
+
+  renderHome();
+})();
+</script>
+</body>
+</html>

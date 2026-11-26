@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AEUN Photo Kit — পণ্যের ছবি সাজান</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0B1F3A;
+    --blue:#1D6FF2;
+    --teal:#00C2A8;
+    --amber:#FFB020;
+    --bg:#F4F7FB;
+    --surface:#FFFFFF;
+    --surface-2:#EAF0F8;
+    --text:#334155;
+    --heading:#0B1F3A;
+    --muted:#64748B;
+    --line:#D8E1EE;
+    --danger:#DC2626;
+    --shadow:0 6px 24px rgba(11,31,58,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0A1626;
+      --surface:#12233D;
+      --surface-2:#1A2E4D;
+      --text:#CBD5E1;
+      --heading:#F1F5F9;
+      --muted:#94A3B8;
+      --line:#243B5C;
+      --shadow:0 6px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    font-family:"Hind Siliguri", system-ui, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.55;
+  }
+  button, select, input{ font-family:inherit; font-size:1rem; }
+  button, [role="button"], select, input:not([type="checkbox"]){ min-height:44px; }
+  label.chk{ min-height:44px; }
+
+  .wrap{ max-width:1060px; margin:0 auto; padding:0 16px 48px; }
+
+  /* ---------- Top band ---------- */
+  .topband{
+    background:var(--navy);
+    color:#E8EEF7;
+    margin:0 -16px;
+    padding:18px 16px 20px;
+  }
+  .topband-in{ max-width:1060px; margin:0 auto; }
+  .brandrow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .brandmark{
+    background:var(--teal); color:#06281F; font-weight:700; font-size:.8rem;
+    padding:4px 10px; border-radius:6px; letter-spacing:.04em;
+  }
+  .brandname{ font-weight:600; color:#fff; font-size:1.05rem; }
+  .topband h1{ color:#fff; font-size:1.65rem; line-height:1.25; margin:14px 0 6px; font-weight:700; }
+  .topband p{ margin:0; color:#B9C8DE; font-size:.98rem; max-width:56ch; }
+  .top-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:0; border-radius:10px; padding:10px 18px; font-weight:600; cursor:pointer;
+    text-decoration:none; transition:transform .08s ease, background .15s ease;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-amber{ background:var(--amber); color:#3A2700; }
+  .btn-amber:hover{ background:#FFBE45; }
+  .btn-ghost{ background:transparent; color:#DCE7F5; border:1.5px solid #3D5A82; }
+  .btn-ghost:hover{ border-color:#6E8FB8; }
+  .btn-blue{ background:var(--blue); color:#fff; width:100%; font-size:1.08rem; padding:13px 18px; }
+  .btn-blue:hover{ background:#3A82F5; }
+  .btn-blue:disabled{ background:var(--surface-2); color:var(--muted); cursor:not-allowed; }
+  .btn-soft{ background:var(--surface-2); color:var(--heading); border:1px solid var(--line); }
+  .btn-soft:hover{ border-color:var(--blue); color:var(--blue); }
+
+  /* ---------- Layout ---------- */
+  .grid{ display:grid; gap:18px; margin-top:20px; }
+  @media (min-width:880px){
+    .grid{ grid-template-columns: 1fr 400px; align-items:start; }
+    .preview-col{ position:sticky; top:16px; }
+  }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:18px; box-shadow:var(--shadow);
+  }
+  .card + .card{ margin-top:18px; }
+  .card h2{ margin:0 0 4px; font-size:1.12rem; color:var(--heading); font-weight:700; display:flex; align-items:center; gap:8px; }
+  .card .sub{ margin:0 0 14px; color:var(--muted); font-size:.92rem; }
+  .stepnum{
+    background:var(--navy); color:#fff; width:26px; height:26px; border-radius:8px;
+    display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; flex:none;
+  }
+  @media (prefers-color-scheme: dark){ .stepnum{ background:var(--blue); } }
+
+  /* ---------- Upload ---------- */
+  .dropzone{
+    border:2px dashed var(--line); border-radius:12px; padding:26px 16px; text-align:center;
+    background:var(--surface-2); cursor:pointer; display:block;
+  }
+  .dropzone:hover, .dropzone.drag{ border-color:var(--blue); }
+  .dropzone .big{ font-size:2rem; line-height:1; }
+  .dropzone .t1{ font-weight:700; color:var(--heading); margin:8px 0 2px; font-size:1.05rem; }
+  .dropzone .t2{ color:var(--muted); font-size:.9rem; margin:0; }
+  .filemeta{ display:none; margin-top:12px; font-size:.9rem; color:var(--muted); word-break:break-all; }
+  .filemeta.show{ display:block; }
+  .filemeta b{ color:var(--heading); }
+
+  /* ---------- Preview ---------- */
+  .canvasbox{
+    background:
+      repeating-conic-gradient(var(--surface-2) 0% 25%, var(--surface) 0% 50%) 0 0/22px 22px;
+    border:1px solid var(--line); border-radius:12px; padding:10px; text-align:center;
+  }
+  canvas#preview{ max-width:100%; height:auto; border-radius:6px; display:none; margin:0 auto; }
+  .empty-note{ color:var(--muted); padding:34px 10px; font-size:.98rem; }
+  .empty-note .big{ font-size:2.2rem; display:block; margin-bottom:6px; }
+  .preview-actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .preview-actions .btn{ flex:1; min-width:130px; }
+
+  /* ---------- Controls ---------- */
+  .field{ margin-bottom:14px; }
+  .field:last-child{ margin-bottom:0; }
+  .field label.lbl{ display:block; font-weight:600; color:var(--heading); font-size:.95rem; margin-bottom:6px; }
+  .field input[type="text"], .field select{
+    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px;
+    background:var(--surface); color:var(--text);
+  }
+  .field input[type="text"]:focus, .field select:focus{ outline:2px solid var(--blue); outline-offset:1px; border-color:var(--blue); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:420px){ .row2{ grid-template-columns:1fr; } }
+
+  label.chk{
+    display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; color:var(--heading);
+    padding:6px 0;
+  }
+  label.chk input{ width:22px; height:22px; accent-color:var(--blue); flex:none; }
+  .panel{ border-top:1px dashed var(--line); margin-top:10px; padding-top:14px; }
+  .panel.off{ opacity:.45; pointer-events:none; }
+
+  input[type="range"]{ width:100%; accent-color:var(--blue); min-height:36px; }
+  .rangeval{ font-weight:700; color:var(--blue); }
+
+  .swatches{ display:flex; gap:10px; flex-wrap:wrap; }
+  .swatch{
+    width:44px; height:44px; border-radius:10px; border:2.5px solid var(--line); cursor:pointer; padding:0;
+    min-height:44px;
+  }
+  .swatch[aria-checked="true"]{ border-color:var(--blue); box-shadow:0 0 0 2px var(--surface), 0 0 0 4.5px var(--blue); }
+
+  .seg{ display:flex; gap:8px; flex-wrap:wrap; }
+  .seg button{
+    flex:1; min-width:100px; border:1.5px solid var(--line); background:var(--surface); color:var(--text);
+    border-radius:10px; padding:9px 10px; cursor:pointer; font-weight:500;
+  }
+  .seg button[aria-pressed="true"]{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  @media (prefers-color-scheme: dark){ .seg button[aria-pressed="true"]{ background:var(--blue); border-color:var(--blue); } }
+
+  .hint{ font-size:.88rem; color:var(--muted); margin:8px 0 0; }
+  .saved-note{ font-size:.85rem; color:var(--teal); font-weight:600; min-height:1.2em; }
+
+  .export-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  @media (max-width:420px){ .export-row{ grid-template-columns:1fr; } }
+
+  footer{ margin-top:26px; text-align:center; color:var(--muted); font-size:.88rem; }
+  footer b{ color:var(--heading); }
+  .toast{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(80px);
+    background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-weight:600;
+    box-shadow:var(--shadow); transition:transform .25s ease; z-index:50; max-width:92vw; text-align:center;
+  }
+  .toast.show{ transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topband">
+    <div class="topband-in">
+      <div class="brandrow">
+        <span class="brandmark">AEUN</span>
+        <span class="brandname">Photo Kit</span>
+      </div>
+      <h1>পণ্যের ছবি পোস্টের জন্য তৈরি করুন</h1>
+      <p>ছবিতে দোকানের নামের ওয়াটারমার্ক, দামের ব্যাজ আর সুন্দর বর্ডার বসান — ফেসবুক পেজে পোস্ট করার আগে মাত্র কয়েক সেকেন্ডে। সব কাজ হয় আপনার ফোনেই, ছবি কোথাও আপলোড হয় না।</p>
+      <div class="top-actions">
+        <button class="btn btn-amber" id="btnDownloadSelf" type="button">📥 ডাউনলোড করুন</button>
+        <span style="align-self:center; font-size:.88rem; color:#9DB2CE;">এই টুলটা নিজের ফোনে রেখে অফলাইনেও ব্যবহার করুন</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- ===== Preview column ===== -->
+    <div class="preview-col">
+      <section class="card" aria-label="ছবির প্রিভিউ">
+        <h2><span class="stepnum">১</span> ছবি বেছে নিন</h2>
+        <p class="sub">গ্যালারি থেকে পণ্যের ছবি দিন। ছবি এই পেজের বাইরে কোথাও যায় না।</p>
+
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <span class="big" aria-hidden="true">🖼️</span>
+          <p class="t1">এখানে চাপ দিয়ে ছবি বেছে নিন</p>
+          <p class="t2">অথবা ছবিটা টেনে এনে এখানে ছাড়ুন (JPG / PNG)</p>
+        </label>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <p class="filemeta" id="fileMeta"></p>
+
+        <div class="canvasbox" style="margin-top:16px;">
+          <div class="empty-note" id="emptyNote"><span class="big" aria-hidden="true">📷</span>এখনো কোনো ছবি দেওয়া হয়নি।<br />ছবি দিলে এখানে লাইভ প্রিভিউ দেখা যাবে।</div>
+          <canvas id="preview" width="800" height="600"></canvas>
+        </div>
+
+        <div class="preview-actions">
+          <button class="btn btn-soft" id="btnChange" type="button" disabled>🔄 অন্য ছবি</button>
+          <button class="btn btn-soft" id="btnRemove" type="button" disabled>✕ ছবি সরান</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== Controls column ===== -->
+    <div>
+      <section class="card" aria-label="ওয়াটারমার্ক">
+        <h2><span class="stepnum">২</span> দোকানের নাম (ওয়াটারমার্ক)</h2>
+        <p class="sub">ছবির ওপর হালকা করে দোকানের নাম বসবে — অন্য কেউ ছবি নিলেও নাম থেকে যাবে।</p>
+        <label class="chk"><input type="checkbox" id="wmOn" checked /> ওয়াটারমার্ক চালু রাখুন</label>
+        <div class="panel" id="wmPanel">
+          <div class="field">
+            <label class="lbl" for="shopName">দোকানের নাম</label>
+            <input type="text" id="shopName" placeholder="যেমন: রুমানা ফ্যাশন হাউস" autocomplete="off" />
+            <p class="saved-note" id="savedNote"></p>
+          </div>
+          <div class="field">
+            <label class="lbl">নামের জায়গা</label>
+            <div class="seg" id="wmPosSeg" role="group" aria-label="ওয়াটারমার্কের জায়গা">
+              <button type="button" data-pos="br" aria-pressed="true">নিচে-ডানে</button>
+              <button type="button" data-pos="bl" aria-pressed="false">নিচে-বামে</button>
+              <button type="button" data-pos="center" aria-pressed="false">মাঝখানে হালকা</button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl" for="wmOpacity">কতটা হালকা/গাঢ় — <span class="rangeval" id="wmOpacityVal">৫০%</span></label>
+            <input type="range" id="wmOpacity" min="10" max="100" value="50" />
+          </div>
+          <div class="field">
+            <label class="lbl" for="wmSize">লেখার আকার — <span class="rangeval" id="wmSizeVal">মাঝারি</span></label>
+            <input type="range" id="wmSize" min="2" max="8" step="0.5" value="4" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="দামের ব্যাজ">
+        <h2><span class="stepnum">৩</span> দামের ব্যাজ</h2>
+        <p class="sub">ছবির কোণায় সুন্দর দামের ট্যাগ বসবে। আগের দাম দিলে কাটা দাগসহ দেখাবে — অফার বোঝাতে কাজে লাগে।</p>
+        <label class="chk"><input type="checkbox" id="priceOn" /> দামের ব্যাজ চালু করুন</label>
+        <div class="panel off" id="pricePanel">
+          <div class="row2">
+            <div class="field">
+              <label class="lbl" for="priceNow">বর্তমান দাম (টাকা)</label>
+              <input type="text" id="priceNow" inputmode="numeric" placeholder="যেমন: 850" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="lbl" for="priceOld">আগের দাম (ঐচ্ছিক)</label>
+              <input type="text" id="priceOld" inputmode="numeric" placeholder="যেমন: 1200" autocomplete="off" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl">ব্যাজের জায়গা</label>
+            <div class="seg" id="pricePosSeg" role="group" aria-label="দামের ব্যাজের জায়গা">
+              <button type="button" data-pos="tr" aria-pressed="true">উপরে-ডানে</button>
+              <button type="button" data-pos="tl" aria-pressed="false">উপরে-বামে</button>
+              <button type="button" data-pos="br" aria-pressed="false">নিচে-ডানে</button>
+              <button type="button" data-pos="bl" aria-pressed="false">নিচে-বামে</button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl">ব্যাজের রঙ</label>
+            <div class="seg" id="priceColorSeg" role="group" aria-label="ব্যাজের রঙ">
+              <button type="button" data-color="amber" aria-pressed="true">হলুদ</button>
+              <button type="button" data-color="teal" aria-pressed="false">সবুজাভ</button>
+              <button type="button" data-color="navy" aria-pressed="false">নেভি</button>
+              <button type="button" data-color="red" aria-pressed="false">লাল</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="বর্ডার">
+        <h2><span class="stepnum">৪</span> বর্ডার / ফ্রেম</h2>
+        <p class="sub">ছবির চারপাশে পরিষ্কার বর্ডার দিলে ফিডে ছবিটা আলাদা করে চোখে পড়ে।</p>
+        <label class="chk"><input type="checkbox" id="borderOn" /> বর্ডার চালু করুন</label>
+        <div class="panel off" id="borderPanel">
+          <div class="field">
+            <label class="lbl">বর্ডারের রঙ</label>
+            <div class="swatches" id="borderSwatches" role="radiogroup" aria-label="বর্ডারের রঙ">
+              <button type="button" class="swatch" role="radio" aria-checked="true"  data-color="#0B1F3A" style="background:#0B1F3A" aria-label="নেভি"></button>
+              <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#1D6FF2" style="background:#1D6FF2" aria-label="নীল"></button>
+              <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#00C2A8" style="background:#00C2A8" aria-label="সবুজাভ"></button>
+              <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#FFB020" style="background:#FFB020" aria-label="হলুদ"></button>
+              <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#FFFFFF" style="background:#FFFFFF" aria-label="সাদা"></button>
+              <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#111111" style="background:#111111" aria-label="কালো"></button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl" for="borderWidth">বর্ডারের মোটা — <span class="rangeval" id="borderWidthVal">মাঝারি</span></label>
+            <input type="range" id="borderWidth" min="0.4" max="3" step="0.2" value="1.2" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="ছবি ডাউনলোড">
+        <h2><span class="stepnum">৫</span> তৈরি ছবি ডাউনলোড</h2>
+        <p class="sub">ছবি আসল সাইজেই তৈরি হবে (সর্বোচ্চ ২০৪৮ পিক্সেল) — ফেসবুকে পোস্টের জন্য যথেষ্ট পরিষ্কার।</p>
+        <div class="export-row">
+          <div class="field" style="margin:0;">
+            <label class="lbl" for="fmtSel">ফাইলের ধরন</label>
+            <select id="fmtSel">
+              <option value="png">PNG (সবচেয়ে পরিষ্কার)</option>
+              <option value="jpeg" selected>JPG (হালকা ফাইল)</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0;">
+            <label class="lbl" for="qualitySel">JPG মান</label>
+            <select id="qualitySel">
+              <option value="0.92" selected>সেরা মান</option>
+              <option value="0.8">ভালো মান</option>
+              <option value="0.65">ছোট ফাইল</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-blue" id="btnExport" type="button" disabled>⬇️ ছবি ডাউনলোড</button>
+        <p class="hint">ডাউনলোড করা ছবিটা গ্যালারিতে পাবেন — সেখান থেকে ফেসবুক পেজে পোস্ট করুন।</p>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <p><b>AEUN Photo Kit</b> — AEUN (AI Engineering &amp; Utility Network)-এর ছোট বিক্রেতাদের জন্য তৈরি টুল।<br />আপনার ছবি ও তথ্য শুধু এই ডিভাইসেই থাকে।</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  var fileInput = $("fileInput"), dropzone = $("dropzone"), fileMeta = $("fileMeta");
+  var canvas = $("preview"), ctx = canvas.getContext("2d");
+  var emptyNote = $("emptyNote");
+  var btnChange = $("btnChange"), btnRemove = $("btnRemove"), btnExport = $("btnExport");
+  var toastEl = $("toast");
+  var toastTimer = null;
+
+  var img = null;          // HTMLImageElement
+  var imgName = "photo";
+  var MAX_EXPORT = 2048;
+
+  var state = {
+    wmPos: "br",
+    pricePos: "tr",
+    priceColor: "amber",
+    borderColor: "#0B1F3A"
+  };
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+  }
+
+  /* ---------- Shop name memory ---------- */
+  var shopInput = $("shopName");
+  try {
+    var saved = localStorage.getItem("aeun_photo_kit_shop");
+    if (saved) shopInput.value = saved;
+  } catch(e){}
+  var saveTimer = null;
+  shopInput.addEventListener("input", function(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      try { localStorage.setItem("aeun_photo_kit_shop", shopInput.value.trim()); } catch(e){}
+      $("savedNote").textContent = shopInput.value.trim() ? "✓ নামটা মনে রাখা হয়েছে" : "";
+      setTimeout(function(){ $("savedNote").textContent = ""; }, 2000);
+    }, 500);
+    draw();
+  });
+
+  /* ---------- File loading ---------- */
+  function loadFile(file){
+    if (!file) return;
+    if (file.type && file.type.indexOf("image/") !== 0){
+      toast("এটা ছবির ফাইল নয় — JPG বা PNG ছবি দিন।");
+      return;
+    }
+    var url = URL.createObjectURL(file);
+    var im = new Image();
+    im.onload = function(){
+      img = im;
+      imgName = (file.name || "photo").replace(/\.[^.]+$/, "");
+      fileMeta.innerHTML = "ছবি: <b></b> · সাইজ: <b>" + im.naturalWidth + " × " + im.naturalHeight + " পিক্সেল</b>";
+      fileMeta.querySelector("b").textContent = file.name || "ছবি";
+      fileMeta.classList.add("show");
+      emptyNote.style.display = "none";
+      canvas.style.display = "block";
+      btnChange.disabled = false;
+      btnRemove.disabled = false;
+      btnExport.disabled = false;
+      draw();
+      toast("ছবি তৈরি ✓ এবার পাশের অপশনগুলো সাজান।");
+    };
+    im.onerror = function(){
+      URL.revokeObjectURL(url);
+      toast("ছবিটা খোলা যায়নি — অন্য ছবি দিয়ে চেষ্টা করুন।");
+    };
+    im.src = url;
+  }
+
+  fileInput.addEventListener("change", function(){ loadFile(fileInput.files[0]); fileInput.value = ""; });
+  btnChange.addEventListener("click", function(){ fileInput.click(); });
+  btnRemove.addEventListener("click", function(){
+    img = null;
+    canvas.style.display = "none";
+    emptyNote.style.display = "block";
+    fileMeta.classList.remove("show");
+    btnChange.disabled = true; btnRemove.disabled = true; btnExport.disabled = true;
+  });
+
+  ["dragenter","dragover"].forEach(function(ev){
+    dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add("drag"); });
+  });
+  ["dragleave","drop"].forEach(function(ev){
+    dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove("drag"); });
+  });
+  dropzone.addEventListener("drop", function(e){
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    loadFile(f);
+  });
+
+  /* ---------- Segmented controls ---------- */
+  function segWire(id, key, after){
+    var seg = $(id);
+    seg.addEventListener("click", function(e){
+      var b = e.target.closest("button"); if (!b) return;
+      seg.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      state[key] = b.getAttribute("data-pos") || b.getAttribute("data-color");
+      if (after) after();
+      draw();
+    });
+  }
+  segWire("wmPosSeg", "wmPos");
+  segWire("pricePosSeg", "pricePos");
+  segWire("priceColorSeg", "priceColor");
+
+  $("borderSwatches").addEventListener("click", function(e){
+    var b = e.target.closest(".swatch"); if (!b) return;
+    this.querySelectorAll(".swatch").forEach(function(x){ x.setAttribute("aria-checked","false"); });
+    b.setAttribute("aria-checked","true");
+    state.borderColor = b.getAttribute("data-color");
+    draw();
+  });
+
+  /* ---------- Panels & inputs ---------- */
+  function panelWire(chkId, panelId){
+    var chk = $(chkId), panel = $(panelId);
+    function sync(){ panel.classList.toggle("off", !chk.checked); draw(); }
+    chk.addEventListener("change", sync);
+    sync();
+    return chk;
+  }
+  var wmOn = panelWire("wmOn","wmPanel");
+  var priceOn = panelWire("priceOn","pricePanel");
+  var borderOn = panelWire("borderOn","borderPanel");
+
+  function sizeLabel(v){
+    v = parseFloat(v);
+    if (v <= 2.5) return "ছোট";
+    if (v <= 4.5) return "মাঝারি";
+    if (v <= 6.5) return "বড়";
+    return "খুব বড়";
+  }
+  function widthLabel(v){
+    v = parseFloat(v);
+    if (v <= 0.8) return "পাতলা";
+    if (v <= 1.6) return "মাঝারি";
+    if (v <= 2.4) return "মোটা";
+    return "খুব মোটা";
+  }
+
+  ["wmOpacity","wmSize","borderWidth","priceNow","priceOld"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      $("wmOpacityVal").textContent = $("wmOpacity").value + "%";
+      $("wmSizeVal").textContent = sizeLabel($("wmSize").value);
+      $("borderWidthVal").textContent = widthLabel($("borderWidth").value);
+      draw();
+    });
+  });
+
+  /* ---------- Drawing ---------- */
+  function roundRect(c, x, y, w, h, r){
+    r = Math.min(r, w/2, h/2);
+    c.beginPath();
+    c.moveTo(x+r, y);
+    c.arcTo(x+w, y, x+w, y+h, r);
+    c.arcTo(x+w, y+h, x, y+h, r);
+    c.arcTo(x, y+h, x, y, r);
+    c.arcTo(x, y, x+w, y, r);
+    c.closePath();
+  }
+
+  var BADGE_COLORS = {
+    amber: { bg:"#FFB020", fg:"#0B1F3A", old:"#7A5200" },
+    teal:  { bg:"#00C2A8", fg:"#04382E", old:"#0B5A4E" },
+    navy:  { bg:"#0B1F3A", fg:"#FFFFFF", old:"#9DB2CE" },
+    red:   { bg:"#DC2626", fg:"#FFFFFF", old:"#FECACA" }
+  };
+
+  function drawTo(c, W, H){
+    // Base photo
+    c.clearRect(0,0,W,H);
+    c.drawImage(img, 0, 0, W, H);
+
+    var unit = W / 100; // 1% of width — everything scales with photo size
+
+    /* Price badge (drawn before watermark so watermark stays readable) */
+    if (priceOn.checked){
+      var price = $("priceNow").value.trim();
+      var old = $("priceOld").value.trim();
+      if (price){
+        var col = BADGE_COLORS[state.priceColor] || BADGE_COLORS.amber;
+        var mainFs = unit * 5.2;
+        var oldFs = unit * 3.4;
+        c.save();
+        c.font = "700 " + mainFs + "px 'Hind Siliguri', sans-serif";
+        var mainText = "৳ " + price;
+        var mainW = c.measureText(mainText).width;
+        var oldW = 0;
+        if (old){
+          c.font = "600 " + oldFs + "px 'Hind Siliguri', sans-serif";
+          oldW = c.measureText("৳ " + old).width;
+        }
+        var padX = unit * 2.6, padY = unit * 1.7;
+        var gap = old ? unit * 2.2 : 0;
+        var bw = mainW + (old ? gap + oldW : 0) + padX * 2;
+        var bh = mainFs + padY * 2;
+        var m = unit * 3; // margin from edge (inside border if any)
+        var bx, by;
+        if (state.pricePos === "tr"){ bx = W - m - bw; by = m; }
+        else if (state.pricePos === "tl"){ bx = m; by = m; }
+        else if (state.pricePos === "br"){ bx = W - m - bw; by = H - m - bh; }
+        else { bx = m; by = H - m - bh; }
+
+        c.shadowColor = "rgba(0,0,0,.28)";
+        c.shadowBlur = unit * 1.2;
+        c.shadowOffsetY = unit * 0.5;
+        roundRect(c, bx, by, bw, bh, bh * 0.32);
+        c.fillStyle = col.bg;
+        c.fill();
+        c.shadowColor = "transparent"; c.shadowBlur = 0; c.shadowOffsetY = 0;
+
+        c.textBaseline = "middle";
+        var tx = bx + padX;
+        if (old){
+          c.font = "600 " + oldFs + "px 'Hind Siliguri', sans-serif";
+          c.fillStyle = col.old;
+          var oldText = "৳ " + old;
+          c.fillText(oldText, tx, by + bh/2 + unit*0.2);
+          var lw = c.measureText(oldText).width;
+          c.strokeStyle = col.old; c.lineWidth = Math.max(1.5, unit*0.28);
+          c.beginPath();
+          c.moveTo(tx - unit*0.3, by + bh/2 + unit*0.2);
+          c.lineTo(tx + lw + unit*0.3, by + bh/2 + unit*0.2);
+          c.stroke();
+          tx += lw + gap;
+        }
+        c.font = "700 " + mainFs + "px 'Hind Siliguri', sans-serif";
+        c.fillStyle = col.fg;
+        c.fillText(mainText, tx, by + bh/2 + unit*0.2);
+        c.restore();
+      }
+    }
+
+    /* Watermark */
+    if (wmOn.checked){
+      var name = shopInput.value.trim();
+      if (name){
+        var op = parseInt($("wmOpacity").value, 10) / 100;
+        var sizePct = parseFloat($("wmSize").value);
+        c.save();
+        if (state.wmPos === "center"){
+          var fs = unit * sizePct * 2.1;
+          c.font = "700 " + fs + "px 'Hind Siliguri', sans-serif";
+          c.globalAlpha = Math.min(op, 0.35);
+          c.textAlign = "center"; c.textBaseline = "middle";
+          c.shadowColor = "rgba(0,0,0,.45)"; c.shadowBlur = unit * 0.8;
+          c.fillStyle = "#FFFFFF";
+          c.fillText(name, W/2, H/2, W * 0.9);
+        } else {
+          var fs2 = unit * sizePct;
+          c.font = "600 " + fs2 + "px 'Hind Siliguri', sans-serif";
+          c.globalAlpha = op;
+          c.textBaseline = "alphabetic";
+          var tw = c.measureText(name).width;
+          var padBgX = unit * 1.8, padBgY = unit * 1.1;
+          var bwBg = tw + padBgX * 2, bhBg = fs2 + padBgY * 2;
+          var mm = unit * 2.4;
+          var bx2 = state.wmPos === "br" ? W - mm - bwBg : mm;
+          var by2 = H - mm - bhBg;
+          c.fillStyle = "rgba(11,31,58,.55)";
+          roundRect(c, bx2, by2, bwBg, bhBg, unit * 1.2);
+          c.fill();
+          c.fillStyle = "#FFFFFF";
+          c.textAlign = "left";
+          c.fillText(name, bx2 + padBgX, by2 + padBgY + fs2 * 0.82);
+        }
+        c.restore();
+      }
+    }
+
+    /* Border / frame (drawn last, on top edge) */
+    if (borderOn.checked){
+      var bwPx = unit * parseFloat($("borderWidth").value) * 1.6;
+      c.save();
+      c.strokeStyle = state.borderColor;
+      c.lineWidth = bwPx;
+      c.strokeRect(bwPx/2, bwPx/2, W - bwPx, H - bwPx);
+      c.restore();
+    }
+  }
+
+  function draw(){
+    if (!img) return;
+    // Preview at up to 1100px wide — fast on phones, still sharp
+    var scale = Math.min(1, 1100 / img.naturalWidth);
+    var W = Math.round(img.naturalWidth * scale);
+    var H = Math.round(img.naturalHeight * scale);
+    if (canvas.width !== W || canvas.height !== H){ canvas.width = W; canvas.height = H; }
+    drawTo(ctx, W, H);
+  }
+
+  /* ---------- Export at original size (max 2048) ---------- */
+  btnExport.addEventListener("click", function(){
+    if (!img) return;
+    var scale = Math.min(1, MAX_EXPORT / Math.max(img.naturalWidth, img.naturalHeight));
+    var W = Math.round(img.naturalWidth * scale);
+    var H = Math.round(img.naturalHeight * scale);
+    var off = document.createElement("canvas");
+    off.width = W; off.height = H;
+    drawTo(off.getContext("2d"), W, H);
+    var fmt = $("fmtSel").value;
+    var mime = fmt === "png" ? "image/png" : "image/jpeg";
+    var q = parseFloat($("qualitySel").value);
+    off.toBlob(function(blob){
+      if (!blob){ toast("ছবি তৈরি করা যায়নি — আবার চেষ্টা করুন।"); return; }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = imgName + "-aeun-photo." + (fmt === "png" ? "png" : "jpg");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      toast("ছবি ডাউনলোড হচ্ছে ✓ গ্যালারিতে দেখুন।");
+    }, mime, q);
+  });
+
+  /* ---------- Download this tool itself ---------- */
+  $("btnDownloadSelf").addEventListener("click", function(){
+    var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "aeun-photo-kit.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast("টুলটা ডাউনলোড হচ্ছে ✓ ফাইলটা ফোনে রেখে যেকোনো সময় খুলুন।");
+  });
+
+  // Initialise slider labels
+  $("wmOpacityVal").textContent = $("wmOpacity").value + "%";
+  $("wmSizeVal").textContent = sizeLabel($("wmSize").value);
+  $("borderWidthVal").textContent = widthLabel($("borderWidth").value);
+})();
+</script>
+</body>
+</html>

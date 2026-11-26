@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AEUN Poster Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+    --light:#F4F7FB; --body:#334155;
+    --bg:#F4F7FB; --panel:#ffffff; --panel-2:#EEF3F9; --line:#D9E2EC;
+    --text:#0B1F3A; --muted:#5B6B7F; --input-bg:#ffffff;
+    --shadow:0 10px 30px rgba(11,31,58,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#081627; --panel:#0E2440; --panel-2:#122C4D; --line:#24405F;
+      --text:#EDF3FA; --muted:#9FB2C8; --input-bg:#0B1F3A;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Hind Siliguri",system-ui,sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  button,input,textarea,select{font-family:inherit}
+  button,[role="button"],input,textarea,select{min-height:44px}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 16px 40px}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;gap:14px;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;margin-bottom:16px;
+  }
+  .intro{margin:0;font-size:1.02rem;color:var(--muted);max-width:560px;line-height:1.55}
+  .intro strong{color:var(--text)}
+  .btn-download-page{
+    background:var(--teal);color:#04241E;border:none;cursor:pointer;
+    font-size:1rem;font-weight:700;padding:12px 20px;border-radius:10px;
+    box-shadow:0 6px 16px rgba(0,194,168,.35);white-space:nowrap;
+  }
+  .btn-download-page:active{transform:scale(.98)}
+
+  /* ---------- Layout ---------- */
+  .layout{display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+  @media(min-width:920px){
+    .layout{grid-template-columns:430px 1fr}
+    .preview-panel{position:sticky;top:16px}
+  }
+  .panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:18px;
+  }
+  .panel h2{
+    margin:0 0 4px;font-size:1.12rem;font-weight:700;color:var(--text);
+    display:flex;align-items:center;gap:8px;
+  }
+  .panel h2 .step{
+    background:var(--navy);color:#fff;font-size:.8rem;font-weight:700;
+    width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;
+  }
+  @media (prefers-color-scheme: dark){ .panel h2 .step{background:var(--blue)} }
+  .panel .sub{margin:0 0 14px;color:var(--muted);font-size:.92rem;line-height:1.5}
+  .section{margin-bottom:22px}
+  .section:last-child{margin-bottom:0}
+
+  /* ---------- Templates ---------- */
+  .templates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .tpl{
+    border:2px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;
+    background:var(--panel-2);text-align:center;
+  }
+  .tpl.active{border-color:var(--blue);outline:2px solid rgba(29,111,242,.25)}
+  .tpl .swatch{height:64px;border-radius:8px;margin-bottom:7px;position:relative;overflow:hidden}
+  .tpl .swatch::after{
+    content:"";position:absolute;left:12%;right:12%;top:34%;height:34%;
+    background:rgba(255,255,255,.85);border-radius:5px;
+  }
+  .sw-navy{background:#0B1F3A}.sw-navy::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#FFB020;border-radius:99px}
+  .sw-light{background:#E8EEF5}.sw-light::after{background:#fff !important;box-shadow:0 1px 4px rgba(11,31,58,.18)}
+  .sw-light::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#00C2A8;border-radius:99px}
+  .sw-amber{background:#FFB020}.sw-amber::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#0B1F3A;border-radius:99px}
+  .tpl span{font-size:.88rem;font-weight:600;display:block;line-height:1.3}
+
+  /* ---------- Photo ---------- */
+  .photo-drop{
+    border:2px dashed var(--line);border-radius:12px;padding:16px;text-align:center;
+    background:var(--panel-2);
+  }
+  .photo-drop p{margin:0 0 10px;color:var(--muted);font-size:.94rem;line-height:1.5}
+  .btn{
+    border:none;cursor:pointer;font-weight:700;font-size:.98rem;
+    padding:11px 18px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  }
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .btn:active{transform:scale(.98)}
+  .photo-name{font-size:.85rem;color:var(--muted);margin-top:8px;word-break:break-all}
+  .photo-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  input[type=file]{display:none}
+
+  /* ---------- Fields ---------- */
+  .field{margin-bottom:13px}
+  .field label{display:block;font-weight:600;font-size:.95rem;margin-bottom:5px}
+  .field input[type=text],.field input[type=tel],.field textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:10px;
+    padding:11px 13px;font-size:1.02rem;background:var(--input-bg);color:var(--text);
+  }
+  .field textarea{resize:vertical;min-height:64px;line-height:1.45}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,111,242,.18)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .range-row{display:flex;align-items:center;gap:12px}
+  .range-row input[type=range]{flex:1;accent-color:var(--blue);min-height:36px}
+  .range-val{font-weight:700;min-width:44px;text-align:right;font-size:.95rem}
+  .hint{font-size:.85rem;color:var(--muted);margin:5px 0 0;line-height:1.5}
+
+  /* ---------- Preview ---------- */
+  .canvas-box{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:14px;
+    padding:12px;display:flex;justify-content:center;
+  }
+  canvas#poster{
+    width:100%;max-width:520px;height:auto;aspect-ratio:1/1;
+    border-radius:10px;box-shadow:0 14px 34px rgba(11,31,58,.22);display:block;
+  }
+  .btn-poster{
+    width:100%;margin-top:14px;background:var(--amber);color:#231600;
+    font-size:1.12rem;padding:15px;border-radius:12px;
+    box-shadow:0 8px 20px rgba(255,176,32,.4);
+  }
+  .preview-meta{text-align:center;color:var(--muted);font-size:.9rem;margin:10px 0 0}
+  .btn-clear{width:100%;margin-top:10px}
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);
+    background:var(--navy);color:#fff;padding:12px 20px;border-radius:99px;
+    font-weight:600;font-size:.95rem;box-shadow:0 10px 26px rgba(0,0,0,.3);
+    transition:transform .25s ease;z-index:50;max-width:92vw;text-align:center;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <p class="intro"><strong>ফেসবুক পেজের জন্য প্রফেশনাল পোস্টার</strong> — পণ্যের ছবি দিন, লেখা আর দাম লিখুন, পছন্দের ডিজাইন বেছে নিয়ে এক চাপে PNG ডাউনলোড করুন। কোনো ডিজাইন জানা লাগবে না।</p>
+    <button class="btn-download-page" id="downloadPageBtn" type="button">📥 ডাউনলোড করুন</button>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ CONTROLS ============ -->
+    <div class="panel">
+
+      <div class="section">
+        <h2><span class="step">১</span> ডিজাইন বেছে নিন</h2>
+        <p class="sub">তিনটি তৈরি ডিজাইন — যেটা পছন্দ, সেটায় চাপ দিন।</p>
+        <div class="templates" role="radiogroup" aria-label="পোস্টারের ডিজাইন">
+          <div class="tpl active" data-template="navy" role="radio" aria-checked="true" tabindex="0">
+            <div class="swatch sw-navy"></div><span>নেভি সেল</span>
+          </div>
+          <div class="tpl" data-template="light" role="radio" aria-checked="false" tabindex="0">
+            <div class="swatch sw-light"></div><span>হালকা ক্লিন</span>
+          </div>
+          <div class="tpl" data-template="amber" role="radio" aria-checked="false" tabindex="0">
+            <div class="swatch sw-amber"></div><span>হলুদ অফার</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2><span class="step">২</span> পণ্যের ছবি</h2>
+        <p class="sub">ফোন থেকে পণ্যের একটা পরিষ্কার ছবি দিন। ছবি নিজে নিজেই পোস্টারের মাপে বসে যাবে।</p>
+        <div class="photo-drop">
+          <p id="photoStatus">এখনো কোনো ছবি দেওয়া হয়নি</p>
+          <div class="photo-actions">
+            <label class="btn btn-blue" for="photoInput">ছবি বেছে নিন</label>
+            <button class="btn btn-ghost" id="removePhotoBtn" type="button" style="display:none">ছবি সরান</button>
+          </div>
+          <input type="file" id="photoInput" accept="image/*">
+          <div class="photo-name" id="photoName"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2><span class="step">৩</span> লেখা ও দাম</h2>
+        <p class="sub">লিখলেই পাশের পোস্টারে সাথে সাথে দেখা যাবে।</p>
+
+        <div class="field">
+          <label for="headline">বড় হেডলাইন</label>
+          <textarea id="headline" placeholder="যেমন: ঈদ স্পেশাল অফার!" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="headlineSize">হেডলাইনের সাইজ</label>
+          <div class="range-row">
+            <input type="range" id="headlineSize" min="52" max="110" value="84" step="2">
+            <span class="range-val" id="headlineSizeVal">৮৪</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="productName">পণ্যের নাম</label>
+          <input type="text" id="productName" placeholder="যেমন: প্রিমিয়াম কটন পাঞ্জাবি">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="price">দাম (টাকা)</label>
+            <input type="text" id="price" inputmode="numeric" placeholder="যেমন: ৯৯০">
+          </div>
+          <div class="field">
+            <label for="oldPrice">আগের দাম (থাকলে)</label>
+            <input type="text" id="oldPrice" inputmode="numeric" placeholder="যেমন: ১,৪৫০">
+          </div>
+        </div>
+        <div class="field">
+          <label for="offer">অফারের ব্যাজ লেখা</label>
+          <input type="text" id="offer" placeholder="যেমন: ৩০% ছাড়  •  ফ্রি ডেলিভারি">
+          <p class="hint">এই লেখাটা পোস্টারের উপরে রঙিন ব্যাজে বড় করে দেখাবে।</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2><span class="step">৪</span> দোকানের তথ্য</h2>
+        <p class="sub">একবার লিখলেই মনে থাকবে — পরের পোস্টারেও নিজে নিজে আসবে। পোস্টারের নিচে দেখাবে, যাতে ক্রেতা সহজে যোগাযোগ করতে পারে।</p>
+        <div class="field">
+          <label for="shopName">দোকান / পেজের নাম</label>
+          <input type="text" id="shopName" placeholder="যেমন: রুমানা ফ্যাশন হাউস">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label for="phone">ফোন / WhatsApp নম্বর</label>
+          <input type="tel" id="phone" placeholder="যেমন: 01XXXXXXXXX">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ PREVIEW ============ -->
+    <div class="panel preview-panel">
+      <h2>লাইভ প্রিভিউ</h2>
+      <p class="sub">ঠিক যেমন দেখছেন, ডাউনলোডেও হুবহু এমনই PNG ছবি পাবেন।</p>
+      <div class="canvas-box">
+        <canvas id="poster" width="1080" height="1080" aria-label="পোস্টারের প্রিভিউ"></canvas>
+      </div>
+      <button class="btn btn-poster" id="downloadPngBtn" type="button">পোস্টার ডাউনলোড করুন (PNG)</button>
+      <p class="preview-meta">সাইজ: 1080 × 1080 পিক্সেল — ফেসবুক পোস্টের জন্য একদম ঠিক মাপ</p>
+      <button class="btn btn-ghost btn-clear" id="clearBtn" type="button">সব লেখা মুছে নতুন করে শুরু করুন</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var canvas = $("poster"), ctx = canvas.getContext("2d");
+  var W = 1080, H = 1080;
+
+  var state = {
+    template: "navy",
+    img: null,
+    imgName: ""
+  };
+
+  var els = {
+    headline: $("headline"), productName: $("productName"),
+    price: $("price"), oldPrice: $("oldPrice"), offer: $("offer"),
+    shopName: $("shopName"), phone: $("phone"),
+    headlineSize: $("headlineSize"), headlineSizeVal: $("headlineSizeVal"),
+    photoInput: $("photoInput"), photoName: $("photoName"),
+    photoStatus: $("photoStatus"), removePhotoBtn: $("removePhotoBtn")
+  };
+
+  var BN = "০১২৩৪৫৬৭৮৯";
+  function toBn(str){
+    return String(str).replace(/[0-9]/g, function(d){ return BN[+d]; });
+  }
+
+  /* ---------- localStorage: shop info + template ---------- */
+  try {
+    els.shopName.value = localStorage.getItem("aeun_poster_shop") || "";
+    els.phone.value = localStorage.getItem("aeun_poster_phone") || "";
+    var savedTpl = localStorage.getItem("aeun_poster_template");
+    if (savedTpl === "navy" || savedTpl === "light" || savedTpl === "amber") state.template = savedTpl;
+  } catch(e){}
+
+  function saveShop(){
+    try {
+      localStorage.setItem("aeun_poster_shop", els.shopName.value);
+      localStorage.setItem("aeun_poster_phone", els.phone.value);
+      localStorage.setItem("aeun_poster_template", state.template);
+    } catch(e){}
+  }
+
+  /* ---------- Templates UI ---------- */
+  var tplEls = document.querySelectorAll(".tpl");
+  function syncTplUI(){
+    tplEls.forEach(function(t){
+      var on = t.getAttribute("data-template") === state.template;
+      t.classList.toggle("active", on);
+      t.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  }
+  tplEls.forEach(function(t){
+    function pick(){
+      state.template = t.getAttribute("data-template");
+      syncTplUI(); saveShop(); draw();
+    }
+    t.addEventListener("click", pick);
+    t.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(); } });
+  });
+  syncTplUI();
+
+  /* ---------- Photo ---------- */
+  els.photoInput.addEventListener("change", function(){
+    var file = els.photoInput.files && els.photoInput.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        state.img = img; state.imgName = file.name;
+        els.photoName.textContent = file.name;
+        els.photoStatus.textContent = "ছবি যোগ হয়েছে ✓ এবার লেখা লিখুন";
+        els.removePhotoBtn.style.display = "";
+        draw();
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  els.removePhotoBtn.addEventListener("click", function(){
+    state.img = null; state.imgName = "";
+    els.photoInput.value = ""; els.photoName.textContent = "";
+    els.photoStatus.textContent = "এখনো কোনো ছবি দেওয়া হয়নি";
+    els.removePhotoBtn.style.display = "none";
+    draw();
+  });
+
+  /* ---------- Canvas helpers ---------- */
+  function roundRect(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function wrapText(text, maxWidth){
+    var words = String(text).split(/\s+/).filter(Boolean);
+    if (!words.length) return [];
+    var lines = [], line = "";
+    for (var i = 0; i < words.length; i++){
+      var test = line ? line + " " + words[i] : words[i];
+      if (ctx.measureText(test).width <= maxWidth || !line) line = test;
+      else { lines.push(line); line = words[i]; }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  function drawCoverImage(img, x, y, w, h, r){
+    ctx.save();
+    roundRect(x, y, w, h, r); ctx.clip();
+    var scale = Math.max(w / img.width, h / img.height);
+    var dw = img.width * scale, dh = img.height * scale;
+    ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+    ctx.restore();
+  }
+  function centered(text, y, font, color){
+    ctx.font = font; ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(text, W / 2, y);
+  }
+
+  var THEMES = {
+    navy:  { bg:"#0B1F3A", head:"#FFFFFF", name:"#FFFFFF", sub:"#9FB2C8",
+             badgeBg:"#FFB020", badgeTx:"#0B1F3A", price:"#FFB020", old:"#8FA3BC",
+             imgBg:"#132C4E", imgLine:"#2A4A73", imgTx:"#9FB2C8",
+             foot:"#FFFFFF", footSub:"#C7D5E6", credit:"rgba(255,255,255,.45)", deco:"rgba(0,194,168,.16)" },
+    light: { bg:"#F4F7FB", head:"#0B1F3A", name:"#0B1F3A", sub:"#5B6B7F",
+             badgeBg:"#00C2A8", badgeTx:"#FFFFFF", price:"#1D6FF2", old:"#8496AB",
+             imgBg:"#FFFFFF", imgLine:"#C9D6E4", imgTx:"#8496AB",
+             foot:"#0B1F3A", footSub:"#5B6B7F", credit:"rgba(11,31,58,.4)", deco:"rgba(29,111,242,.10)" },
+    amber: { bg:"#FFB020", head:"#0B1F3A", name:"#0B1F3A", sub:"#5C4300",
+             badgeBg:"#0B1F3A", badgeTx:"#FFB020", price:"#0B1F3A", old:"#7A5B00",
+             imgBg:"#FFC44D", imgLine:"#0B1F3A", imgTx:"#5C4300",
+             foot:"#0B1F3A", footSub:"#4A3600", credit:"rgba(11,31,58,.5)", deco:"rgba(11,31,58,.08)" }
+  };
+
+  function draw(){
+    var T = THEMES[state.template] || THEMES.navy;
+    var headline = els.headline.value.trim();
+    var product  = els.productName.value.trim();
+    var price    = els.price.value.trim();
+    var oldPrice = els.oldPrice.value.trim();
+    var offer    = els.offer.value.trim();
+    var shop     = els.shopName.value.trim();
+    var phone    = els.phone.value.trim();
+    var hSize    = parseInt(els.headlineSize.value, 10) || 84;
+    els.headlineSizeVal.textContent = toBn(hSize);
+
+    /* background */
+    ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+    /* soft deco circles */
+    ctx.fillStyle = T.deco;
+    ctx.beginPath(); ctx.arc(1010, 40, 190, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(40, 1030, 150, 0, Math.PI * 2); ctx.fill();
+
+    var y = 78;
+
+    /* offer badge */
+    if (offer){
+      ctx.font = "700 40px 'Hind Siliguri'";
+      var bw = ctx.measureText(offer).width + 56;
+      var bx = (W - bw) / 2;
+      ctx.fillStyle = T.badgeBg; roundRect(bx, y, bw, 66, 33); ctx.fill();
+      ctx.fillStyle = T.badgeTx; ctx.textAlign = "center";
+      ctx.fillText(offer, W / 2, y + 47);
+      y += 66 + 30;
+    }
+
+    /* headline (auto-shrink to fit max 2 lines) */
+    var headText = headline || "এখানে আপনার হেডলাইন";
+    var size = hSize, lines = [];
+    while (size >= 40){
+      ctx.font = "700 " + size + "px 'Hind Siliguri'";
+      lines = wrapText(headText, W - 140);
+      if (lines.length <= 2) break;
+      size -= 6;
+    }
+    if (lines.length > 2) lines = lines.slice(0, 2);
+    ctx.fillStyle = headline ? T.head : T.sub;
+    ctx.textAlign = "center";
+    var lh = size * 1.28;
+    lines.forEach(function(ln){ y += lh; ctx.fillText(ln, W / 2, y - size * 0.22); });
+    y += 26;
+
+    /* product image */
+    var ix = 90, iw = W - 180, ih = 430;
+    if (state.img){
+      drawCoverImage(state.img, ix, y, iw, ih, 26);
+      ctx.strokeStyle = T.imgLine; ctx.lineWidth = 3;
+      roundRect(ix, y, iw, ih, 26); ctx.stroke();
+    } else {
+      ctx.fillStyle = T.imgBg; roundRect(ix, y, iw, ih, 26); ctx.fill();
+      ctx.strokeStyle = T.imgLine; ctx.lineWidth = 3;
+      ctx.setLineDash([14, 10]); roundRect(ix, y, iw, ih, 26); ctx.stroke(); ctx.setLineDash([]);
+      centered("পণ্যের ছবি এখানে আসবে", y + ih / 2 - 6, "600 38px 'Hind Siliguri'", T.imgTx);
+      centered("বামে / উপরে “ছবি বেছে নিন” চাপুন", y + ih / 2 + 42, "400 27px 'Hind Siliguri'", T.imgTx);
+    }
+    y += ih + 66;
+
+    /* product name */
+    if (product){
+      var pSize = 50;
+      ctx.font = "700 " + pSize + "px 'Hind Siliguri'";
+      while (ctx.measureText(product).width > W - 120 && pSize > 30){
+        pSize -= 4; ctx.font = "700 " + pSize + "px 'Hind Siliguri'";
+      }
+      centered(product, y, "700 " + pSize + "px 'Hind Siliguri'", T.name);
+      y += 30;
+    }
+
+    /* price row */
+    if (price || oldPrice){
+      var parts = [];
+      if (oldPrice) parts.push({ t: "৳" + oldPrice, old: true });
+      if (price) parts.push({ t: "৳" + price, old: false });
+      var widths = parts.map(function(p){
+        ctx.font = (p.old ? "500 44px" : "700 82px") + " 'Hind Siliguri'";
+        return ctx.measureText(p.t).width;
+      });
+      var gap = parts.length > 1 ? 34 : 0;
+      var total = widths.reduce(function(a,b){ return a + b; }, 0) + gap;
+      var x = (W - total) / 2;
+      y += 62;
+      parts.forEach(function(p, i){
+        ctx.font = (p.old ? "500 44px" : "700 82px") + " 'Hind Siliguri'";
+        ctx.fillStyle = p.old ? T.old : T.price;
+        ctx.textAlign = "left";
+        ctx.fillText(p.t, x, y);
+        if (p.old){
+          var wy = y - 16;
+          ctx.strokeStyle = T.old; ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.moveTo(x - 4, wy); ctx.lineTo(x + widths[i] + 4, wy); ctx.stroke();
+        }
+        x += widths[i] + gap;
+      });
+      ctx.textAlign = "center";
+      y += 18;
+    }
+
+    /* footer: shop + phone */
+    var footY = H - 108;
+    ctx.strokeStyle = T.deco; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(90, footY - 38); ctx.lineTo(W - 90, footY - 38); ctx.stroke();
+    if (shop) centered(shop, footY + 14, "700 42px 'Hind Siliguri'", T.foot);
+    if (phone) centered("অর্ডার করতে কল করুন: " + phone, footY + 62, "500 32px 'Hind Siliguri'", T.footSub);
+    if (!shop && !phone) centered("দোকানের নাম ও ফোন নম্বর এখানে আসবে", footY + 30, "400 30px 'Hind Siliguri'", T.footSub);
+
+    /* credit */
+    ctx.font = "500 22px 'Hind Siliguri'";
+    ctx.fillStyle = T.credit; ctx.textAlign = "right";
+    ctx.fillText("AEUN Poster Maker", W - 34, H - 22);
+    ctx.textAlign = "left";
+    ctx.fillText("1080 × 1080", 34, H - 22);
+  }
+
+  /* ---------- Live updates ---------- */
+  [els.headline, els.productName, els.price, els.oldPrice, els.offer].forEach(function(el){
+    el.addEventListener("input", draw);
+  });
+  [els.shopName, els.phone].forEach(function(el){
+    el.addEventListener("input", function(){ saveShop(); draw(); });
+  });
+  els.headlineSize.addEventListener("input", draw);
+
+  /* ---------- Clear ---------- */
+  $("clearBtn").addEventListener("click", function(){
+    els.headline.value = ""; els.productName.value = ""; els.price.value = "";
+    els.oldPrice.value = ""; els.offer.value = ""; els.headlineSize.value = 84;
+    state.img = null; els.photoInput.value = ""; els.photoName.textContent = "";
+    els.photoStatus.textContent = "এখনো কোনো ছবি দেওয়া হয়নি";
+    els.removePhotoBtn.style.display = "none";
+    draw(); toast("সব মুছে ফেলা হয়েছে — নতুন পোস্টার শুরু করুন");
+  });
+
+  /* ---------- Toast ---------- */
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+
+  /* ---------- Download poster PNG ---------- */
+  $("downloadPngBtn").addEventListener("click", function(){
+    if (document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){ draw(); exportPng(); });
+    } else exportPng();
+  });
+  function exportPng(){
+    canvas.toBlob(function(blob){
+      if (!blob){ toast("দুঃখিত, ছবি তৈরি হয়নি — আবার চেষ্টা করুন"); return; }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      var name = (els.productName.value.trim() || "poster").replace(/\s+/g, "-");
+      a.download = "aeun-poster-" + name + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      toast("পোস্টার ডাউনলোড হচ্ছে ✓");
+    }, "image/png");
+  }
+
+  /* ---------- Download this page itself ---------- */
+  $("downloadPageBtn").addEventListener("click", function(){
+    var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "aeun-poster-maker.html";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast("অ্যাপের ফাইল ডাউনলোড হচ্ছে ✓");
+  });
+
+  /* ---------- First draw (after Bengali font loads) ---------- */
+  draw();
+  if (document.fonts && document.fonts.load){
+    document.fonts.load("700 84px 'Hind Siliguri'").then(draw).catch(function(){});
+    document.fonts.load("500 32px 'Hind Siliguri'").then(draw).catch(function(){});
+    document.fonts.ready.then(draw).catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
