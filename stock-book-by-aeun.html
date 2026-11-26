@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Stock Book by AEUN — মজুদ খাতা</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+:root{
+  --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+  --bg:#F4F7FB; --card:#FFFFFF; --text:#334155; --heading:#0B1F3A; --muted:#64748B;
+  --border:#E2E8F0; --input-bg:#FFFFFF;
+  --red:#DC2626; --red-bg:#FEF2F2; --red-border:#FECACA;
+  --amber-bg:#FFFBEB; --amber-border:#FDE68A; --amber-text:#92400E;
+  --teal-bg:#ECFDF9; --teal-text:#047857;
+  --shadow:0 1px 3px rgba(11,31,58,.08),0 4px 14px rgba(11,31,58,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0A1628; --card:#12263F; --text:#CBD5E1; --heading:#F1F5F9; --muted:#94A3B8;
+    --border:#1E3A55; --input-bg:#0B1F3A;
+    --red-bg:#3B1215; --red-border:#7F1D1D;
+    --amber-bg:#33270A; --amber-border:#78590D; --amber-text:#FCD34D;
+    --teal-bg:#06302A; --teal-text:#5EEAD4;
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Bornomala','Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
+button{cursor:pointer}
+h1,h2,h3{color:var(--heading);margin:0;line-height:1.3}
+
+/* ---------- Header ---------- */
+.topbar{background:var(--navy);color:#fff;padding:18px 16px 20px}
+.topbar-inner{max-width:760px;margin:0 auto}
+.brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.app-title{color:#fff;font-size:1.55rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.app-title .box-ic{width:42px;height:42px;flex:0 0 42px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center}
+.app-sub{color:#B9CCE4;font-size:.92rem;margin-top:2px}
+.dl-btn{flex:0 0 auto;background:var(--amber);color:#0B1F3A;border:none;font-weight:700;font-size:.95rem;padding:10px 14px;border-radius:10px;min-height:44px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.dl-btn:active{transform:scale(.97)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}
+.stat .num{color:#fff;font-size:1.35rem;font-weight:700;line-height:1.2}
+.stat .lbl{color:#B9CCE4;font-size:.8rem;margin-top:1px}
+.stat.hl .num{color:var(--amber)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 110px}
+.toolbar{display:flex;gap:10px;margin-bottom:14px}
+.search-box{flex:1;position:relative}
+.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none}
+.search-box input{width:100%;padding:11px 12px 11px 40px;border:1.5px solid var(--border);border-radius:12px;background:var(--input-bg);min-height:48px;outline:none}
+.search-box input:focus{border-color:var(--blue)}
+.btn{border:none;border-radius:10px;font-weight:600;min-height:44px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-teal{background:var(--teal);color:#06302A}
+.btn-ghost{background:var(--card);color:var(--heading);border:1.5px solid var(--border)}
+.btn-danger-ghost{background:var(--card);color:var(--red);border:1.5px solid var(--red-border)}
+.btn-block{width:100%}
+.add-btn{white-space:nowrap}
+
+/* ---------- Low stock box ---------- */
+.low-box{background:var(--amber-bg);border:1.5px solid var(--amber-border);border-radius:14px;padding:14px;margin-bottom:16px}
+.low-box h2{color:var(--amber-text);font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.low-box p{margin:4px 0 10px;font-size:.9rem;color:var(--amber-text)}
+.low-chips{display:flex;flex-wrap:wrap;gap:8px}
+.low-chip{background:var(--card);border:1px solid var(--amber-border);color:var(--heading);border-radius:999px;padding:8px 13px;font-weight:600;font-size:.92rem;min-height:38px}
+.low-chip b{color:var(--red)}
+
+/* ---------- Product list ---------- */
+.sec-title{font-size:1.08rem;font-weight:700;margin:4px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-title span{font-size:.85rem;color:var(--muted);font-weight:500}
+.p-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);width:100%;text-align:left;display:block}
+.p-card.low{border-color:var(--red-border);background:linear-gradient(0deg,var(--red-bg),var(--red-bg)),var(--card)}
+.p-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.p-name{font-size:1.12rem;font-weight:700;color:var(--heading)}
+.p-prices{font-size:.88rem;color:var(--muted);margin-top:2px}
+.p-stock{text-align:right;flex:0 0 auto}
+.p-stock .n{font-size:1.5rem;font-weight:700;color:var(--heading);line-height:1.1}
+.p-stock .u{font-size:.78rem;color:var(--muted)}
+.p-stock.low .n{color:var(--red)}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;border-radius:999px;padding:3px 10px;margin-top:7px}
+.badge-low{background:var(--red);color:#fff}
+.badge-ok{background:var(--teal-bg);color:var(--teal-text)}
+.p-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:.88rem;color:var(--muted)}
+.p-foot .val{font-weight:700;color:var(--heading)}
+.chev{color:var(--muted);font-size:1.2rem}
+
+/* ---------- Empty state ---------- */
+.empty{background:var(--card);border:1.5px dashed var(--border);border-radius:16px;padding:36px 20px;text-align:center}
+.empty .big{font-size:3rem;line-height:1}
+.empty h2{margin:12px 0 6px;font-size:1.2rem}
+.empty p{color:var(--muted);margin:0 auto 18px;max-width:420px;font-size:.95rem}
+
+/* ---------- Detail view ---------- */
+.back-btn{background:none;border:none;color:var(--blue);font-weight:700;font-size:1rem;padding:10px 4px;min-height:44px;display:inline-flex;align-items:center;gap:6px}
+.d-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.d-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.d-stock{text-align:center;background:var(--bg);border-radius:12px;padding:12px;margin:14px 0}
+.d-stock .n{font-size:2.1rem;font-weight:700;color:var(--heading);line-height:1.1}
+.d-stock.low .n{color:var(--red)}
+.d-stock .u{color:var(--muted);font-size:.88rem}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;font-size:.95rem}
+.kv div{background:var(--bg);border-radius:10px;padding:9px 12px}
+.kv .k{color:var(--muted);font-size:.8rem}
+.kv .v{font-weight:700;color:var(--heading)}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.type-btn{border:2px solid var(--border);background:var(--card);border-radius:12px;padding:12px 8px;font-weight:700;font-size:1rem;min-height:52px;color:var(--muted)}
+.type-btn.on-in{border-color:var(--teal);background:var(--teal-bg);color:var(--teal-text)}
+.type-btn.on-out{border-color:var(--amber);background:var(--amber-bg);color:var(--amber-text)}
+.field{margin-bottom:12px}
+.field label{display:block;font-weight:600;font-size:.92rem;color:var(--heading);margin-bottom:5px}
+.field input,.field textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);min-height:48px;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--blue)}
+.field .hint{font-size:.8rem;color:var(--muted);margin-top:3px}
+.form-err{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);border-radius:10px;padding:9px 12px;font-size:.9rem;font-weight:600;margin-bottom:12px;display:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.row2{grid-template-columns:1fr 1fr}}
+
+/* history */
+.hist-item{display:flex;gap:11px;padding:11px 2px;border-bottom:1px solid var(--border);align-items:flex-start}
+.hist-item:last-child{border-bottom:none}
+.hist-ic{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem}
+.hist-ic.in{background:var(--teal-bg);color:var(--teal-text)}
+.hist-ic.out{background:var(--amber-bg);color:var(--amber-text)}
+.hist-main{flex:1;min-width:0}
+.hist-main .t{font-weight:700;color:var(--heading)}
+.hist-main .s{font-size:.85rem;color:var(--muted)}
+.hist-del{background:none;border:none;color:var(--red);font-size:.85rem;font-weight:600;padding:8px;min-height:36px;min-width:36px}
+.d-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ---------- Modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(11,31,58,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+.overlay.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:20px 18px 26px}
+@media(min-width:640px){.overlay{align-items:center;padding:16px}.sheet{border-radius:18px}}
+.sheet h2{font-size:1.2rem;margin-bottom:4px}
+.sheet .sub{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.sheet-btns{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:6px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;z-index:99;transition:transform .25s ease;max-width:92vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.footer-note{text-align:center;color:var(--muted);font-size:.82rem;margin-top:22px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-row">
+      <div>
+        <div class="app-title">
+          <span class="box-ic" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z" stroke="#06302A" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 8l9 5 9-5M12 13v8" stroke="#06302A" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </span>
+          মজুদ খাতা
+        </div>
+        <div class="app-sub">দোকানের স্টক হিসাব — সহজে, বাংলায় · Stock Book by AEUN</div>
+      </div>
+      <button class="dl-btn" id="dlBtn" type="button">📥 ডাউনলোড করুন</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="statProducts">০</div><div class="lbl">মোট পণ্য</div></div>
+      <div class="stat"><div class="num" id="statPieces">০</div><div class="lbl">মোট স্টক (টি)</div></div>
+      <div class="stat hl"><div class="num" id="statValue">৳০</div><div class="lbl">স্টকের মূল্য (কেনা দামে)</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ======== LIST VIEW ======== -->
+  <section id="viewList">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#64748B" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" id="searchInput" placeholder="পণ্যের নাম লিখে খুঁজুন…" aria-label="পণ্য খুঁজুন">
+      </div>
+      <button class="btn btn-primary add-btn" id="openAddBtn" type="button">➕ নতুন পণ্য</button>
+    </div>
+
+    <div class="low-box" id="lowBox" hidden>
+      <h2>⚠️ স্টক কম — এগুলো শেষ হওয়ার আগেই কিনুন</h2>
+      <p>নিচের পণ্যগুলোর স্টক সতর্কতার সীমায় বা তার নিচে নেমে গেছে। পণ্যে চাপ দিলে নতুন স্টক যোগ করতে পারবেন।</p>
+      <div class="low-chips" id="lowChips"></div>
+    </div>
+
+    <div class="sec-title">সব পণ্য <span id="listCount"></span></div>
+    <div id="productList"></div>
+
+    <div class="empty" id="emptyState" hidden>
+      <div class="big" aria-hidden="true">📦</div>
+      <h2>এখনো কোনো পণ্য যোগ করা হয়নি</h2>
+      <p>প্রথম পণ্যটা যোগ করুন — নাম, কেনা দাম, বিক্রির দাম আর হাতে থাকা স্টক লিখলেই খাতা তৈরি। এরপর কেনা-বেচা হলেই এখানে হিসাব আপডেট হবে।</p>
+      <button class="btn btn-primary" id="emptyAddBtn" type="button">➕ প্রথম পণ্য যোগ করুন</button>
+    </div>
+
+    <div class="empty" id="noResult" hidden>
+      <div class="big" aria-hidden="true">🔍</div>
+      <h2>এই নামে কোনো পণ্য পাওয়া যায়নি</h2>
+      <p>অন্য নাম লিখে আবার খুঁজুন, অথবা পণ্যটা নতুন করে যোগ করুন।</p>
+    </div>
+
+    <p class="footer-note">সব তথ্য এই ফোনের ব্রাউজারেই সেভ থাকে · Stock Book by AEUN</p>
+  </section>
+
+  <!-- ======== DETAIL VIEW ======== -->
+  <section id="viewDetail" hidden>
+    <button class="back-btn" id="backBtn" type="button">← সব পণ্যের তালিকায় ফিরুন</button>
+
+    <div class="d-card">
+      <div class="d-head">
+        <div>
+          <h2 id="dName" style="font-size:1.3rem"></h2>
+          <div id="dBadge"></div>
+        </div>
+      </div>
+      <div class="d-stock" id="dStockBox">
+        <div class="n" id="dStock">০</div>
+        <div class="u">টি এখন স্টকে আছে</div>
+      </div>
+      <div class="kv">
+        <div><div class="k">কেনা দাম (প্রতি টি)</div><div class="v" id="dBuy"></div></div>
+        <div><div class="k">বিক্রির দাম (প্রতি টি)</div><div class="v" id="dSell"></div></div>
+        <div><div class="k">প্রতি টিতে লাভ</div><div class="v" id="dProfit"></div></div>
+        <div><div class="k">স্টক কমের সতর্কতা</div><div class="v" id="dAlert"></div></div>
+        <div><div class="k">শুরুর স্টক ছিল</div><div class="v" id="dOpening"></div></div>
+        <div><div class="k">এই পণ্যের স্টক মূল্য</div><div class="v" id="dValue"></div></div>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <h3 style="font-size:1.08rem;margin-bottom:12px">স্টক যোগ / বের করুন</h3>
+      <div class="type-toggle" role="group" aria-label="এন্ট্রির ধরন">
+        <button class="type-btn on-in" id="typeIn" type="button">⬇️ কিনলাম (স্টক এলো)</button>
+        <button class="type-btn" id="typeOut" type="button">⬆️ বিক্রি / বের হলো</button>
+      </div>
+      <div class="form-err" id="entryErr"></div>
+      <div class="row2">
+        <div class="field">
+          <label for="entryQty">পরিমাণ (টি)</label>
+          <input type="number" id="entryQty" inputmode="numeric" min="1" placeholder="যেমন: ১০">
+        </div>
+        <div class="field">
+          <label for="entryDate">তারিখ</label>
+          <input type="date" id="entryDate">
+        </div>
+      </div>
+      <div class="field">
+        <label for="entryNote">নোট (না লিখলেও চলবে)</label>
+        <input type="text" id="entryNote" placeholder="যেমন: পাইকারি বাজার থেকে কেনা / রহিমের দোকানে বিক্রি">
+      </div>
+      <button class="btn btn-teal btn-block" id="saveEntryBtn" type="button" style="min-height:50px;font-size:1.02rem">✓ এন্ট্রি সেভ করুন</button>
+    </div>
+
+    <div class="d-card">
+      <h3 style="font-size:1.08rem;margin-bottom:6px">আসা-যাওয়ার ইতিহাস</h3>
+      <div id="historyList"></div>
+      <p id="historyEmpty" style="color:var(--muted);font-size:.92rem;margin:8px 0 2px" hidden>এখনো কোনো আসা-যাওয়ার এন্ট্রি নেই। উপরে প্রথম এন্ট্রিটা যোগ করুন।</p>
+    </div>
+
+    <div class="d-actions">
+      <button class="btn btn-ghost" id="editProductBtn" type="button">✏️ পণ্য ঠিক করুন</button>
+      <button class="btn btn-danger-ghost" id="deleteProductBtn" type="button">🗑️ পণ্য মুছুন</button>
+    </div>
+  </section>
+</main>
+
+<!-- ======== ADD / EDIT PRODUCT MODAL ======== -->
+<div class="overlay" id="productModal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h2 id="modalTitle">নতুন পণ্য যোগ করুন</h2>
+    <p class="sub">পণ্যের তথ্য লিখুন — স্টক হিসাব নিজে নিজেই হবে।</p>
+    <div class="form-err" id="productErr"></div>
+    <div class="field">
+      <label for="fName">পণ্যের নাম *</label>
+      <input type="text" id="fName" placeholder="যেমন: মিনিকেট চাল ৫ কেজি">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="fBuy">কেনা দাম (৳) *</label>
+        <input type="number" id="fBuy" inputmode="decimal" min="0" placeholder="যেমন: ৩২০">
+      </div>
+      <div class="field">
+        <label for="fSell">বিক্রির দাম (৳) *</label>
+        <input type="number" id="fSell" inputmode="decimal" min="0" placeholder="যেমন: ৩৮০">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="fOpening">শুরুর স্টক (টি)</label>
+        <input type="number" id="fOpening" inputmode="numeric" min="0" placeholder="যেমন: ৫০">
+        <div class="hint">এখন হাতে যত টি আছে</div>
+      </div>
+      <div class="field">
+        <label for="fAlert">স্টক কমের সতর্কতা (টি)</label>
+        <input type="number" id="fAlert" inputmode="numeric" min="0" placeholder="যেমন: ৫">
+        <div class="hint">স্টক এর নিচে নামলেই সতর্কতা দেখাবে</div>
+      </div>
+    </div>
+    <div class="sheet-btns">
+      <button class="btn btn-ghost" id="cancelProductBtn" type="button">বাতিল</button>
+      <button class="btn btn-primary" id="saveProductBtn" type="button">✓ সেভ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== CONFIRM MODAL ======== -->
+<div class="overlay" id="confirmModal" role="dialog" aria-modal="true">
+  <div class="sheet" style="max-width:440px">
+    <h2 id="confirmTitle">নিশ্চিত তো?</h2>
+    <p class="sub" id="confirmText" style="margin-bottom:18px"></p>
+    <div class="sheet-btns">
+      <button class="btn btn-ghost" id="confirmNo" type="button">না, থাক</button>
+      <button class="btn" id="confirmYes" type="button" style="background:var(--red);color:#fff">হ্যাঁ, মুছুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY = "aeun_stock_book_v1";
+var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+var MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+
+function toBn(v){ return String(v).replace(/[0-9]/g, function(d){ return BN[+d]; }); }
+function fmtNum(n){ return toBn(Number(n||0).toLocaleString("en-IN")); }
+function fmtMoney(n){
+  var num = Number(n||0);
+  var s = (Math.round(num*100)/100).toLocaleString("en-IN",{maximumFractionDigits:2});
+  return "৳" + toBn(s);
+}
+function fmtDate(ds){
+  if(!ds) return "";
+  var p = ds.split("-"); if(p.length!==3) return toBn(ds);
+  return toBn(p[2]) + " " + MONTHS[(+p[1])-1] + " " + toBn(p[0]);
+}
+function todayStr(){
+  var d = new Date();
+  var m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+  return d.getFullYear()+"-"+m+"-"+day;
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- storage ---------- */
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(!raw) return {products:[]};
+    var data = JSON.parse(raw);
+    if(!data || !Array.isArray(data.products)) return {products:[]};
+    data.products.forEach(function(p){ if(!Array.isArray(p.movements)) p.movements = []; });
+    return data;
+  }catch(e){ return {products:[]}; }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+var state = load();
+var selectedId = null;
+var entryType = "in";
+var editingId = null;
+var confirmCb = null;
+
+/* ---------- helpers ---------- */
+function getProduct(id){ for(var i=0;i<state.products.length;i++){ if(state.products[i].id===id) return state.products[i]; } return null; }
+function getStock(p){
+  var s = Number(p.openingStock||0);
+  p.movements.forEach(function(m){ s += (m.type==="in" ? Number(m.qty||0) : -Number(m.qty||0)); });
+  return s;
+}
+function isLow(p){ return getStock(p) <= Number(p.alertLevel||0); }
+
+var $ = function(id){ return document.getElementById(id); };
+var toastTimer = null;
+function toast(msg){
+  var t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+}
+
+/* ---------- render: stats + list ---------- */
+function renderStats(){
+  var totalPieces = 0, totalValue = 0;
+  state.products.forEach(function(p){ var s = getStock(p); totalPieces += s; totalValue += s * Number(p.buyPrice||0); });
+  $("statProducts").textContent = fmtNum(state.products.length);
+  $("statPieces").textContent = fmtNum(totalPieces);
+  $("statValue").textContent = fmtMoney(totalValue);
+}
+function renderLow(){
+  var lows = state.products.filter(isLow);
+  var box = $("lowBox");
+  if(!lows.length){ box.hidden = true; return; }
+  box.hidden = false;
+  $("lowChips").innerHTML = lows.map(function(p){
+    return '<button type="button" class="low-chip" data-open="'+p.id+'">'+esc(p.name)+' — মাত্র <b>'+fmtNum(getStock(p))+' টি</b></button>';
+  }).join("");
+}
+function renderList(){
+  renderStats(); renderLow();
+  var q = $("searchInput").value.trim().toLowerCase();
+  var list = state.products.filter(function(p){ return !q || p.name.toLowerCase().indexOf(q) !== -1; });
+  var wrap = $("productList");
+  $("emptyState").hidden = state.products.length !== 0;
+  $("noResult").hidden = !(state.products.length > 0 && list.length === 0);
+  $("listCount").textContent = state.products.length ? fmtNum(list.length) + "টি পণ্য" : "";
+  wrap.innerHTML = list.map(function(p){
+    var s = getStock(p), low = isLow(p);
+    var badge = low
+      ? '<span class="badge badge-low">⚠️ স্টক কম</span>'
+      : '<span class="badge badge-ok">✓ স্টক ঠিক আছে</span>';
+    return '<button type="button" class="p-card'+(low?" low":"")+'" data-open="'+p.id+'">'
+      + '<span class="p-top"><span><span class="p-name">'+esc(p.name)+'</span>'
+      + '<span class="p-prices" style="display:block">কেনা '+fmtMoney(p.buyPrice)+' · বিক্রি '+fmtMoney(p.sellPrice)+'</span>'
+      + badge + '</span>'
+      + '<span class="p-stock'+(low?" low":"")+'"><span class="n">'+fmtNum(s)+'</span><br><span class="u">টি স্টকে</span></span></span>'
+      + '<span class="p-foot"><span>স্টক মূল্য: <span class="val">'+fmtMoney(s*Number(p.buyPrice||0))+'</span></span><span class="chev">›</span></span>'
+      + '</button>';
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-open]"), function(el){
+    el.addEventListener("click", function(){ openDetail(el.getAttribute("data-open")); });
+  });
+}
+
+/* ---------- detail ---------- */
+function openDetail(id){
+  selectedId = id;
+  var p = getProduct(id); if(!p) return;
+  entryType = "in"; syncTypeBtns();
+  $("entryQty").value = ""; $("entryNote").value = ""; $("entryDate").value = todayStr();
+  $("entryErr").style.display = "none";
+  renderDetail();
+  $("viewList").hidden = true; $("viewDetail").hidden = false;
+  window.scrollTo(0,0);
+}
+function closeDetail(){
+  selectedId = null;
+  $("viewDetail").hidden = true; $("viewList").hidden = false;
+  renderList();
+}
+function renderDetail(){
+  var p = getProduct(selectedId); if(!p){ closeDetail(); return; }
+  var s = getStock(p), low = isLow(p);
+  $("dName").textContent = p.name;
+  $("dBadge").innerHTML = low ? '<span class="badge badge-low">⚠️ স্টক কম — কেনার সময় হয়েছে</span>' : '<span class="badge badge-ok">✓ স্টক ঠিক আছে</span>';
+  $("dStock").textContent = fmtNum(s);
+  $("dStockBox").classList.toggle("low", low);
+  $("dBuy").textContent = fmtMoney(p.buyPrice);
+  $("dSell").textContent = fmtMoney(p.sellPrice);
+  $("dProfit").textContent = fmtMoney(Number(p.sellPrice||0) - Number(p.buyPrice||0));
+  $("dAlert").textContent = fmtNum(p.alertLevel) + " টি বা কম হলে";
+  $("dOpening").textContent = fmtNum(p.openingStock) + " টি";
+  $("dValue").textContent = fmtMoney(s * Number(p.buyPrice||0));
+  var movs = p.movements.slice().sort(function(a,b){
+    if(a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.createdAt||0) - (a.createdAt||0);
+  });
+  $("historyEmpty").hidden = movs.length !== 0;
+  $("historyList").innerHTML = movs.map(function(m){
+    var isIn = m.type === "in";
+    return '<div class="hist-item"><div class="hist-ic '+(isIn?"in":"out")+'">'+(isIn?"↓":"↑")+'</div>'
+      + '<div class="hist-main"><div class="t">'+(isIn?"কিনলাম / স্টক এলো":"বিক্রি / বের হলো")+' — '+fmtNum(m.qty)+' টি</div>'
+      + '<div class="s">'+fmtDate(m.date)+(m.note ? " · " + esc(m.note) : "")+'</div></div>'
+      + '<button type="button" class="hist-del" data-del-mov="'+m.id+'" aria-label="এন্ট্রি মুছুন">মুছুন</button></div>';
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-del-mov]"), function(el){
+    el.addEventListener("click", function(){
+      var mid = el.getAttribute("data-del-mov");
+      askConfirm("এই এন্ট্রিটা মুছবেন?", "এন্ট্রি মুছলে স্টকের হিসাব বদলে যাবে।", function(){
+        p.movements = p.movements.filter(function(m){ return m.id !== mid; });
+        save(); renderDetail(); toast("এন্ট্রি মোছা হয়েছে");
+      });
+    });
+  });
+}
+function syncTypeBtns(){
+  $("typeIn").className = "type-btn" + (entryType==="in" ? " on-in" : "");
+  $("typeOut").className = "type-btn" + (entryType==="out" ? " on-out" : "");
+  var b = $("saveEntryBtn");
+  b.textContent = entryType==="in" ? "✓ কিনলাম — এন্ট্রি সেভ করুন" : "✓ বিক্রি / বের হলো — এন্ট্রি সেভ করুন";
+  b.style.background = entryType==="in" ? "var(--teal)" : "var(--amber)";
+  b.style.color = entryType==="in" ? "#06302A" : "#0B1F3A";
+}
+
+/* ---------- confirm ---------- */
+function askConfirm(title, text, cb){
+  $("confirmTitle").textContent = title;
+  $("confirmText").textContent = text;
+  confirmCb = cb;
+  $("confirmModal").classList.add("open");
+}
+$("confirmNo").addEventListener("click", function(){ $("confirmModal").classList.remove("open"); confirmCb = null; });
+$("confirmYes").addEventListener("click", function(){
+  $("confirmModal").classList.remove("open");
+  if(confirmCb){ var cb = confirmCb; confirmCb = null; cb(); }
+});
+
+/* ---------- product modal ---------- */
+function openProductModal(p){
+  editingId = p ? p.id : null;
+  $("modalTitle").textContent = p ? "পণ্যের তথ্য ঠিক করুন" : "নতুন পণ্য যোগ করুন";
+  $("productErr").style.display = "none";
+  $("fName").value = p ? p.name : "";
+  $("fBuy").value = p ? p.buyPrice : "";
+  $("fSell").value = p ? p.sellPrice : "";
+  $("fOpening").value = p ? p.openingStock : "";
+  $("fAlert").value = p ? p.alertLevel : 5;
+  var openField = $("fOpening"); openField.disabled = !!p;
+  openField.style.opacity = p ? ".55" : "1";
+  $("productModal").classList.add("open");
+  setTimeout(function(){ $("fName").focus(); }, 80);
+}
+function showErr(id, msg){ var e = $(id); e.textContent = msg; e.style.display = "block"; }
+$("saveProductBtn").addEventListener("click", function(){
+  var name = $("fName").value.trim();
+  var buy = parseFloat($("fBuy").value), sell = parseFloat($("fSell").value);
+  var opening = parseInt($("fOpening").value, 10), alertLv = parseInt($("fAlert").value, 10);
+  if(!name) return showErr("productErr", "পণ্যের নাম লিখুন।");
+  if(isNaN(buy) || buy < 0) return showErr("productErr", "কেনা দাম ঠিকমতো লিখুন (টাকায়)।");
+  if(isNaN(sell) || sell < 0) return showErr("productErr", "বিক্রির দাম ঠিকমতো লিখুন (টাকায়)।");
+  if(isNaN(opening) || opening < 0) opening = 0;
+  if(isNaN(alertLv) || alertLv < 0) alertLv = 0;
+  if(editingId){
+    var p = getProduct(editingId); if(!p) return;
+    p.name = name; p.buyPrice = buy; p.sellPrice = sell; p.alertLevel = alertLv;
+    save(); $("productModal").classList.remove("open");
+    toast("পণ্যের তথ্য আপডেট হয়েছে ✓");
+    if(selectedId === editingId) renderDetail(); else renderList();
+  }else{
+    state.products.unshift({ id: uid(), name: name, buyPrice: buy, sellPrice: sell, openingStock: opening, alertLevel: alertLv, movements: [], createdAt: Date.now() });
+    save(); $("productModal").classList.remove("open");
+    renderList(); toast("নতুন পণ্য যোগ হয়েছে ✓");
+  }
+});
+$("cancelProductBtn").addEventListener("click", function(){ $("productModal").classList.remove("open"); });
+$("productModal").addEventListener("click", function(e){ if(e.target === this) this.classList.remove("open"); });
+$("openAddBtn").addEventListener("click", function(){ openProductModal(null); });
+$("emptyAddBtn").addEventListener("click", function(){ openProductModal(null); });
+$("editProductBtn").addEventListener("click", function(){ var p = getProduct(selectedId); if(p) openProductModal(p); });
+$("deleteProductBtn").addEventListener("click", function(){
+  var p = getProduct(selectedId); if(!p) return;
+  askConfirm("“" + p.name + "” মুছে ফেলবেন?", "পণ্যটা আর এর সব আসা-যাওয়ার ইতিহাস চিরতরে মুছে যাবে।", function(){
+    state.products = state.products.filter(function(x){ return x.id !== selectedId; });
+    save(); closeDetail(); toast("পণ্য মোছা হয়েছে");
+  });
+});
+
+/* ---------- entries ---------- */
+$("typeIn").addEventListener("click", function(){ entryType = "in"; syncTypeBtns(); });
+$("typeOut").addEventListener("click", function(){ entryType = "out"; syncTypeBtns(); });
+$("saveEntryBtn").addEventListener("click", function(){
+  var p = getProduct(selectedId); if(!p) return;
+  var qty = parseInt($("entryQty").value, 10);
+  var date = $("entryDate").value || todayStr();
+  var note = $("entryNote").value.trim();
+  if(isNaN(qty) || qty <= 0) return showErr("entryErr", "পরিমাণ ঠিকমতো লিখুন — কমপক্ষে ১ টি হতে হবে।");
+  if(entryType === "out" && qty > getStock(p)){
+    return showErr("entryErr", "স্টকে মাত্র " + fmtNum(getStock(p)) + " টি আছে — এর বেশি বের করা যাবে না। আগে স্টক যোগ করুন।");
+  }
+  $("entryErr").style.display = "none";
+  p.movements.push({ id: uid(), type: entryType, qty: qty, date: date, note: note, createdAt: Date.now() });
+  save();
+  $("entryQty").value = ""; $("entryNote").value = "";
+  renderDetail();
+  toast(entryType === "in" ? "স্টক যোগ হয়েছে ✓ এখন মোট " + fmtNum(getStock(p)) + " টি" : "স্টক বের হয়েছে ✓ এখন মোট " + fmtNum(getStock(p)) + " টি");
+});
+
+/* ---------- misc ---------- */
+$("backBtn").addEventListener("click", closeDetail);
+$("searchInput").addEventListener("input", renderList);
+$("dlBtn").addEventListener("click", function(){
+  var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  var blob = new Blob([html], {type: "text/html;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "stock-book-by-aeun.html";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  toast("ডাউনলোড শুরু হয়েছে — stock-book-by-aeun.html");
+});
+
+$("entryDate").value = todayStr();
+renderList();
+})();
+</script>
+</body>
+</html>
