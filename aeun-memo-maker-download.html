@@ -191,6 +191,9 @@
       .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
       @media (prefers-reduced-motion: reduce){ .toast{ transition:none; } .btn:active{ transform:none; } }
     </style>
+  <link rel="manifest" href="memo-manifest.webmanifest">
+  <meta name="theme-color" content="#0B1F3A">
+  <link rel="apple-touch-icon" href="memo-icon-192.png">
   </head>
   <body>
     <header class="topbar">
@@ -989,5 +992,6 @@
         renderHistory();
       })();
     </script>
-  </body>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+</body>
 </html>
