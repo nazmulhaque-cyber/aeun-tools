@@ -1,0 +1,15 @@
+{
+  "name": "Memo Maker by AEUN",
+  "short_name": "Memo Maker",
+  "description": "বাংলা মেমো ও ইনভয়েস বানানোর ফ্রি টুল — by AEUN",
+  "lang": "bn",
+  "start_url": "aeun-memo-maker-download.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F4F7FB",
+  "theme_color": "#0B1F3A",
+  "icons": [
+    { "src": "memo-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "memo-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
