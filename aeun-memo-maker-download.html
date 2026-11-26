@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
-    <title>AEUN Memo Maker — বাংলা মেমো বানানোর টুল</title>
+    <title>Memo Maker by AEUN — বাংলা মেমো বানানোর টুল</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -194,7 +194,8 @@
   <body>
     <header class="topbar">
       <div class="topbar-inner">
-        <h1>AEUN <span class="accent">Memo Maker</span></h1>
+        <h1>Memo <span class="accent">Maker</span></h1>
+        <div style="color:#FFB020;font-weight:700;letter-spacing:.22em;font-size:.78rem;margin-top:2px">BY AEUN</div>
         <p>ফেসবুক ও WhatsApp বিক্রেতাদের জন্য সহজ বাংলা মেমো — একবার দোকানের তথ্য দিলেই প্রতিটা অর্ডারের সুন্দর মেমো তৈরি।</p>
       </div>
     </header>
@@ -205,7 +206,7 @@
       <section class="card dl-card" aria-labelledby="dl-h">
         <h2 id="dl-h">⬇️ এই টুলটা নিজের কাছে রাখুন</h2>
         <p class="hint" style="margin-bottom:10px;">নিচের বোতামে চাপ দিলে পুরো টুলটা একটা মাত্র HTML ফাইল হিসেবে ডাউনলোড হবে। ফাইলটা নিজের কম্পিউটার/ফোনে রেখে সরাসরি খুলতে পারবেন, অথবা নিজের ওয়েবসাইটে বসাতে পারবেন।</p>
-        <button class="btn btn-amber" id="btnDownloadTool" type="button">📥 AEUN Memo Maker ডাউনলোড করুন (HTML ফাইল)</button>
+        <button class="btn btn-amber" id="btnDownloadTool" type="button">📥 Memo Maker ডাউনলোড করুন (HTML ফাইল)</button>
         <ol class="dl-steps">
           <li>নিজের ওয়েবসাইটে বসাতে চাইলে ফাইলটা GitHub Pages বা Netlify-তে আপলোড করলেই চলবে — আলাদা কোনো সার্ভার লাগবে না।</li>
           <li>দোকানের তথ্য আর সব মেমো প্রত্যেক ব্যবহারকারীর নিজের ব্রাউজারেই সেভ থাকে — একজনের তথ্য আরেকজন দেখতে পায় না।</li>
@@ -327,7 +328,7 @@
                 💳 অর্ডার নিশ্চিত করতে ডেলিভারি চার্জটা বিকাশে অগ্রিম পাঠিয়ে দিন:<br />
                 বিকাশ / নগদ নম্বর: <span class="num" id="pBkashNum">—</span>
               </div>
-              <div class="foot">Made with AEUN Memo Maker</div>
+              <div class="foot">Made with Memo Maker · by AEUN</div>
             </div>
 
             <div class="btn-row">
@@ -348,7 +349,7 @@
         <div id="historyBox"></div>
       </section>
 
-      <p style="text-align:center; color:var(--muted); font-size:.85rem; margin:6px 0 0;">AEUN Memo Maker · AI Engineering &amp; Utility Network</p>
+      <p style="text-align:center; color:var(--muted); font-size:.85rem; margin:6px 0 0;">Memo Maker by AEUN · AI Engineering &amp; Utility Network</p>
     </main>
 
     <!-- Delete confirm modal -->
@@ -885,7 +886,7 @@
 
           // Footer
           ctx.fillStyle = "#94A3B8"; ctx.font = "400 17px " + F; ctx.textAlign = "center";
-          ctx.fillText("Made with AEUN Memo Maker", W/2, by + 34);
+          ctx.fillText("Made with Memo Maker · by AEUN", W/2, by + 34);
           return canvas;
         }
 
@@ -973,7 +974,7 @@
           var blob = new Blob([html], { type: "text/html;charset=utf-8" });
           var a = document.createElement("a");
           a.href = URL.createObjectURL(blob);
-          a.download = "aeun-memo-maker.html";
+          a.download = "memo-maker-by-aeun.html";
           document.body.appendChild(a); a.click(); a.remove();
           setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
           toast("ডাউনলোড শুরু হয়েছে 📥");
