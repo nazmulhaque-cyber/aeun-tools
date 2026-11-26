@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<link rel="icon" href="data:," />
+<title>Appointment Book by AEUN — অ্যাপয়েন্টমেন্ট খাতা</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+:root{
+  --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+  --light:#F4F7FB; --body:#334155; --muted:#64748B; --line:#E2E8F0;
+  --card:#FFFFFF; --danger:#DC2626; --wa:#25D366; --wa-dark:#128C7E;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Bornomala","Hind Siliguri",system-ui,sans-serif;background:var(--light);color:var(--body);line-height:1.55}
+button,input,select,textarea{font:inherit}
+button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
+a,button{-webkit-tap-highlight-color:transparent}
+
+/* ---------- Header ---------- */
+.topbar{background:var(--navy);color:#fff;padding:18px 16px 20px;position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(11,31,58,.25)}
+.topbar-in{max-width:760px;margin:0 auto}
+.brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.brand h1{margin:0;font-size:1.45rem;line-height:1.25;font-weight:700;letter-spacing:.2px}
+.brand h1 .en{font-size:.82rem;font-weight:600;color:#93C5FD;display:block;letter-spacing:.6px;text-transform:uppercase;margin-top:2px}
+.brand p{margin:6px 0 0;font-size:.92rem;color:#CBD5E1;max-width:46ch}
+.btn-download{flex-shrink:0;background:var(--amber);color:#1E293B;border:none;border-radius:10px;padding:10px 14px;font-weight:700;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:48px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.btn-download:active{transform:scale(.97)}
+.today-line{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:6px 12px;font-size:.88rem;color:#E2E8F0}
+.chip strong{color:#fff;font-size:1rem}
+.chip.amber{border-color:rgba(255,176,32,.5)} .chip.amber strong{color:var(--amber)}
+.chip.teal strong{color:#5EEAD4}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 40px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.card h2{margin:0 0 4px;font-size:1.12rem;color:var(--navy);font-weight:700;display:flex;align-items:center;gap:8px}
+.card .sub{margin:0 0 14px;font-size:.88rem;color:var(--muted)}
+label{display:block;font-size:.9rem;font-weight:600;color:var(--navy);margin:0 0 6px}
+.field{margin-bottom:12px}
+input[type="text"],input[type="tel"],input[type="date"],input[type="time"],textarea,select{
+  width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--body);font-size:1rem;outline:none;transition:border-color .15s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--blue)}
+textarea{resize:vertical;min-height:64px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.btn{border:none;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:.95rem;min-height:48px;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff;width:100%}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--body)}
+.btn-sm{min-height:40px;padding:8px 12px;font-size:.87rem;border-radius:9px}
+.settings-row{display:flex;gap:10px}
+.settings-row input{flex:1}
+.settings-row .btn{flex-shrink:0}
+.saved-note{font-size:.85rem;color:var(--teal);font-weight:600;margin-top:8px;display:none}
+.saved-note.show{display:block}
+
+/* ---------- View tabs ---------- */
+.seg{display:flex;background:#E8EEF6;border-radius:11px;padding:4px;gap:4px}
+.seg button{flex:1;border:none;background:transparent;border-radius:8px;padding:9px 6px;font-weight:600;font-size:.93rem;color:var(--muted);cursor:pointer;min-height:44px}
+.seg button.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(15,23,42,.12)}
+.date-row{display:none;margin-top:12px;gap:10px;align-items:end}
+.date-row.show{display:flex}
+.date-row .field{flex:1;margin:0}
+.day-nav{display:flex;gap:8px}
+.day-nav button{width:48px;padding:0;font-size:1.15rem}
+.list-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.list-head h2{margin:0}
+.list-head .count{font-size:.88rem;color:var(--muted);white-space:nowrap}
+
+/* ---------- Appointment cards ---------- */
+.appt{border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;background:#fff}
+.appt:last-child{margin-bottom:0}
+.appt.done{opacity:.75;background:#F8FAFC}
+.appt.cancelled{opacity:.6;background:#FEF2F2}
+.appt-top{display:flex;gap:12px;align-items:flex-start}
+.time-badge{flex-shrink:0;background:var(--navy);color:#fff;border-radius:10px;padding:7px 10px;text-align:center;min-width:78px}
+.time-badge .t{font-weight:700;font-size:.98rem;line-height:1.2;display:block}
+.time-badge .d{font-size:.72rem;color:#BFDBFE;display:block;margin-top:1px}
+.appt-main{flex:1;min-width:0}
+.appt-name{font-weight:700;color:var(--navy);font-size:1.05rem;line-height:1.3;word-break:break-word}
+.appt-service{color:var(--blue);font-weight:600;font-size:.93rem}
+.appt-meta{font-size:.87rem;color:var(--muted);margin-top:2px;word-break:break-word}
+.appt-note{font-size:.88rem;background:var(--light);border-radius:8px;padding:7px 10px;margin-top:8px;color:var(--body)}
+.status-pill{flex-shrink:0;font-size:.75rem;font-weight:700;border-radius:999px;padding:3px 10px}
+.status-pill.pending{background:#FEF3C7;color:#92400E}
+.status-pill.done{background:#CCFBF1;color:#0F766E}
+.status-pill.cancelled{background:#FEE2E2;color:#991B1B}
+.appt-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn-wa{background:#E7F9EE;color:#0B6B3A;border:1.5px solid #BBE9CC}
+.btn-wa2{background:#E0F2FE;color:#075985;border:1.5px solid #BAE6FD}
+.btn-done{background:var(--teal);color:#fff}
+.btn-cancel{background:#fff;color:var(--danger);border:1.5px solid #FECACA}
+.btn-del{background:#fff;color:var(--muted);border:1.5px solid var(--line)}
+.btn-undo{background:#fff;color:var(--blue);border:1.5px solid #BFDBFE}
+
+.empty{border:2px dashed var(--line);border-radius:12px;padding:28px 16px;text-align:center;color:var(--muted)}
+.empty .big{font-size:2rem;margin-bottom:6px}
+.empty p{margin:0;font-size:.95rem}
+.empty p strong{color:var(--navy);display:block;font-size:1.02rem;margin-bottom:4px}
+
+.foot{text-align:center;font-size:.82rem;color:var(--muted);padding:4px 10px 10px}
+.foot strong{color:var(--navy)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:999px;font-weight:600;font-size:.93rem;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:all .3s;z-index:50;max-width:92vw;text-align:center;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.err{color:var(--danger);font-size:.86rem;font-weight:600;margin-top:6px;display:none}
+.err.show{display:block}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand-row">
+      <div class="brand">
+        <h1>📅 অ্যাপয়েন্টমেন্ট খাতা <span class="en">Appointment Book by AEUN</span></h1>
+        <p>সেলুন, ক্লিনিক, কোচিং বা সার্ভিস দোকানের প্রতিদিনের বুকিং — এক জায়গায়, সহজে।</p>
+      </div>
+      <button class="btn-download" id="btnDownload" type="button">📥 ডাউনলোড করুন</button>
+    </div>
+    <div class="today-line">
+      <span class="chip">আজ: <strong id="todayDateLabel">—</strong></span>
+      <span class="chip amber">আজকের অ্যাপয়েন্টমেন্ট: <strong id="statTotal">০</strong>টি</span>
+      <span class="chip teal">সম্পন্ন: <strong id="statDone">০</strong>টি</span>
+      <span class="chip">বাকি: <strong id="statPending">০</strong>টি</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Settings -->
+  <section class="card" aria-label="সেটিংস">
+    <h2>⚙️ দোকান / প্রতিষ্ঠানের নাম</h2>
+    <p class="sub">এই নামটা WhatsApp মেসেজে যাবে। একবার সেভ করলেই হবে।</p>
+    <div class="settings-row">
+      <input type="text" id="bizName" placeholder="যেমন: স্টাইল হেয়ার সেলুন" autocomplete="off">
+      <button class="btn btn-teal" id="btnSaveBiz" type="button">সেভ করুন</button>
+    </div>
+    <div class="saved-note" id="bizSaved">✓ সেভ হয়েছে</div>
+  </section>
+
+  <!-- Add form -->
+  <section class="card" aria-label="নতুন অ্যাপয়েন্টমেন্ট">
+    <h2>➕ নতুন অ্যাপয়েন্টমেন্ট</h2>
+    <p class="sub">কাস্টমারের তথ্য লিখে সেভ করুন — তালিকায় সময় অনুযায়ী সাজিয়ে দেখাবে।</p>
+    <form id="apptForm" novalidate>
+      <div class="grid2">
+        <div class="field">
+          <label for="fName">কাস্টমারের নাম *</label>
+          <input type="text" id="fName" placeholder="যেমন: মোঃ রফিকুল ইসলাম" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fPhone">মোবাইল নম্বর *</label>
+          <input type="tel" id="fPhone" placeholder="01XXXXXXXXX" inputmode="tel" autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fService">সার্ভিসের নাম *</label>
+        <input type="text" id="fService" list="serviceList" placeholder="যেমন: হেয়ার কাট, ডাক্তার দেখানো, ভর্তি পরামর্শ" autocomplete="off">
+        <datalist id="serviceList">
+          <option value="হেয়ার কাট"></option>
+          <option value="শেভ / দাড়ি ট্রিম"></option>
+          <option value="ফেসিয়াল"></option>
+          <option value="হেয়ার কালার"></option>
+          <option value="ডাক্তার দেখানো"></option>
+          <option value="ফলো-আপ চেকআপ"></option>
+          <option value="দাঁতের চিকিৎসা"></option>
+          <option value="ভর্তি পরামর্শ"></option>
+          <option value="ডেমো ক্লাস"></option>
+          <option value="মোবাইল সার্ভিসিং"></option>
+          <option value="ফটোশুট বুকিং"></option>
+          <option value="হোম সার্ভিস"></option>
+        </datalist>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="fDate">তারিখ *</label>
+          <input type="date" id="fDate">
+        </div>
+        <div class="field">
+          <label for="fTime">সময় *</label>
+          <input type="time" id="fTime">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fNote">নোট (ঐচ্ছিক)</label>
+        <textarea id="fNote" placeholder="বিশেষ কোনো কথা থাকলে লিখুন…"></textarea>
+      </div>
+      <div class="err" id="formErr"></div>
+      <button class="btn btn-primary" type="submit">💾 অ্যাপয়েন্টমেন্ট সেভ করুন</button>
+    </form>
+  </section>
+
+  <!-- List -->
+  <section class="card" aria-label="অ্যাপয়েন্টমেন্ট তালিকা">
+    <div class="seg" role="tablist">
+      <button type="button" id="tabToday" class="active">📋 আজকের তালিকা</button>
+      <button type="button" id="tabDate">🗓️ তারিখ অনুযায়ী</button>
+    </div>
+    <div class="date-row" id="dateRow">
+      <div class="field">
+        <label for="viewDate">তারিখ বেছে নিন</label>
+        <input type="date" id="viewDate">
+      </div>
+      <div class="day-nav">
+        <button class="btn btn-ghost" type="button" id="prevDay" aria-label="আগের দিন">‹</button>
+        <button class="btn btn-ghost" type="button" id="nextDay" aria-label="পরের দিন">›</button>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="list-head">
+      <h2 id="listTitle">আজকের তালিকা</h2>
+      <span class="count" id="listCount"></span>
+    </div>
+    <div id="listBox"></div>
+  </section>
+
+  <p class="foot">তৈরি করেছে <strong>AEUN</strong> — AI Engineering &amp; Utility Network<br>সব তথ্য আপনার ফোনের ব্রাউজারেই সেভ থাকে।</p>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var LS_KEY = "aeun_appointment_book_v1";
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if(!raw) return { businessName:"", appointments:[] };
+      var d = JSON.parse(raw);
+      if(!d || !Array.isArray(d.appointments)) return { businessName:"", appointments:[] };
+      return d;
+    }catch(e){ return { businessName:"", appointments:[] }; }
+  }
+  function save(){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  }
+  var state = load();
+  var viewMode = "today"; // today | date
+  var viewDate = todayStr();
+
+  /* ---------- helpers ---------- */
+  var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+  function toBn(s){ return String(s).replace(/[0-9]/g, function(c){ return BN[+c]; }); }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function todayStr(){
+    var d = new Date();
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  }
+  function fmtDateBn(iso){
+    if(!iso) return "";
+    var p = iso.split("-"); if(p.length!==3) return iso;
+    var d = new Date(+p[0], +p[1]-1, +p[2]);
+    var days = ["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"];
+    var months = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+    return days[d.getDay()]+", "+toBn(+p[2])+" "+months[+p[1]-1]+" "+toBn(p[0]);
+  }
+  function fmtTimeBn(t){
+    if(!t) return "";
+    var p = t.split(":"); var h = +p[0], m = +p[1]||0;
+    var period = h<4 ? "রাত" : h<12 ? "সকাল" : h<16 ? "দুপুর" : h<19 ? "বিকাল" : "রাত";
+    var h12 = h%12; if(h12===0) h12=12;
+    return period+" "+toBn(h12)+":"+toBn(pad(m));
+  }
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function normPhone(raw){
+    var d = String(raw||"").replace(/[^0-9]/g,"");
+    if(d.indexOf("880")===0) return d;
+    if(d.indexOf("0")===0) return "880"+d.slice(1);
+    return d;
+  }
+  var toastTimer = null;
+  function toast(msg){
+    var el = document.getElementById("toast");
+    el.textContent = msg; el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2400);
+  }
+  function uid(){ return "a"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+  /* ---------- elements ---------- */
+  var bizInput = document.getElementById("bizName");
+  var listBox = document.getElementById("listBox");
+  var viewDateInput = document.getElementById("viewDate");
+
+  bizInput.value = state.businessName || "";
+  document.getElementById("fDate").value = todayStr();
+  viewDateInput.value = viewDate;
+
+  /* ---------- stats ---------- */
+  function renderStats(){
+    var t = todayStr();
+    var todays = state.appointments.filter(function(a){ return a.date===t && a.status!=="cancelled"; });
+    var done = todays.filter(function(a){ return a.status==="done"; }).length;
+    document.getElementById("todayDateLabel").textContent = fmtDateBn(t);
+    document.getElementById("statTotal").textContent = toBn(todays.length);
+    document.getElementById("statDone").textContent = toBn(done);
+    document.getElementById("statPending").textContent = toBn(todays.length - done);
+  }
+
+  /* ---------- list ---------- */
+  function statusPill(st){
+    if(st==="done") return '<span class="status-pill done">✓ সম্পন্ন</span>';
+    if(st==="cancelled") return '<span class="status-pill cancelled">✕ বাতিল</span>';
+    return '<span class="status-pill pending">⏳ অপেক্ষমাণ</span>';
+  }
+  function waLink(phone, msg){
+    return "https://wa.me/"+normPhone(phone)+"?text="+encodeURIComponent(msg);
+  }
+  function bizName(){
+    return (state.businessName||"").trim() || "আমাদের প্রতিষ্ঠান";
+  }
+  function confirmMsg(a){
+    return "আসসালামু আলাইকুম "+a.name+",\n"+bizName()+" থেকে বলছি। আপনার অ্যাপয়েন্টমেন্ট নিশ্চিত করা হয়েছে ✅\n\nসার্ভিস: "+a.service+"\nতারিখ: "+fmtDateBn(a.date)+"\nসময়: "+fmtTimeBn(a.time)+"\n\nঅনুগ্রহ করে সময়মতো আসবেন। ধন্যবাদ!";
+  }
+  function remindMsg(a){
+    return "আসসালামু আলাইকুম "+a.name+",\n"+bizName()+" থেকে মনে করিয়ে দিচ্ছি 🔔\n\nআপনার অ্যাপয়েন্টমেন্ট:\nসার্ভিস: "+a.service+"\nতারিখ: "+fmtDateBn(a.date)+"\nসময়: "+fmtTimeBn(a.time)+"\n\nঅনুগ্রহ করে সময়মতো আসার চেষ্টা করবেন। কোনো সমস্যা থাকলে জানাবেন। ধন্যবাদ!";
+  }
+
+  function render(){
+    renderStats();
+    var target = viewMode==="today" ? todayStr() : viewDate;
+    var items = state.appointments.filter(function(a){ return a.date===target; });
+    items.sort(function(x,y){ return x.time < y.time ? -1 : x.time > y.time ? 1 : 0; });
+
+    document.getElementById("listTitle").textContent =
+      viewMode==="today" ? "আজকের তালিকা" : fmtDateBn(target);
+    document.getElementById("listCount").textContent =
+      items.length ? "মোট "+toBn(items.length)+"টি" : "";
+
+    if(!items.length){
+      listBox.innerHTML = '<div class="empty"><div class="big">🗓️</div><p><strong>কোনো অ্যাপয়েন্টমেন্ট নেই</strong>'+
+        (viewMode==="today" ? "আজকের জন্য এখনো কোনো বুকিং যোগ হয়নি। উপরের ফর্ম থেকে নতুন অ্যাপয়েন্টমেন্ট যোগ করুন।"
+                            : "এই তারিখে কোনো বুকিং নেই। অন্য তারিখ বেছে দেখুন, অথবা নতুন অ্যাপয়েন্টমেন্ট যোগ করুন।")+
+        '</p></div>';
+      return;
+    }
+    var html = "";
+    items.forEach(function(a){
+      var cls = a.status==="done" ? "appt done" : a.status==="cancelled" ? "appt cancelled" : "appt";
+      html += '<article class="'+cls+'" data-id="'+a.id+'">'
+        + '<div class="appt-top">'
+        +   '<div class="time-badge"><span class="t">'+esc(fmtTimeBn(a.time))+'</span><span class="d">'+esc(fmtDateBn(a.date).split(",")[0])+'</span></div>'
+        +   '<div class="appt-main">'
+        +     '<div class="appt-name">'+esc(a.name)+'</div>'
+        +     '<div class="appt-service">'+esc(a.service)+'</div>'
+        +     '<div class="appt-meta">📞 '+esc(toBn(a.phone))+(a.note ? '' : '')+'</div>'
+        +   '</div>'
+        +   statusPill(a.status)
+        + '</div>'
+        + (a.note ? '<div class="appt-note">📝 '+esc(a.note)+'</div>' : '')
+        + '<div class="appt-actions">'
+        +   '<a class="btn btn-sm btn-wa" target="_blank" rel="noopener" href="'+waLink(a.phone, confirmMsg(a))+'">💬 কনফার্ম পাঠান</a>'
+        +   '<a class="btn btn-sm btn-wa2" target="_blank" rel="noopener" href="'+waLink(a.phone, remindMsg(a))+'">🔔 রিমাইন্ডার</a>'
+        +   (a.status!=="done" && a.status!=="cancelled"
+              ? '<button type="button" class="btn btn-sm btn-done" data-act="done">✓ সম্পন্ন</button>'
+              + '<button type="button" class="btn btn-sm btn-cancel" data-act="cancel">✕ বাতিল</button>'
+              : '<button type="button" class="btn btn-sm btn-undo" data-act="pending">↩ আবার চালু করুন</button>')
+        +   '<button type="button" class="btn btn-sm btn-del" data-act="del">🗑️ মুছুন</button>'
+        + '</div></article>';
+    });
+    listBox.innerHTML = html;
+  }
+
+  listBox.addEventListener("click", function(e){
+    var btn = e.target.closest ? e.target.closest("[data-act]") : null;
+    if(!btn) return;
+    var card = btn.closest(".appt"); if(!card) return;
+    var id = card.getAttribute("data-id");
+    var act = btn.getAttribute("data-act");
+    var appt = null;
+    state.appointments.forEach(function(a){ if(a.id===id) appt=a; });
+    if(act==="del"){
+      state.appointments = state.appointments.filter(function(a){ return a.id!==id; });
+      save(); render(); toast("অ্যাপয়েন্টমেন্ট মোছা হয়েছে");
+      return;
+    }
+    if(!appt) return;
+    if(act==="done"){ appt.status="done"; toast("✓ সম্পন্ন হিসেবে চিহ্নিত হয়েছে"); }
+    if(act==="cancel"){ appt.status="cancelled"; toast("অ্যাপয়েন্টমেন্ট বাতিল করা হয়েছে"); }
+    if(act==="pending"){ appt.status="pending"; toast("আবার অপেক্ষমাণ করা হয়েছে"); }
+    save(); render();
+  });
+
+  /* ---------- tabs & date nav ---------- */
+  var tabToday = document.getElementById("tabToday");
+  var tabDate = document.getElementById("tabDate");
+  var dateRow = document.getElementById("dateRow");
+  function setMode(m){
+    viewMode = m;
+    tabToday.classList.toggle("active", m==="today");
+    tabDate.classList.toggle("active", m==="date");
+    dateRow.classList.toggle("show", m==="date");
+    render();
+  }
+  tabToday.addEventListener("click", function(){ setMode("today"); });
+  tabDate.addEventListener("click", function(){ setMode("date"); });
+  viewDateInput.addEventListener("change", function(){
+    if(viewDateInput.value){ viewDate = viewDateInput.value; render(); }
+  });
+  function shiftDay(n){
+    var p = viewDate.split("-");
+    var d = new Date(+p[0], +p[1]-1, +p[2]+n);
+    viewDate = d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+    viewDateInput.value = viewDate; render();
+  }
+  document.getElementById("prevDay").addEventListener("click", function(){ shiftDay(-1); });
+  document.getElementById("nextDay").addEventListener("click", function(){ shiftDay(1); });
+
+  /* ---------- settings ---------- */
+  document.getElementById("btnSaveBiz").addEventListener("click", function(){
+    state.businessName = bizInput.value.trim();
+    save();
+    var n = document.getElementById("bizSaved");
+    n.classList.add("show");
+    setTimeout(function(){ n.classList.remove("show"); }, 2000);
+    toast("প্রতিষ্ঠানের নাম সেভ হয়েছে");
+    render();
+  });
+
+  /* ---------- add form ---------- */
+  document.getElementById("apptForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("fName").value.trim();
+    var phone = document.getElementById("fPhone").value.trim();
+    var service = document.getElementById("fService").value.trim();
+    var date = document.getElementById("fDate").value;
+    var time = document.getElementById("fTime").value;
+    var note = document.getElementById("fNote").value.trim();
+    var err = document.getElementById("formErr");
+    if(!name || !phone || !service || !date || !time){
+      err.textContent = "⚠️ নাম, মোবাইল নম্বর, সার্ভিস, তারিখ আর সময় — সবগুলো ঘর পূরণ করুন।";
+      err.classList.add("show"); return;
+    }
+    if(normPhone(phone).length < 11){
+      err.textContent = "⚠️ সঠিক মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)।";
+      err.classList.add("show"); return;
+    }
+    err.classList.remove("show");
+    state.appointments.push({
+      id: uid(), name: name, phone: phone, service: service,
+      date: date, time: time, note: note, status: "pending",
+      createdAt: Date.now()
+    });
+    save();
+    // jump the list to the day that was just booked
+    if(date === todayStr()){ setMode("today"); }
+    else { viewDate = date; viewDateInput.value = date; setMode("date"); }
+    document.getElementById("fName").value = "";
+    document.getElementById("fPhone").value = "";
+    document.getElementById("fService").value = "";
+    document.getElementById("fNote").value = "";
+    toast("✅ অ্যাপয়েন্টমেন্ট যোগ হয়েছে");
+    render();
+  });
+
+  /* ---------- download self ---------- */
+  document.getElementById("btnDownload").addEventListener("click", function(){
+    var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "appointment-book-by-aeun.html";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    toast("📥 ফাইল ডাউনলোড হচ্ছে — appointment-book-by-aeun.html");
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
