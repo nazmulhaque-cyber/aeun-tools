@@ -6,13 +6,11 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:,">
 <title>CV Maker by AEUN — সহজে প্রফেশনাল সিভি বানান</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+  @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
 :root{
-  --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+  --navy:#0B1F3A; --blue:#1D6FF2; --teal:#1D6FF2; --amber:#1D6FF2;
   --bg:#F4F7FB; --card:#ffffff; --ink:#0B1F3A; --body:#334155; --muted:#64748B;
   --line:#E2E8F0; --input:#ffffff; --soft:#EEF4FF; --danger:#DC2626;
   --radius:14px;
@@ -148,8 +146,23 @@ input[type="file"]{display:none}
   .cv-foot{display:none}
 }
 </style>
+
+<meta name="description" content="সুন্দর আর পরিষ্কার সিভি বানানোর ফ্রি টুল।">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="manifest" href="aeun-cv-maker-manifest.webmanifest">
+<link rel="apple-touch-icon" href="aeun-icon-192.png">
+<style id="aeun-platform">
+.aeun-bar{position:relative;z-index:60;background:#081627;color:#C7D6EA;font-family:'Bornomala',sans-serif;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font-size:.86rem}
+.aeun-bar a{color:#fff;text-decoration:none;font-weight:700;min-height:32px;display:inline-flex;align-items:center}
+.aeun-bar .aeun-brand{letter-spacing:.22em;font-weight:700;color:#9CC2FF;font-size:.78rem}
+.aeun-foot{font-family:'Bornomala',sans-serif;text-align:center;color:#64748B;font-size:.82rem;padding:22px 16px 30px;line-height:1.7}
+.aeun-foot a{color:#1D6FF2;text-decoration:none;font-weight:700}
+.dl-btn{color:#fff !important}
+.brand h1 .en{color:#9CC2FF !important}
+</style>
 </head>
 <body data-view="form">
+<nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
 
 <header class="topbar">
   <div class="wrap">
@@ -580,5 +593,7 @@ fillForm();
 renderCV();
 })();
 </script>
+<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 </body>
 </html>

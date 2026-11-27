@@ -1,0 +1,1169 @@
+<!doctype html>
+<!--
+  Order Bot by AEUN — অর্ডার ম্যানেজমেন্ট অ্যাপ (একটিমাত্র HTML ফাইল)
+  ─────────────────────────────────────────────────────────────────
+  • সব ডেটা ব্যবহারকারীর নিজের ব্রাউজারের localStorage-এ থাকে — কোনো সার্ভার নেই।
+  • এই অ্যাপ WhatsApp-এ নিজে নিজে মেসেজ পাঠায় না। এটি মেসেজ তৈরি করে wa.me লিংকে
+    খুলে দেয় — পাঠানোর আগে আপনি নিজে দেখে এক ট্যাপে পাঠাতে পারেন।
+  • PWA / Android অ্যাপ বানাতে চাইলে: এই ফাইলটি হোস্ট করে (GitHub Pages / Netlify)
+    PWABuilder (pwabuilder.com) দিয়ে wrap করলেই APK/AAB তৈরি করা যাবে।
+    নিচে theme-color ও Apple touch মেটা ট্যাগ সেই জন্যই দেওয়া আছে।
+-->
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0B1F3A" />
+    <meta name="description" content="Order Bot by AEUN — ফেসবুক ও WhatsApp বিক্রেতাদের জন্য বাংলা অর্ডার ম্যানেজমেন্ট অ্যাপ। অর্ডার নিন, স্ট্যাটাস রাখুন, এক ট্যাপে WhatsApp মেসেজ পাঠান।" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Order Bot" />
+    <link rel="icon" href="data:," />
+    <title>Order Bot by AEUN — অর্ডার ম্যানেজমেন্ট অ্যাপ</title>
+    <style>
+      @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+      :root{
+        --navy:#0B1F3A; --blue:#1D6FF2; --blue-dark:#1559C7;
+        --bg:#F4F7FB; --card:#FFFFFF; --text:#334155; --heading:#0B1F3A;
+        --muted:#64748B; --border:#DCE4EE; --input-bg:#FFFFFF;
+        --soft:#EAF1FA; --danger:#DC2626; --wa:#1FA855; --wa-dark:#178A44;
+        --amber:#B45309; --amber-bg:#FFF7E0;
+        --st-new:#1D6FF2; --st-conf:#7C3AED; --st-del:#D97706; --st-done:#178A44; --st-cancel:#DC2626;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#071426; --card:#0E2440; --text:#D7E1EE; --heading:#F1F5F9;
+          --muted:#94A7BD; --border:#1E3A5C; --input-bg:#0B1F3A; --soft:#123058;
+          --amber-bg:#3A2E0B;
+        }
+      }
+      *{ box-sizing:border-box; }
+      html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+      body{
+        margin:0; background:var(--bg); color:var(--text);
+        font-family:"Bornomala","Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+        font-size:16px; line-height:1.55;
+      }
+      button, input, textarea, select{ font-family:inherit; font-size:1rem; color:inherit; }
+      button{ cursor:pointer; }
+      :focus-visible{ outline:3px solid var(--blue); outline-offset:2px; }
+
+      .topbar{ background:var(--navy); color:#fff; padding:18px 16px 20px; }
+      .topbar-inner{ max-width:1080px; margin:0 auto; }
+      .topbar h1{ margin:0; font-size:1.55rem; font-weight:700; letter-spacing:.2px; }
+      .topbar h1 .accent{ color:#5EA3FF; }
+      .brand-line{ color:#FFB020; font-weight:700; letter-spacing:.22em; font-size:.78rem; margin-top:2px; }
+      .topbar p{ margin:6px 0 0; color:#B9CBE2; font-size:.95rem; max-width:640px; }
+      .topbar .honest{
+        margin-top:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+        border-radius:10px; padding:10px 12px; font-size:.9rem; color:#DCE8F7; max-width:640px;
+      }
+      .topbar .honest b{ color:#fff; }
+
+      .navchips{
+        position:sticky; top:0; z-index:20; background:var(--navy);
+        padding:0 12px 12px;
+      }
+      .navchips-inner{ max-width:1080px; margin:0 auto; display:flex; gap:8px; flex-wrap:wrap; }
+      .navchips a{
+        color:#fff; text-decoration:none; font-weight:600; font-size:.92rem;
+        background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.16);
+        padding:9px 14px; border-radius:999px; min-height:38px; display:inline-flex; align-items:center;
+      }
+      .navchips a:active{ background:rgba(255,255,255,.25); }
+
+      .wrap{ max-width:1080px; margin:0 auto; padding:16px 14px 48px; }
+
+      .card{
+        background:var(--card); border:1px solid var(--border);
+        border-radius:14px; padding:18px; margin-bottom:18px;
+        scroll-margin-top:70px;
+      }
+      .card h2{ margin:0 0 4px; font-size:1.2rem; color:var(--heading); font-weight:700; }
+      .card .hint{ margin:0 0 14px; color:var(--muted); font-size:.92rem; }
+
+      .dl-card{ border:2px solid #FFB020; }
+      .dl-steps{ margin:10px 0 0; padding-left:20px; color:var(--muted); font-size:.93rem; }
+      .dl-steps li{ margin:3px 0; }
+
+      /* Dashboard */
+      .stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      @media (min-width:720px){ .stats{ grid-template-columns:repeat(4,1fr); } }
+      .stat{
+        background:var(--soft); border-radius:12px; padding:14px 15px;
+      }
+      .stat .num{ font-size:1.65rem; font-weight:700; color:var(--heading); line-height:1.2; }
+      .stat .lbl{ color:var(--muted); font-size:.9rem; margin-top:2px; }
+      .stat.blue .num{ color:var(--blue); }
+      .stat.green .num{ color:var(--st-done); }
+      .stat.amber .num{ color:var(--st-del); }
+
+      label{ display:block; font-weight:600; font-size:.93rem; margin:0 0 5px; color:var(--heading); }
+      .field{ margin-bottom:13px; }
+      input[type="text"], input[type="tel"], input[type="number"], input[type="search"], textarea, select{
+        width:100%; min-height:46px; padding:10px 12px;
+        border:1.5px solid var(--border); border-radius:10px; background:var(--input-bg);
+      }
+      textarea{ min-height:64px; resize:vertical; }
+      textarea.tpl{ min-height:170px; font-size:.95rem; line-height:1.6; }
+      input:focus, textarea:focus, select:focus{ border-color:var(--blue); outline:none; box-shadow:0 0 0 3px rgba(29,111,242,.18); }
+      .grid2{ display:grid; grid-template-columns:1fr; gap:0 14px; }
+      @media (min-width:640px){ .grid2{ grid-template-columns:1fr 1fr; } }
+      .grid3{ display:grid; grid-template-columns:1fr; gap:0 14px; }
+      @media (min-width:640px){ .grid3{ grid-template-columns:1fr 1fr 1fr; } }
+
+      .btn{
+        display:inline-flex; align-items:center; justify-content:center; gap:8px;
+        min-height:48px; padding:10px 18px; border:none; border-radius:11px;
+        font-weight:700; font-size:1rem; text-decoration:none;
+      }
+      .btn-blue{ background:var(--blue); color:#fff; }
+      .btn-blue:active{ background:var(--blue-dark); }
+      .btn-amber{ background:#FFB020; color:#3A2700; }
+      .btn-wa{ background:var(--wa); color:#fff; }
+      .btn-wa:active{ background:var(--wa-dark); }
+      .btn-ghost{ background:var(--soft); color:var(--heading); border:1px solid var(--border); }
+      .btn-danger{ background:var(--danger); color:#fff; }
+      .btn-danger-ghost{ background:transparent; color:var(--danger); border:1.5px solid var(--danger); }
+      .btn-sm{ min-height:40px; padding:7px 13px; font-size:.92rem; border-radius:9px; }
+      .btn:active{ transform:translateY(1px); }
+      .btn-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+      .btn-row .btn{ flex:1 1 150px; }
+
+      .status-line{ font-size:.92rem; margin-top:10px; min-height:1.3em; color:var(--st-done); font-weight:600; }
+      .warn{
+        background:var(--amber-bg); border:1px solid #FFB020; color:var(--heading);
+        border-radius:10px; padding:10px 12px; font-size:.93rem; margin-bottom:14px; display:none;
+      }
+
+      /* Item rows */
+      .item-row{
+        display:grid; grid-template-columns:minmax(0,1fr) 62px 92px 40px; gap:8px; align-items:end;
+        margin-bottom:10px;
+      }
+      .item-row .lbl{ font-size:.8rem; font-weight:600; color:var(--muted); margin-bottom:3px; display:block; }
+      .item-row input{ min-height:44px; padding:8px 9px; }
+      .rm-btn{
+        width:40px; height:44px; border-radius:9px; border:1.5px solid var(--border);
+        background:var(--soft); color:var(--danger); font-size:1.15rem; font-weight:700; line-height:1;
+      }
+      .line-total{ font-size:.85rem; color:var(--muted); grid-column:1 / -1; margin-top:-4px; }
+
+      .totals-box{ background:var(--soft); border-radius:11px; padding:13px 15px; margin-top:6px; }
+      .totals-box .trow{ display:flex; justify-content:space-between; gap:10px; padding:3px 0; font-size:1rem; }
+      .totals-box .trow.grand{ font-weight:700; font-size:1.13rem; color:var(--heading); border-top:1px dashed var(--border); margin-top:6px; padding-top:9px; }
+      .totals-box .trow.due{ font-weight:700; color:var(--danger); }
+
+      .radio-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:13px; }
+      .radio-chip{
+        display:inline-flex; align-items:center; gap:7px; min-height:44px;
+        border:1.5px solid var(--border); border-radius:999px; padding:8px 14px;
+        font-weight:600; font-size:.94rem; cursor:pointer; background:var(--input-bg);
+      }
+      .radio-chip input{ accent-color:var(--blue); width:18px; height:18px; margin:0; }
+      .radio-chip:has(input:checked){ border-color:var(--blue); background:var(--soft); color:var(--heading); }
+
+      /* Orders */
+      .toolbar{ display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:14px; }
+      @media (min-width:640px){ .toolbar{ grid-template-columns:1fr 220px; } }
+      .filter-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+      .fchip{
+        min-height:40px; padding:7px 14px; border-radius:999px; font-weight:600; font-size:.92rem;
+        border:1.5px solid var(--border); background:var(--card); color:var(--text);
+      }
+      .fchip.on{ background:var(--navy); color:#fff; border-color:var(--navy); }
+      @media (prefers-color-scheme: dark){ .fchip.on{ background:var(--blue); border-color:var(--blue); } }
+
+      .order-card{
+        border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px;
+        background:var(--card);
+      }
+      .order-head{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+      .order-head .who{ font-weight:700; color:var(--heading); font-size:1.05rem; }
+      .order-head .amt{ font-weight:700; color:var(--blue); white-space:nowrap; font-size:1.05rem; }
+      .order-sub{ color:var(--muted); font-size:.88rem; margin-top:2px; }
+      .order-items{ font-size:.93rem; margin-top:8px; white-space:pre-line; }
+      .order-note{ font-size:.9rem; color:var(--muted); margin-top:6px; white-space:pre-line; }
+      .badge{
+        display:inline-block; font-size:.8rem; font-weight:700; padding:3px 10px;
+        border-radius:999px; color:#fff; vertical-align:middle;
+      }
+      .badge.new{ background:var(--st-new); }
+      .badge.confirmed{ background:var(--st-conf); }
+      .badge.delivering{ background:var(--st-del); }
+      .badge.done{ background:var(--st-done); }
+      .badge.cancelled{ background:var(--st-cancel); }
+      .order-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+      .order-actions .btn{ min-height:42px; }
+      .order-status-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
+      .order-status-row label{ margin:0; font-size:.88rem; }
+      .order-status-row select{ width:auto; min-height:42px; flex:1 1 170px; }
+      .empty-state{
+        text-align:center; color:var(--muted); padding:26px 12px; font-size:.97rem;
+        border:1.5px dashed var(--border); border-radius:12px;
+      }
+
+      .ph-list{ font-size:.9rem; color:var(--muted); margin:0 0 12px; padding-left:18px; }
+      .ph-list li{ margin:2px 0; }
+      .ph-list code{
+        background:var(--soft); color:var(--heading); padding:1px 7px; border-radius:6px;
+        font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.88em;
+      }
+      .tpl-block{ border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px; }
+      .tpl-block h3{ margin:0 0 4px; font-size:1.02rem; color:var(--heading); }
+      .tpl-block p{ margin:0 0 10px; color:var(--muted); font-size:.9rem; }
+
+      .help-list{ margin:0; padding-left:20px; font-size:.95rem; }
+      .help-list li{ margin:6px 0; }
+
+      /* Modal */
+      .modal-back{
+        position:fixed; inset:0; background:rgba(4,15,30,.55); display:none;
+        align-items:center; justify-content:center; padding:18px; z-index:50;
+      }
+      .modal-back.open{ display:flex; }
+      .modal{ background:var(--card); color:var(--text); border-radius:14px; padding:20px; max-width:400px; width:100%; }
+      .modal h3{ margin:0 0 8px; color:var(--heading); font-size:1.1rem; }
+      .modal p{ margin:0 0 16px; color:var(--muted); font-size:.94rem; }
+
+      .toast{
+        position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(80px);
+        background:var(--navy); color:#fff; padding:12px 20px; border-radius:999px;
+        font-weight:600; font-size:.95rem; opacity:0; transition:all .25s ease; z-index:60;
+        max-width:92vw; text-align:center; pointer-events:none;
+      }
+      .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+      .editing-banner{
+        display:none; background:var(--amber-bg); border:1px solid #FFB020; color:var(--heading);
+        border-radius:10px; padding:10px 12px; font-size:.93rem; margin-bottom:14px;
+      }
+      @media (prefers-reduced-motion: reduce){
+        .toast{ transition:none; } .btn:active{ transform:none; } html{ scroll-behavior:auto; }
+      }
+    </style>
+  
+<link rel="manifest" href="aeun-order-bot-manifest.webmanifest">
+<link rel="apple-touch-icon" href="aeun-icon-192.png">
+<style id="aeun-platform">
+.aeun-bar{position:relative;z-index:60;background:#081627;color:#C7D6EA;font-family:'Bornomala',sans-serif;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font-size:.86rem}
+.aeun-bar a{color:#fff;text-decoration:none;font-weight:700;min-height:32px;display:inline-flex;align-items:center}
+.aeun-bar .aeun-brand{letter-spacing:.22em;font-weight:700;color:#9CC2FF;font-size:.78rem}
+.aeun-foot{font-family:'Bornomala',sans-serif;text-align:center;color:#64748B;font-size:.82rem;padding:22px 16px 30px;line-height:1.7}
+.aeun-foot a{color:#1D6FF2;text-decoration:none;font-weight:700}
+</style>
+</head>
+  <body>
+<nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1>Order <span class="accent">Bot</span></h1>
+        <div class="brand-line">BY AEUN</div>
+        <p>ফেসবুক ও WhatsApp বিক্রেতাদের জন্য অর্ডার রাখার সহজ বাংলা অ্যাপ — অর্ডার নিন, স্ট্যাটাস গুছিয়ে রাখুন, আর এক ট্যাপে ক্রেতাকে WhatsApp মেসেজ পাঠান।</p>
+        <div class="honest"><b>সোজা কথা:</b> এই অ্যাপ নিজে নিজে WhatsApp-এ মেসেজ পাঠায় না বা অটো-রিপ্লাই দেয় না। এটি মেসেজ তৈরি করে WhatsApp-এ খুলে দেয় — আপনি দেখে এক ট্যাপে পাঠিয়ে দিলেই হবে।</div>
+      </div>
+    </header>
+    <nav class="navchips" aria-label="বিভাগসমূহ">
+      <div class="navchips-inner">
+        <a href="#dashboard">ড্যাশবোর্ড</a>
+        <a href="#new-order">নতুন অর্ডার</a>
+        <a href="#orders">অর্ডারসমূহ</a>
+        <a href="#shop">দোকানের তথ্য</a>
+        <a href="#templates">মেসেজ টেমপ্লেট</a>
+        <a href="#data">ব্যাকআপ</a>
+      </div>
+    </nav>
+
+    <main class="wrap">
+
+      <!-- Download -->
+      <section class="card dl-card" aria-labelledby="dl-h">
+        <h2 id="dl-h">অ্যাপটি ডাউনলোড করুন</h2>
+        <p class="hint" style="margin-bottom:10px;">নিচের বোতামে চাপ দিলে পুরো অ্যাপটা একটা মাত্র HTML ফাইল হিসেবে ডাউনলোড হবে। ফাইলটা ফোনে/কম্পিউটারে রেখে সরাসরি খুললেই চলবে — ইন্টারনেট ছাড়াও অর্ডার রাখা যাবে।</p>
+        <button class="btn btn-amber" id="btnDownloadApp" type="button">অ্যাপটি ডাউনলোড করুন (HTML ফাইল)</button>
+        <ol class="dl-steps">
+          <li>ফোনে হোম স্ক্রিনে রাখতে চাইলে ফাইলটা GitHub Pages বা Netlify-তে আপলোড করে PWABuilder দিয়ে Android অ্যাপও বানানো যাবে।</li>
+          <li>সব অর্ডার আর তথ্য প্রত্যেক ব্যবহারকারীর নিজের ব্রাউজারেই সেভ থাকে — একজনের তথ্য আরেকজন দেখতে পায় না।</li>
+        </ol>
+      </section>
+
+      <!-- Dashboard -->
+      <section class="card" id="dashboard" aria-labelledby="dash-h">
+        <h2 id="dash-h">আজকের হিসাব</h2>
+        <p class="hint" id="dashDate">—</p>
+        <div class="stats">
+          <div class="stat blue">
+            <div class="num" id="statToday">০</div>
+            <div class="lbl">আজকের অর্ডার</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="statSales">৳০</div>
+            <div class="lbl">মোট বিক্রি (বাতিল বাদে)</div>
+          </div>
+          <div class="stat amber">
+            <div class="num" id="statPending">০</div>
+            <div class="lbl">অপেক্ষমাণ (নতুন + কনফার্ম)</div>
+          </div>
+          <div class="stat green">
+            <div class="num" id="statDone">০</div>
+            <div class="lbl">সম্পন্ন ডেলিভারি</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shop profile -->
+      <section class="card" id="shop" aria-labelledby="shop-h">
+        <h2 id="shop-h">দোকানের তথ্য</h2>
+        <p class="hint">একবার লিখে সেভ করুন — WhatsApp মেসেজে আর হিসাবে এই তথ্য নিজে নিজে বসে যাবে।</p>
+        <div class="grid2">
+          <div class="field">
+            <label for="shopName">দোকানের নাম *</label>
+            <input type="text" id="shopName" placeholder="যেমন: রহিম ফ্যাশন হাউস" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="shopWhatsApp">আপনার WhatsApp নম্বর</label>
+            <input type="tel" id="shopWhatsApp" placeholder="যেমন: 01XXXXXXXXX" autocomplete="tel" />
+          </div>
+        </div>
+        <div class="grid3">
+          <div class="field">
+            <label for="shopBkash">বিকাশ নম্বর (অগ্রিম নেওয়ার জন্য)</label>
+            <input type="tel" id="shopBkash" placeholder="যেমন: 01XXXXXXXXX" />
+          </div>
+          <div class="field">
+            <label for="chargeInside">ডেলিভারি চার্জ — ঢাকার ভিতরে (৳)</label>
+            <input type="number" id="chargeInside" inputmode="numeric" min="0" placeholder="যেমন: ৬০" />
+          </div>
+          <div class="field">
+            <label for="chargeOutside">ডেলিভারি চার্জ — ঢাকার বাইরে (৳)</label>
+            <input type="number" id="chargeOutside" inputmode="numeric" min="0" placeholder="যেমন: ১২০" />
+          </div>
+        </div>
+        <button class="btn btn-blue" id="btnSaveShop" type="button">দোকানের তথ্য সেভ করুন</button>
+        <div class="status-line" id="shopStatus" role="status"></div>
+      </section>
+
+      <!-- New order -->
+      <section class="card" id="new-order" aria-labelledby="order-h">
+        <h2 id="order-h">নতুন অর্ডার</h2>
+        <p class="hint">ক্রেতার তথ্য আর পণ্য লিখুন — মোট হিসাব নিচে নিজে নিজে তৈরি হয়ে যাবে।</p>
+        <div class="warn" id="shopWarn">দোকানের তথ্য এখনো সেভ করা হয়নি — WhatsApp মেসেজে দোকানের নাম আর বিকাশ নম্বর আসবে না। আগে উপরে “দোকানের তথ্য” সেভ করুন।</div>
+        <div class="editing-banner" id="editBanner">আপনি একটি আগের অর্ডার বদলাচ্ছেন (অর্ডার নং: <b id="editNo">—</b>)। বদল শেষে “অর্ডার আপডেট করুন” চাপুন, অথবা <button type="button" id="btnCancelEdit" style="background:none;border:none;color:var(--blue);font-weight:700;text-decoration:underline;min-height:36px;padding:4px 6px;">বাতিল করে নতুন অর্ডার শুরু করুন</button></div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="custName">ক্রেতার নাম *</label>
+            <input type="text" id="custName" placeholder="যেমন: করিম উদ্দিন" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="custPhone">ক্রেতার ফোন / WhatsApp নম্বর *</label>
+            <input type="tel" id="custPhone" placeholder="যেমন: 01XXXXXXXXX" autocomplete="tel" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="custAddress">ক্রেতার ঠিকানা</label>
+          <textarea id="custAddress" placeholder="যেমন: বাড়ি ১২, রোড ৩, ধানমন্ডি, ঢাকা"></textarea>
+        </div>
+
+        <label style="margin-top:4px;">পণ্যের তালিকা</label>
+        <div id="itemsBox"></div>
+        <button class="btn btn-ghost btn-sm" id="btnAddItem" type="button">+ আরেকটা পণ্য যোগ করুন</button>
+
+        <label style="margin-top:16px;">ডেলিভারি চার্জ</label>
+        <div class="radio-row" role="radiogroup" aria-label="ডেলিভারি চার্জের ধরন">
+          <label class="radio-chip"><input type="radio" name="delType" value="inside" checked /> ঢাকার ভিতরে (<span id="lblInside">৳০</span>)</label>
+          <label class="radio-chip"><input type="radio" name="delType" value="outside" /> ঢাকার বাইরে (<span id="lblOutside">৳০</span>)</label>
+          <label class="radio-chip"><input type="radio" name="delType" value="custom" /> নিজে লিখব</label>
+          <label class="radio-chip"><input type="radio" name="delType" value="free" /> ফ্রি ডেলিভারি</label>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="deliveryCharge">ডেলিভারি চার্জ (৳)</label>
+            <input type="number" id="deliveryCharge" inputmode="numeric" min="0" placeholder="০" />
+          </div>
+          <div class="field">
+            <label for="advancePaid">অগ্রিম পেয়েছেন (৳)</label>
+            <input type="number" id="advancePaid" inputmode="numeric" min="0" placeholder="০" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="orderNotes">নোট (যদি থাকে)</label>
+          <textarea id="orderNotes" placeholder="যেমন: লাল রঙেরটা, সাইজ XL, সন্ধ্যায় ডেলিভারি দিতে হবে"></textarea>
+        </div>
+
+        <div class="totals-box" aria-live="polite">
+          <div class="trow"><span>পণ্যের মোট</span><span id="tSubtotal">৳০</span></div>
+          <div class="trow"><span>ডেলিভারি চার্জ</span><span id="tDelivery">৳০</span></div>
+          <div class="trow grand"><span>সর্বমোট</span><span id="tGrand">৳০</span></div>
+          <div class="trow"><span>অগ্রিম পেয়েছেন</span><span id="tAdvance">৳০</span></div>
+          <div class="trow due"><span>বাকি (ডেলিভারির সময় দেবেন)</span><span id="tDue">৳০</span></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-blue" id="btnSaveOrder" type="button">অর্ডার সেভ করুন</button>
+          <button class="btn btn-ghost" id="btnResetForm" type="button">ফর্ম খালি করুন</button>
+        </div>
+        <div class="status-line" id="orderStatus" role="status"></div>
+      </section>
+
+      <!-- Orders list -->
+      <section class="card" id="orders" aria-labelledby="orders-h">
+        <h2 id="orders-h">অর্ডারসমূহ</h2>
+        <p class="hint">স্ট্যাটাস ধাপ: <b>নতুন → কনফার্ম → ডেলিভারিতে → সম্পন্ন</b> (অথবা বাতিল)। প্রতিটা অর্ডার থেকে এক ট্যাপে ক্রেতাকে WhatsApp মেসেজ পাঠানো যায় — মেসেজটা WhatsApp-এ খুলবে, আপনি দেখে পাঠিয়ে দিলেই হবে।</p>
+        <div class="toolbar">
+          <div>
+            <label for="searchBox" style="margin-bottom:4px;">নাম বা ফোন নম্বর দিয়ে খুঁজুন</label>
+            <input type="search" id="searchBox" placeholder="যেমন: করিম অথবা 017…" />
+          </div>
+          <div>
+            <label for="sortBox" style="margin-bottom:4px;">সাজানো</label>
+            <select id="sortBox">
+              <option value="newest">নতুন আগে</option>
+              <option value="oldest">পুরোনো আগে</option>
+              <option value="amount">টাকার পরিমাণ (বেশি আগে)</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-chips" id="filterChips" role="group" aria-label="স্ট্যাটাস অনুযায়ী ছাঁকুন"></div>
+        <div id="ordersBox"></div>
+      </section>
+
+      <!-- Templates -->
+      <section class="card" id="templates" aria-labelledby="tpl-h">
+        <h2 id="tpl-h">মেসেজ টেমপ্লেট</h2>
+        <p class="hint">WhatsApp মেসেজের লেখা নিজের মতো বদলে সেভ করুন। মেসেজ পাঠানোর সময় নিচের চিহ্নগুলো আসল তথ্য দিয়ে নিজে নিজে বদলে যাবে:</p>
+        <ul class="ph-list">
+          <li><code>{name}</code> — ক্রেতার নাম</li>
+          <li><code>{shop}</code> — আপনার দোকানের নাম</li>
+          <li><code>{order_no}</code> — অর্ডার নম্বর</li>
+          <li><code>{items}</code> — পণ্যের তালিকা</li>
+          <li><code>{subtotal}</code> — পণ্যের মোট টাকা</li>
+          <li><code>{delivery}</code> — ডেলিভারি চার্জ</li>
+          <li><code>{total}</code> — সর্বমোট টাকা</li>
+          <li><code>{advance}</code> — অগ্রিম পাওয়া টাকা</li>
+          <li><code>{due}</code> — বাকি টাকা</li>
+          <li><code>{bkash}</code> — আপনার বিকাশ নম্বর</li>
+          <li><code>{address}</code> — ক্রেতার ঠিকানা</li>
+        </ul>
+
+        <div class="tpl-block">
+          <h3>১) অর্ডার কনফার্মেশন মেসেজ</h3>
+          <p>নতুন অর্ডার এলে পাঠান — এতে ডেলিভারি চার্জ অগ্রিম চাওয়া থাকে, যাতে ভুয়া ক্যাশ-অন-ডেলিভারি অর্ডার কমে।</p>
+          <textarea class="tpl" id="tplConfirm" aria-label="কনফার্মেশন মেসেজ টেমপ্লেট"></textarea>
+        </div>
+        <div class="tpl-block">
+          <h3>২) ডেলিভারিতে পাঠানোর মেসেজ</h3>
+          <p>পণ্য কুরিয়ারে/ডেলিভারিতে দিলে পাঠান।</p>
+          <textarea class="tpl" id="tplDelivery" aria-label="ডেলিভারি মেসেজ টেমপ্লেট"></textarea>
+        </div>
+        <div class="tpl-block">
+          <h3>৩) ডেলিভারি সম্পন্ন — ধন্যবাদ মেসেজ</h3>
+          <p>ক্রেতা পণ্য হাতে পেলে পাঠান।</p>
+          <textarea class="tpl" id="tplDone" aria-label="ধন্যবাদ মেসেজ টেমপ্লেট"></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-blue" id="btnSaveTpl" type="button">টেমপ্লেট সেভ করুন</button>
+          <button class="btn btn-ghost" id="btnResetTpl" type="button">আগের মতো ফিরিয়ে আনুন</button>
+        </div>
+        <div class="status-line" id="tplStatus" role="status"></div>
+      </section>
+
+      <!-- Help -->
+      <section class="card" aria-labelledby="help-h">
+        <h2 id="help-h">কীভাবে কাজ করে</h2>
+        <ul class="help-list">
+          <li><b>অর্ডার নেওয়া:</b> ফেসবুক পেজ বা WhatsApp-এ অর্ডার এলে এখানে “নতুন অর্ডার”-এ তথ্য তুলে সেভ করুন।</li>
+          <li><b>কনফার্ম করা:</b> অর্ডারের নিচে সবুজ WhatsApp বোতামে চাপ দিলে তৈরি মেসেজসহ WhatsApp খুলে যাবে — ক্রেতার নম্বরেই। আপনি মেসেজটা দেখে পাঠিয়ে দিন। এই অ্যাপ নিজে থেকে কোনো মেসেজ পাঠায় না।</li>
+          <li><b>ভুয়া অর্ডার কমানো:</b> কনফার্মেশন মেসেজে ডেলিভারি চার্জটা বিকাশে অগ্রিম পাঠাতে বলা থাকে। অগ্রিম পেলে স্ট্যাটাস “কনফার্ম” করে দিন।</li>
+          <li><b>ডেলিভারি:</b> পণ্য পাঠালে স্ট্যাটাস “ডেলিভারিতে” করুন আর ডেলিভারি মেসেজটা পাঠান। পৌঁছালে “সম্পন্ন” করে ধন্যবাদ মেসেজ পাঠান।</li>
+          <li><b>ডেটা:</b> সব তথ্য এই ফোন/ব্রাউজারেই থাকে। ব্রাউজার বদলালে বা ডেটা মুছলে অর্ডার হারিয়ে যাবে — তাই মাঝে মাঝে নিচে থেকে ব্যাকআপ (JSON) নামিয়ে রাখুন।</li>
+        </ul>
+      </section>
+
+      <!-- Data -->
+      <section class="card" id="data" aria-labelledby="data-h">
+        <h2 id="data-h">ব্যাকআপ ও ডেটা</h2>
+        <p class="hint">ব্যাকআপ ফাইলে দোকানের তথ্য, সব অর্ডার আর টেমপ্লেট থাকে। নতুন ফোনে/ব্রাউজারে গিয়ে এই ফাইলটা ইমপোর্ট করলেই সব ফিরে আসবে।</p>
+        <div class="btn-row">
+          <button class="btn btn-blue" id="btnExport" type="button">ব্যাকআপ ডাউনলোড করুন (JSON)</button>
+          <button class="btn btn-ghost" id="btnImport" type="button">ব্যাকআপ ইমপোর্ট করুন</button>
+          <input type="file" id="importFile" accept="application/json,.json" style="display:none;" />
+        </div>
+        <div class="status-line" id="dataStatus" role="status"></div>
+        <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;" />
+        <h3 style="margin:0 0 4px; color:var(--heading); font-size:1.02rem;">সব ডেটা মুছে ফেলুন</h3>
+        <p class="hint">দোকানের তথ্য, সব অর্ডার আর টেমপ্লেট — সব মুছে যাবে। এই কাজ ফেরানো যাবে না। মুছার আগে চাইলে আগে ব্যাকআপ নামিয়ে রাখুন।</p>
+        <button class="btn btn-danger-ghost" id="btnClearAll" type="button">সব ডেটা মুছে ফেলুন</button>
+      </section>
+
+      <p style="text-align:center; color:var(--muted); font-size:.85rem; margin:6px 0 0;">Order Bot by AEUN · AI Engineering &amp; Utility Network</p>
+    </main>
+
+    <!-- Confirm modal -->
+    <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal">
+        <h3 id="modalTitle">নিশ্চিত তো?</h3>
+        <p id="modalText">এই কাজটা করবেন?</p>
+        <div class="btn-row" style="margin-top:0;">
+          <button class="btn btn-ghost" id="btnModalCancel" type="button">না, থাক</button>
+          <button class="btn btn-danger" id="btnModalOk" type="button">হ্যাঁ, করুন</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+      (function(){
+        "use strict";
+        var LS_SHOP = "aeun_orderbot_shop_v1";
+        var LS_ORDERS = "aeun_orderbot_orders_v1";
+        var LS_TPL = "aeun_orderbot_templates_v1";
+        var LS_COUNTER = "aeun_orderbot_counter_v1";
+        var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+
+        var STATUSES = [
+          { id:"new",        label:"নতুন" },
+          { id:"confirmed",  label:"কনফার্ম" },
+          { id:"delivering", label:"ডেলিভারিতে" },
+          { id:"done",       label:"সম্পন্ন" },
+          { id:"cancelled",  label:"বাতিল" }
+        ];
+        function statusLabel(id){
+          for (var i=0;i<STATUSES.length;i++) if (STATUSES[i].id===id) return STATUSES[i].label;
+          return "নতুন";
+        }
+
+        var DEFAULT_TPL = {
+          confirm:
+"আসসালামু আলাইকুম {name},\n{shop} থেকে আপনার অর্ডারটি পেয়েছি ✅\n\nঅর্ডার নং: {order_no}\n{items}\n\nপণ্যের মোট: {subtotal}\nডেলিভারি চার্জ: {delivery}\nসর্বমোট: {total}\nবাকি থাকবে: {due}\n\nঅর্ডারটি নিশ্চিত করতে অনুগ্রহ করে ডেলিভারি চার্জ {delivery} বিকাশে অগ্রিম পাঠিয়ে দিন 🙏\nবিকাশ নম্বর: {bkash}\nটাকা পাঠিয়ে এই চ্যাটে জানিয়ে দিলেই অর্ডারটি কনফার্ম হয়ে যাবে।\n\nধন্যবাদ! — {shop}",
+          delivery:
+"আসসালামু আলাইকুম {name},\nআপনার অর্ডারটি (অর্ডার নং: {order_no}) ডেলিভারিতে পাঠানো হয়েছে 🚚\n\n{items}\n\nসর্বমোট: {total}\nঅগ্রিম পেয়েছি: {advance}\nবাকি (ডেলিভারির সময় দেবেন): {due}\n\nপণ্য হাতে পেলে অনুগ্রহ করে জানাবেন।\nধন্যবাদ! — {shop}",
+          done:
+"আসসালামু আলাইকুম {name},\nআপনার অর্ডারটি (অর্ডার নং: {order_no}) সফলভাবে ডেলিভারি হয়েছে ✅\n\n{shop} থেকে কেনাকাটার জন্য আন্তরিক ধন্যবাদ! পণ্যটা ভালো লাগলে পেজে একটা রিভিউ দিলে খুশি হব। আবার কিছু দরকার হলে জানাবেন।"
+        };
+
+        function $(id){ return document.getElementById(id); }
+        function toBn(str){ return String(str).replace(/[0-9]/g, function(d){ return BN[+d]; }); }
+        function money(n){
+          n = Math.round(Number(n) || 0);
+          return "৳" + toBn(n.toLocaleString("en-IN"));
+        }
+        function num(v){ var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+        function esc(s){
+          return String(s == null ? "" : s)
+            .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+        }
+        function loadJSON(key, fallback){
+          try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+          catch(e){ return fallback; }
+        }
+        function saveJSON(key, val){
+          try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+          catch(e){ return false; }
+        }
+        function todayISO(){
+          var d = new Date();
+          var m = String(d.getMonth()+1).padStart(2,"0");
+          var day = String(d.getDate()).padStart(2,"0");
+          return d.getFullYear() + "-" + m + "-" + day;
+        }
+        function dateBn(iso){
+          try {
+            var d = new Date((iso || todayISO()) + "T12:00:00");
+            return d.toLocaleDateString("bn-BD", { day:"numeric", month:"long", year:"numeric" });
+          } catch(e){ return toBn(iso || ""); }
+        }
+
+        var toastTimer = null;
+        function toast(msg){
+          var t = $("toast"); t.textContent = msg; t.classList.add("show");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2800);
+        }
+
+        /* ---------- State ---------- */
+        var shop = loadJSON(LS_SHOP, { name:"", whatsapp:"", bkash:"", chargeInside:"", chargeOutside:"" });
+        var orders = loadJSON(LS_ORDERS, []);
+        if (!Array.isArray(orders)) orders = [];
+        var templates = loadJSON(LS_TPL, null);
+        if (!templates || typeof templates !== "object") templates = JSON.parse(JSON.stringify(DEFAULT_TPL));
+        var counter = parseInt(localStorage.getItem(LS_COUNTER) || "0", 10) || 0;
+        var editingId = null;
+        var activeFilter = "all";
+
+        /* ---------- Shop profile ---------- */
+        function fillShopForm(){
+          $("shopName").value = shop.name || "";
+          $("shopWhatsApp").value = shop.whatsapp || "";
+          $("shopBkash").value = shop.bkash || "";
+          $("chargeInside").value = shop.chargeInside === "" || shop.chargeInside == null ? "" : shop.chargeInside;
+          $("chargeOutside").value = shop.chargeOutside === "" || shop.chargeOutside == null ? "" : shop.chargeOutside;
+          $("shopWarn").style.display = shop.name ? "none" : "block";
+          $("lblInside").textContent = money(num(shop.chargeInside));
+          $("lblOutside").textContent = money(num(shop.chargeOutside));
+        }
+        $("btnSaveShop").addEventListener("click", function(){
+          shop = {
+            name: $("shopName").value.trim(),
+            whatsapp: $("shopWhatsApp").value.trim(),
+            bkash: $("shopBkash").value.trim(),
+            chargeInside: $("chargeInside").value === "" ? "" : num($("chargeInside").value),
+            chargeOutside: $("chargeOutside").value === "" ? "" : num($("chargeOutside").value)
+          };
+          if (!shop.name){
+            $("shopStatus").textContent = "আগে দোকানের নাম লিখুন।";
+            $("shopName").focus();
+            return;
+          }
+          if (saveJSON(LS_SHOP, shop)){
+            $("shopStatus").textContent = "দোকানের তথ্য সেভ হয়েছে।";
+            toast("দোকানের তথ্য সেভ হয়েছে");
+            applyDeliveryChoice();
+          } else {
+            $("shopStatus").textContent = "সেভ করা যায়নি — ব্রাউজারের জায়গা ভরে গেছে কিনা দেখুন।";
+          }
+          fillShopForm();
+        });
+
+        /* ---------- Order form: items ---------- */
+        function addItemRow(name, qty, price){
+          var box = $("itemsBox");
+          var row = document.createElement("div");
+          row.className = "item-row";
+
+          var nameWrap = document.createElement("div");
+          var nLbl = document.createElement("span"); nLbl.className = "lbl"; nLbl.textContent = "পণ্যের নাম";
+          var nIn = document.createElement("input");
+          nIn.type = "text"; nIn.className = "it-name"; nIn.placeholder = "যেমন: পাঞ্জাবি";
+          nIn.value = name || "";
+          nameWrap.appendChild(nLbl); nameWrap.appendChild(nIn);
+
+          var qtyWrap = document.createElement("div");
+          var qLbl = document.createElement("span"); qLbl.className = "lbl"; qLbl.textContent = "পরিমাণ";
+          var qIn = document.createElement("input");
+          qIn.type = "number"; qIn.className = "it-qty"; qIn.min = "0"; qIn.inputMode = "numeric";
+          qIn.value = (qty == null ? "1" : qty);
+          qtyWrap.appendChild(qLbl); qtyWrap.appendChild(qIn);
+
+          var priceWrap = document.createElement("div");
+          var pLbl = document.createElement("span"); pLbl.className = "lbl"; pLbl.textContent = "দাম (৳)";
+          var pIn = document.createElement("input");
+          pIn.type = "number"; pIn.className = "it-price"; pIn.min = "0"; pIn.inputMode = "numeric";
+          pIn.placeholder = "০"; pIn.value = (price == null ? "" : price);
+          priceWrap.appendChild(pLbl); priceWrap.appendChild(pIn);
+
+          var rm = document.createElement("button");
+          rm.type = "button"; rm.className = "rm-btn"; rm.textContent = "✕";
+          rm.setAttribute("aria-label", "এই পণ্যটা সরান");
+          rm.addEventListener("click", function(){
+            row.remove();
+            if (!$("itemsBox").querySelector(".item-row")) addItemRow("", 1, "");
+            renderTotals();
+          });
+
+          var lt = document.createElement("div");
+          lt.className = "line-total";
+
+          row.appendChild(nameWrap); row.appendChild(qtyWrap); row.appendChild(priceWrap); row.appendChild(rm); row.appendChild(lt);
+          box.appendChild(row);
+          [nIn, qIn, pIn].forEach(function(el){ el.addEventListener("input", renderTotals); });
+        }
+        $("btnAddItem").addEventListener("click", function(){ addItemRow("", 1, ""); });
+
+        function readItems(){
+          var items = [];
+          $("itemsBox").querySelectorAll(".item-row").forEach(function(row){
+            var name = row.querySelector(".it-name").value.trim();
+            var qty = num(row.querySelector(".it-qty").value);
+            var price = num(row.querySelector(".it-price").value);
+            var lt = row.querySelector(".line-total");
+            lt.textContent = (name || qty || price) ? ("লাইন মোট: " + money(qty * price)) : "";
+            if (name || price > 0) items.push({ name:name, qty:qty, price:price });
+          });
+          return items;
+        }
+        function computeTotals(items){
+          var subtotal = 0;
+          items.forEach(function(it){ subtotal += it.qty * it.price; });
+          var delivery = num($("deliveryCharge").value);
+          var advance = num($("advancePaid").value);
+          var grand = subtotal + delivery;
+          return { subtotal:subtotal, delivery:delivery, advance:advance, grand:grand, due:Math.max(grand - advance, 0) };
+        }
+        function renderTotals(){
+          var t = computeTotals(readItems());
+          $("tSubtotal").textContent = money(t.subtotal);
+          $("tDelivery").textContent = money(t.delivery);
+          $("tGrand").textContent = money(t.grand);
+          $("tAdvance").textContent = money(t.advance);
+          $("tDue").textContent = money(t.due);
+          return t;
+        }
+        ["custName","custPhone","custAddress","deliveryCharge","advancePaid","orderNotes"].forEach(function(id){
+          $(id).addEventListener("input", function(){ if (id==="deliveryCharge" || id==="advancePaid") renderTotals(); });
+        });
+
+        /* Delivery charge choice */
+        function selectedDelType(){
+          var r = document.querySelector('input[name="delType"]:checked');
+          return r ? r.value : "inside";
+        }
+        function applyDeliveryChoice(){
+          var type = selectedDelType();
+          if (type === "inside") $("deliveryCharge").value = shop.chargeInside === "" ? "" : shop.chargeInside;
+          else if (type === "outside") $("deliveryCharge").value = shop.chargeOutside === "" ? "" : shop.chargeOutside;
+          else if (type === "free") $("deliveryCharge").value = 0;
+          renderTotals();
+        }
+        document.querySelectorAll('input[name="delType"]').forEach(function(r){
+          r.addEventListener("change", applyDeliveryChoice);
+        });
+        $("deliveryCharge").addEventListener("input", function(){
+          var type = selectedDelType();
+          if (type !== "custom" && type !== "free"){
+            var expected = type === "inside" ? num(shop.chargeInside) : num(shop.chargeOutside);
+            if (num($("deliveryCharge").value) !== expected){
+              var c = document.querySelector('input[name="delType"][value="custom"]');
+              if (c) c.checked = true;
+            }
+          }
+          renderTotals();
+        });
+
+        /* ---------- Save order ---------- */
+        function resetForm(){
+          editingId = null;
+          $("editBanner").style.display = "none";
+          $("btnSaveOrder").textContent = "অর্ডার সেভ করুন";
+          $("custName").value = ""; $("custPhone").value = ""; $("custAddress").value = "";
+          $("advancePaid").value = ""; $("orderNotes").value = "";
+          $("itemsBox").textContent = "";
+          addItemRow("", 1, "");
+          var inside = document.querySelector('input[name="delType"][value="inside"]');
+          if (inside) inside.checked = true;
+          applyDeliveryChoice();
+          $("orderStatus").textContent = "";
+          renderTotals();
+        }
+        $("btnResetForm").addEventListener("click", resetForm);
+        $("btnCancelEdit").addEventListener("click", resetForm);
+
+        $("btnSaveOrder").addEventListener("click", function(){
+          var items = readItems();
+          var t = computeTotals(items);
+          var name = $("custName").value.trim();
+          var phone = $("custPhone").value.trim();
+          if (!name){ toast("আগে ক্রেতার নাম লিখুন"); $("custName").focus(); return; }
+          if (!phone){ toast("ক্রেতার ফোন / WhatsApp নম্বর লিখুন"); $("custPhone").focus(); return; }
+          if (!items.length){ toast("অন্তত একটা পণ্য যোগ করুন"); return; }
+
+          if (editingId){
+            for (var i=0;i<orders.length;i++){
+              if (orders[i].id === editingId){
+                orders[i].customer = { name:name, phone:phone, address:$("custAddress").value.trim() };
+                orders[i].items = items;
+                orders[i].delType = selectedDelType();
+                orders[i].delivery = t.delivery;
+                orders[i].advance = t.advance;
+                orders[i].subtotal = t.subtotal;
+                orders[i].grand = t.grand;
+                orders[i].due = t.due;
+                orders[i].notes = $("orderNotes").value.trim();
+                break;
+              }
+            }
+            saveJSON(LS_ORDERS, orders);
+            toast("অর্ডার আপডেট হয়েছে");
+            resetForm();
+          } else {
+            counter += 1;
+            try { localStorage.setItem(LS_COUNTER, String(counter)); } catch(e){}
+            var order = {
+              id: "o" + Date.now().toString(36) + counter,
+              no: "OB-" + String(counter).padStart(3, "0"),
+              dateISO: todayISO(),
+              createdAt: Date.now(),
+              status: "new",
+              customer: { name:name, phone:phone, address:$("custAddress").value.trim() },
+              items: items,
+              delType: selectedDelType(),
+              delivery: t.delivery,
+              advance: t.advance,
+              subtotal: t.subtotal,
+              grand: t.grand,
+              due: t.due,
+              notes: $("orderNotes").value.trim()
+            };
+            orders.unshift(order);
+            if (!saveJSON(LS_ORDERS, orders)){
+              toast("সেভ করা যায়নি — ব্রাউজারের জায়গা ভরে গেছে কিনা দেখুন");
+              return;
+            }
+            toast("অর্ডার সেভ হয়েছে (নং: " + toBn(order.no) + ")");
+            resetForm();
+            $("orderStatus").textContent = "অর্ডার সেভ হয়েছে — নিচে “অর্ডারসমূহ”-তে পাবেন। সেখান থেকে WhatsApp কনফার্মেশন মেসেজ পাঠান।";
+          }
+          renderAll();
+          document.getElementById("orders").scrollIntoView({ behavior:"smooth", block:"start" });
+        });
+
+        function loadOrderForEdit(o){
+          editingId = o.id;
+          $("editNo").textContent = toBn(o.no);
+          $("editBanner").style.display = "block";
+          $("btnSaveOrder").textContent = "অর্ডার আপডেট করুন";
+          $("custName").value = o.customer.name || "";
+          $("custPhone").value = o.customer.phone || "";
+          $("custAddress").value = o.customer.address || "";
+          $("advancePaid").value = o.advance ? o.advance : "";
+          $("orderNotes").value = o.notes || "";
+          $("itemsBox").textContent = "";
+          if (o.items && o.items.length) o.items.forEach(function(it){ addItemRow(it.name, it.qty, it.price); });
+          else addItemRow("", 1, "");
+          var r = document.querySelector('input[name="delType"][value="' + (o.delType || "custom") + '"]');
+          if (r) r.checked = true;
+          $("deliveryCharge").value = o.delivery ? o.delivery : (o.delivery === 0 ? 0 : "");
+          renderTotals();
+          document.getElementById("new-order").scrollIntoView({ behavior:"smooth", block:"start" });
+          $("custName").focus();
+        }
+
+        /* ---------- WhatsApp ---------- */
+        function waNumber(phone){
+          var d = String(phone || "").replace(/[^0-9]/g, "");
+          if (!d) return "";
+          if (d.indexOf("880") === 0) return d;
+          if (d.charAt(0) === "0") return "880" + d.slice(1);
+          return d;
+        }
+        function itemsText(o){
+          if (!o.items || !o.items.length) return "—";
+          return o.items.map(function(it){
+            return "• " + (it.name || "পণ্য") + " × " + toBn(it.qty) + " — " + money(it.qty * it.price);
+          }).join("\n");
+        }
+        function fillTemplate(tpl, o){
+          var map = {
+            "{name}": o.customer.name || "",
+            "{shop}": shop.name || "আমাদের দোকান",
+            "{order_no}": toBn(o.no),
+            "{items}": itemsText(o),
+            "{subtotal}": money(o.subtotal),
+            "{delivery}": money(o.delivery),
+            "{total}": money(o.grand),
+            "{advance}": money(o.advance),
+            "{due}": money(o.due),
+            "{bkash}": shop.bkash ? toBn(shop.bkash) : "(বিকাশ নম্বর সেভ করা হয়নি)",
+            "{address}": o.customer.address || ""
+          };
+          var out = String(tpl || "");
+          Object.keys(map).forEach(function(k){ out = out.split(k).join(map[k]); });
+          return out;
+        }
+        function sendWhatsApp(o, kind){
+          var n = waNumber(o.customer.phone);
+          if (!n){ toast("এই অর্ডারে ক্রেতার সঠিক ফোন নম্বর নেই"); return; }
+          var tpl = kind === "delivery" ? templates.delivery : (kind === "done" ? templates.done : templates.confirm);
+          var url = "https://wa.me/" + n + "?text=" + encodeURIComponent(fillTemplate(tpl, o));
+          window.open(url, "_blank");
+        }
+
+        /* ---------- Dashboard ---------- */
+        function renderDashboard(){
+          var today = todayISO();
+          var todayCount = 0, sales = 0, pending = 0, done = 0;
+          orders.forEach(function(o){
+            if (o.dateISO === today) todayCount++;
+            if (o.status !== "cancelled"){
+              sales += num(o.grand);
+              if (o.status === "done") done++;
+              if (o.status === "new" || o.status === "confirmed") pending++;
+            }
+          });
+          $("statToday").textContent = toBn(todayCount);
+          $("statSales").textContent = money(sales);
+          $("statPending").textContent = toBn(pending);
+          $("statDone").textContent = toBn(done);
+          $("dashDate").textContent = "আজ: " + dateBn(today) + " · মোট অর্ডার: " + toBn(orders.length) + "টি";
+        }
+
+        /* ---------- Orders list ---------- */
+        function buildFilterChips(){
+          var box = $("filterChips");
+          box.textContent = "";
+          var defs = [{ id:"all", label:"সব" }].concat(STATUSES);
+          defs.forEach(function(d){
+            var count = d.id === "all" ? orders.length : orders.filter(function(o){ return o.status === d.id; }).length;
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "fchip" + (activeFilter === d.id ? " on" : "");
+            b.textContent = d.label + " (" + toBn(count) + ")";
+            b.addEventListener("click", function(){ activeFilter = d.id; renderOrders(); });
+            box.appendChild(b);
+          });
+        }
+
+        function renderOrders(){
+          buildFilterChips();
+          var box = $("ordersBox");
+          box.textContent = "";
+          var q = $("searchBox").value.trim().toLowerCase();
+          var qDigits = q.replace(/[^0-9]/g, "");
+          var sort = $("sortBox").value;
+
+          var list = orders.filter(function(o){
+            if (activeFilter !== "all" && o.status !== activeFilter) return false;
+            if (q){
+              var inName = (o.customer.name || "").toLowerCase().indexOf(q) !== -1;
+              var inPhone = qDigits && String(o.customer.phone || "").replace(/[^0-9]/g, "").indexOf(qDigits) !== -1;
+              var inNo = (o.no || "").toLowerCase().indexOf(q) !== -1;
+              if (!inName && !inPhone && !inNo) return false;
+            }
+            return true;
+          });
+          list.sort(function(a, b){
+            if (sort === "oldest") return (a.createdAt || 0) - (b.createdAt || 0);
+            if (sort === "amount") return num(b.grand) - num(a.grand);
+            return (b.createdAt || 0) - (a.createdAt || 0);
+          });
+
+          if (!orders.length){
+            var e = document.createElement("div");
+            e.className = "empty-state";
+            e.textContent = "এখনো কোনো অর্ডার নেই। উপরে “নতুন অর্ডার”-এ প্রথম অর্ডারটা তুলে সেভ করুন — এখানে তালিকা আসবে।";
+            box.appendChild(e);
+            return;
+          }
+          if (!list.length){
+            var e2 = document.createElement("div");
+            e2.className = "empty-state";
+            e2.textContent = "এই খোঁজে/ছাঁকনিতে কোনো অর্ডার পাওয়া যায়নি।";
+            box.appendChild(e2);
+            return;
+          }
+
+          list.forEach(function(o){
+            var card = document.createElement("div");
+            card.className = "order-card";
+
+            var head = document.createElement("div"); head.className = "order-head";
+            var who = document.createElement("span"); who.className = "who";
+            who.textContent = o.customer.name || "নাম নেই";
+            var badge = document.createElement("span");
+            badge.className = "badge " + o.status;
+            badge.textContent = statusLabel(o.status);
+            badge.style.marginLeft = "8px";
+            who.appendChild(badge);
+            var amt = document.createElement("span"); amt.className = "amt";
+            amt.textContent = money(o.grand);
+            head.appendChild(who); head.appendChild(amt);
+
+            var sub = document.createElement("div"); sub.className = "order-sub";
+            var parts = ["অর্ডার নং: " + toBn(o.no), dateBn(o.dateISO)];
+            if (o.customer.phone) parts.push("ফোন: " + toBn(o.customer.phone));
+            if (o.due > 0) parts.push("বাকি: " + money(o.due));
+            else parts.push("পুরো টাকা পাওয়া গেছে");
+            sub.textContent = parts.join(" · ");
+            if (o.customer.address){
+              sub.appendChild(document.createElement("br"));
+              sub.appendChild(document.createTextNode("ঠিকানা: " + o.customer.address));
+            }
+
+            var items = document.createElement("div"); items.className = "order-items";
+            items.textContent = itemsText(o) + "\nডেলিভারি চার্জ: " + money(o.delivery) + (o.advance > 0 ? " · অগ্রিম: " + money(o.advance) : "");
+
+            card.appendChild(head); card.appendChild(sub); card.appendChild(items);
+            if (o.notes){
+              var note = document.createElement("div"); note.className = "order-note";
+              note.textContent = "নোট: " + o.notes;
+              card.appendChild(note);
+            }
+
+            var acts = document.createElement("div"); acts.className = "order-actions";
+            function mkBtn(label, cls, fn){
+              var b = document.createElement("button");
+              b.type = "button"; b.className = "btn btn-sm " + cls; b.textContent = label;
+              b.addEventListener("click", fn);
+              return b;
+            }
+            acts.appendChild(mkBtn("WhatsApp: কনফার্মেশন", "btn-wa", function(){ sendWhatsApp(o, "confirm"); }));
+            acts.appendChild(mkBtn("WhatsApp: ডেলিভারিতে", "btn-wa", function(){ sendWhatsApp(o, "delivery"); }));
+            acts.appendChild(mkBtn("WhatsApp: ধন্যবাদ", "btn-wa", function(){ sendWhatsApp(o, "done"); }));
+            acts.appendChild(mkBtn("বদলান", "btn-ghost", function(){ loadOrderForEdit(o); }));
+            acts.appendChild(mkBtn("মুছুন", "btn-danger-ghost", function(){
+              askConfirm("অর্ডারটা মুছে ফেলবেন?", "অর্ডার নং " + toBn(o.no) + " (" + (o.customer.name || "") + ") স্থায়ীভাবে মুছে যাবে।", function(){
+                orders = orders.filter(function(x){ return x.id !== o.id; });
+                if (editingId === o.id) resetForm();
+                saveJSON(LS_ORDERS, orders);
+                renderAll();
+                toast("অর্ডার মুছে ফেলা হয়েছে");
+              });
+            }));
+            card.appendChild(acts);
+
+            var srow = document.createElement("div"); srow.className = "order-status-row";
+            var slbl = document.createElement("label");
+            slbl.textContent = "স্ট্যাটাস:";
+            slbl.setAttribute("for", "st-" + o.id);
+            var sel = document.createElement("select");
+            sel.id = "st-" + o.id;
+            STATUSES.forEach(function(s){
+              var op = document.createElement("option");
+              op.value = s.id; op.textContent = s.label;
+              if (o.status === s.id) op.selected = true;
+              sel.appendChild(op);
+            });
+            sel.addEventListener("change", function(){
+              o.status = sel.value;
+              saveJSON(LS_ORDERS, orders);
+              renderAll();
+              toast("স্ট্যাটাস বদলেছে: " + statusLabel(o.status));
+            });
+            srow.appendChild(slbl); srow.appendChild(sel);
+            card.appendChild(srow);
+
+            box.appendChild(card);
+          });
+        }
+        $("searchBox").addEventListener("input", renderOrders);
+        $("sortBox").addEventListener("change", renderOrders);
+
+        /* ---------- Templates ---------- */
+        function fillTemplates(){
+          $("tplConfirm").value = templates.confirm || "";
+          $("tplDelivery").value = templates.delivery || "";
+          $("tplDone").value = templates.done || "";
+        }
+        $("btnSaveTpl").addEventListener("click", function(){
+          templates = {
+            confirm: $("tplConfirm").value,
+            delivery: $("tplDelivery").value,
+            done: $("tplDone").value
+          };
+          if (saveJSON(LS_TPL, templates)){
+            $("tplStatus").textContent = "টেমপ্লেট সেভ হয়েছে।";
+            toast("টেমপ্লেট সেভ হয়েছে");
+          } else {
+            $("tplStatus").textContent = "সেভ করা যায়নি — ব্রাউজারের জায়গা ভরে গেছে কিনা দেখুন।";
+          }
+        });
+        $("btnResetTpl").addEventListener("click", function(){
+          askConfirm("টেমপ্লেট আগের মতো করবেন?", "আপনার বদলানো লেখা মুছে গিয়ে অ্যাপের আসল টেমপ্লেট ফিরে আসবে।", function(){
+            templates = JSON.parse(JSON.stringify(DEFAULT_TPL));
+            saveJSON(LS_TPL, templates);
+            fillTemplates();
+            $("tplStatus").textContent = "আসল টেমপ্লেট ফিরিয়ে আনা হয়েছে।";
+            toast("আসল টেমপ্লেট ফিরে এসেছে");
+          });
+        });
+
+        /* ---------- Backup / import / clear ---------- */
+        $("btnExport").addEventListener("click", function(){
+          var data = {
+            app: "order-bot-by-aeun",
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            shop: shop,
+            orders: orders,
+            templates: templates,
+            counter: counter
+          };
+          var blob = new Blob([JSON.stringify(data, null, 2)], { type:"application/json;charset=utf-8" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "order-bot-backup-" + todayISO() + ".json";
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+          $("dataStatus").textContent = "ব্যাকআপ ফাইল ডাউনলোড হয়েছে — নিরাপদ জায়গায় রেখে দিন।";
+          toast("ব্যাকআপ ডাউনলোড হয়েছে");
+        });
+        $("btnImport").addEventListener("click", function(){ $("importFile").click(); });
+        $("importFile").addEventListener("change", function(){
+          var f = this.files && this.files[0];
+          this.value = "";
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function(){
+            try {
+              var data = JSON.parse(String(reader.result || ""));
+              if (!data || !Array.isArray(data.orders)) throw new Error("bad");
+              askConfirm("ব্যাকআপ ইমপোর্ট করবেন?", "এখনকার সব অর্ডার, দোকানের তথ্য আর টেমপ্লেট মুছে গিয়ে ব্যাকআপ ফাইলের তথ্য বসবে। ব্যাকআপে " + toBn(data.orders.length) + "টি অর্ডার আছে।", function(){
+                shop = data.shop && typeof data.shop === "object" ? data.shop : shop;
+                orders = data.orders;
+                if (data.templates && typeof data.templates === "object") templates = data.templates;
+                counter = parseInt(data.counter || "0", 10) || orders.length;
+                saveJSON(LS_SHOP, shop); saveJSON(LS_ORDERS, orders); saveJSON(LS_TPL, templates);
+                try { localStorage.setItem(LS_COUNTER, String(counter)); } catch(e){}
+                resetForm(); fillShopForm(); fillTemplates(); renderAll();
+                $("dataStatus").textContent = "ব্যাকআপ ইমপোর্ট হয়েছে — সব তথ্য ফিরে এসেছে।";
+                toast("ব্যাকআপ ইমপোর্ট হয়েছে");
+              });
+            } catch(e){
+              $("dataStatus").textContent = "ফাইলটা পড়া যায়নি — সঠিক Order Bot ব্যাকআপ (JSON) ফাইল বেছে নিন।";
+              toast("ব্যাকআপ ফাইলটা ঠিকমতো পড়া যায়নি");
+            }
+          };
+          reader.readAsText(f);
+        });
+        $("btnClearAll").addEventListener("click", function(){
+          askConfirm("সব ডেটা মুছে ফেলবেন?", "দোকানের তথ্য, সব অর্ডার (" + toBn(orders.length) + "টি) আর টেমপ্লেট — সব স্থায়ীভাবে মুছে যাবে। এই কাজ ফেরানো যাবে না।", function(){
+            try {
+              localStorage.removeItem(LS_SHOP); localStorage.removeItem(LS_ORDERS);
+              localStorage.removeItem(LS_TPL); localStorage.removeItem(LS_COUNTER);
+            } catch(e){}
+            shop = { name:"", whatsapp:"", bkash:"", chargeInside:"", chargeOutside:"" };
+            orders = [];
+            templates = JSON.parse(JSON.stringify(DEFAULT_TPL));
+            counter = 0;
+            activeFilter = "all";
+            resetForm(); fillShopForm(); fillTemplates(); renderAll();
+            $("dataStatus").textContent = "সব ডেটা মুছে ফেলা হয়েছে। অ্যাপ এখন একদম খালি।";
+            toast("সব ডেটা মুছে ফেলা হয়েছে");
+          });
+        });
+
+        /* ---------- Confirm modal ---------- */
+        var pendingAction = null;
+        function askConfirm(title, text, fn){
+          pendingAction = fn;
+          $("modalTitle").textContent = title;
+          $("modalText").textContent = text;
+          $("modalBack").classList.add("open");
+        }
+        function closeModal(){ pendingAction = null; $("modalBack").classList.remove("open"); }
+        $("btnModalCancel").addEventListener("click", closeModal);
+        $("modalBack").addEventListener("click", function(e){ if (e.target === $("modalBack")) closeModal(); });
+        $("btnModalOk").addEventListener("click", function(){
+          var fn = pendingAction;
+          closeModal();
+          if (fn) fn();
+        });
+
+        /* ---------- Download this app itself ---------- */
+        $("btnDownloadApp").addEventListener("click", function(){
+          var html = "<!doctype html>\n" + document.documentElement.outerHTML;
+          var blob = new Blob([html], { type:"text/html;charset=utf-8" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "order-bot-by-aeun.html";
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+          toast("ডাউনলোড শুরু হয়েছে");
+        });
+
+        /* ---------- Init ---------- */
+        function renderAll(){ renderDashboard(); renderOrders(); }
+        fillShopForm();
+        fillTemplates();
+        resetForm();
+        renderAll();
+      })();
+    </script>
+  <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+</body>
+</html>

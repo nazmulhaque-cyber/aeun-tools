@@ -6,13 +6,11 @@
 <meta name="color-scheme" content="light dark" />
 <link rel="icon" href="data:," />
 <title>Poster Maker by AEUN</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+  @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
   :root{
-    --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+    --navy:#0B1F3A; --blue:#1D6FF2; --teal:#1D6FF2; --amber:#1D6FF2;
     --light:#F4F7FB; --body:#334155;
     --bg:#F4F7FB; --panel:#ffffff; --panel-2:#EEF3F9; --line:#D9E2EC;
     --text:#0B1F3A; --muted:#5B6B7F; --input-bg:#ffffff;
@@ -86,10 +84,10 @@
     content:"";position:absolute;left:12%;right:12%;top:34%;height:34%;
     background:rgba(255,255,255,.85);border-radius:5px;
   }
-  .sw-navy{background:#0B1F3A}.sw-navy::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#FFB020;border-radius:99px}
+  .sw-navy{background:#0B1F3A}.sw-navy::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#1D6FF2;border-radius:99px}
   .sw-light{background:#E8EEF5}.sw-light::after{background:#fff !important;box-shadow:0 1px 4px rgba(11,31,58,.18)}
   .sw-light::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#00C2A8;border-radius:99px}
-  .sw-amber{background:#FFB020}.sw-amber::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#0B1F3A;border-radius:99px}
+  .sw-amber{background:#1D6FF2}.sw-amber::before{content:"";position:absolute;top:9%;left:30%;right:30%;height:13%;background:#0B1F3A;border-radius:99px}
   .tpl span{font-size:.88rem;font-weight:600;display:block;line-height:1.3}
 
   /* ---------- Photo ---------- */
@@ -148,8 +146,23 @@
   }
   .toast.show{transform:translateX(-50%) translateY(0)}
 </style>
+
+<meta name="description" content="পণ্যের সুন্দর পোস্টার বানানোর ফ্রি টুল।">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="manifest" href="aeun-poster-maker-manifest.webmanifest">
+<link rel="apple-touch-icon" href="aeun-icon-192.png">
+<style id="aeun-platform">
+.aeun-bar{position:relative;z-index:60;background:#081627;color:#C7D6EA;font-family:'Bornomala',sans-serif;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font-size:.86rem}
+.aeun-bar a{color:#fff;text-decoration:none;font-weight:700;min-height:32px;display:inline-flex;align-items:center}
+.aeun-bar .aeun-brand{letter-spacing:.22em;font-weight:700;color:#9CC2FF;font-size:.78rem}
+.aeun-foot{font-family:'Bornomala',sans-serif;text-align:center;color:#64748B;font-size:.82rem;padding:22px 16px 30px;line-height:1.7}
+.aeun-foot a{color:#1D6FF2;text-decoration:none;font-weight:700}
+.dl-btn{color:#fff !important}
+.brand h1 .en{color:#9CC2FF !important}
+</style>
 </head>
 <body>
+<nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
 <div class="wrap">
 
   <div class="topbar">
@@ -385,15 +398,15 @@
 
   var THEMES = {
     navy:  { bg:"#0B1F3A", head:"#FFFFFF", name:"#FFFFFF", sub:"#9FB2C8",
-             badgeBg:"#FFB020", badgeTx:"#0B1F3A", price:"#FFB020", old:"#8FA3BC",
+             badgeBg:"#1D6FF2", badgeTx:"#0B1F3A", price:"#1D6FF2", old:"#8FA3BC",
              imgBg:"#132C4E", imgLine:"#2A4A73", imgTx:"#9FB2C8",
              foot:"#FFFFFF", footSub:"#C7D5E6", credit:"rgba(255,255,255,.45)", deco:"rgba(0,194,168,.16)" },
     light: { bg:"#F4F7FB", head:"#0B1F3A", name:"#0B1F3A", sub:"#5B6B7F",
              badgeBg:"#00C2A8", badgeTx:"#FFFFFF", price:"#1D6FF2", old:"#8496AB",
              imgBg:"#FFFFFF", imgLine:"#C9D6E4", imgTx:"#8496AB",
              foot:"#0B1F3A", footSub:"#5B6B7F", credit:"rgba(11,31,58,.4)", deco:"rgba(29,111,242,.10)" },
-    amber: { bg:"#FFB020", head:"#0B1F3A", name:"#0B1F3A", sub:"#5C4300",
-             badgeBg:"#0B1F3A", badgeTx:"#FFB020", price:"#0B1F3A", old:"#7A5B00",
+    amber: { bg:"#1D6FF2", head:"#0B1F3A", name:"#0B1F3A", sub:"#5C4300",
+             badgeBg:"#0B1F3A", badgeTx:"#1D6FF2", price:"#0B1F3A", old:"#7A5B00",
              imgBg:"#FFC44D", imgLine:"#0B1F3A", imgTx:"#5C4300",
              foot:"#0B1F3A", footSub:"#4A3600", credit:"rgba(11,31,58,.5)", deco:"rgba(11,31,58,.08)" }
   };
@@ -584,5 +597,7 @@
   }
 })();
 </script>
+<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 </body>
 </html>

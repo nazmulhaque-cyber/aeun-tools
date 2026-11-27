@@ -6,13 +6,11 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
     <title>Link Page by AEUN — দোকানের সব লিংক এক পেজে</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
     @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+  @font-face{ font-family:'Bornomala'; src:url('https://nazmulhaque-cyber.github.io/aeun-tools/fonts/Bornomala-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
       :root{
-        --navy:#0B1F3A; --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+        --navy:#0B1F3A; --blue:#1D6FF2; --teal:#1D6FF2; --amber:#1D6FF2;
         --bg:#F4F7FB; --surface:#FFFFFF; --surface2:#EEF3FA;
         --ink:#0B1F3A; --body:#334155; --muted:#64748B;
         --line:#DCE5F0; --danger:#DC2626; --wa:#1FAF57; --bkash:#E2136E;
@@ -222,8 +220,23 @@
       .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
       footer.page-foot{ text-align:center; color:var(--muted); font-size:.88rem; padding:0 16px 28px; }
     </style>
-  </head>
+  
+<meta name="description" content="আপনার সব লিংক একটা সুন্দর পেজে সাজানোর ফ্রি টুল।">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="manifest" href="aeun-link-page-manifest.webmanifest">
+<link rel="apple-touch-icon" href="aeun-icon-192.png">
+<style id="aeun-platform">
+.aeun-bar{position:relative;z-index:60;background:#081627;color:#C7D6EA;font-family:'Bornomala',sans-serif;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;font-size:.86rem}
+.aeun-bar a{color:#fff;text-decoration:none;font-weight:700;min-height:32px;display:inline-flex;align-items:center}
+.aeun-bar .aeun-brand{letter-spacing:.22em;font-weight:700;color:#9CC2FF;font-size:.78rem}
+.aeun-foot{font-family:'Bornomala',sans-serif;text-align:center;color:#64748B;font-size:.82rem;padding:22px 16px 30px;line-height:1.7}
+.aeun-foot a{color:#1D6FF2;text-decoration:none;font-weight:700}
+.dl-btn{color:#fff !important}
+.brand h1 .en{color:#9CC2FF !important}
+</style>
+</head>
   <body>
+<nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
 
     <header class="hero">
       <div class="hero-in">
@@ -631,10 +644,12 @@
           return "<!doctype html>\n<html lang=\"bn\">\n<head>\n<meta charset=\"utf-8\" />\n"
             + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n"
             + "<title>" + esc(name) + "</title>\n"
-            + "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n"
-            + "<link href=\"https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap\" rel=\"stylesheet\" />\n"
+            + "\n"
+            + "\n"
             + "<style>" + css + "</style>\n</head>\n<body>\n<div class=\"page\">\n" + inner + "\n</div>\n"
-            + "<script>" + js + "<\/script>\n</body>\n</html>";
+            + "<script>" + js + "<\/script>\n<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+</body>\n</html>";
         }
         $("downloadPageBtn").addEventListener("click", function(){
           if(!state.shopName.trim() && !state.whatsapp.trim() && !state.links.length){
