@@ -1037,5 +1037,50 @@ input[type="text"], input[type="tel"], input[type="number"], textarea{ border-ra
     </script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
+<script src="core.js"></script>
+<script>
+(function(){
+  if (!window.AEUNCore) return;
+  function $(id){ return document.getElementById(id); }
+  function fire(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+  var map = { shopName:'name', shopPhone:'phone', shopBkash:'bkash', shopAddress:'address' };
+  var prof = AEUNCore.getProfile();
+  Object.keys(map).forEach(function(id){
+    var el = $(id); if (!el) return;
+    if (!el.value && prof[map[id]]){ el.value = prof[map[id]]; fire(el); }
+    el.addEventListener('change', function(){
+      var patch = {}; Object.keys(map).forEach(function(i2){ var e2=$(i2); if(e2) patch[map[i2]] = e2.value.trim(); });
+      AEUNCore.setProfile(patch);
+    });
+  });
+  var hd = AEUNCore.takeHandoff();
+  if (hd){
+    if (hd.customer){
+      if (hd.customer.name && $('custName')) $('custName').value = hd.customer.name;
+      if (hd.customer.phone && $('custPhone')) $('custPhone').value = hd.customer.phone;
+      if (hd.customer.address && $('custAddress')) $('custAddress').value = hd.customer.address;
+    }
+    var items = hd.items || [];
+    function fill(){
+      var rows = document.querySelectorAll('#itemsBox .item-row');
+      items.forEach(function(it, idx){
+        if (idx >= rows.length){ var b = $('btnAddItem'); if (b){ b.click(); rows = document.querySelectorAll('#itemsBox .item-row'); } }
+        var row = rows[idx]; if (!row) return;
+        var n = row.querySelector('.it-name'), q = row.querySelector('.it-qty'), p = row.querySelector('.it-price');
+        if (n){ n.value = it.name || ''; fire(n); }
+        if (q){ q.value = it.qty || 1; fire(q); }
+        if (p){ p.value = (it.price == null ? '' : it.price); fire(p); }
+      });
+      var note = document.createElement('div');
+      note.textContent = '✓ Order Bot থেকে অর্ডারটা এসেছে — মেমো তৈরি করে নিন।';
+      note.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:99;background:#0B1F3A;color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;box-shadow:0 10px 26px rgba(11,31,58,.35);max-width:92vw;text-align:center';
+      document.body.appendChild(note);
+      setTimeout(function(){ note.remove(); }, 5000);
+    }
+    if (document.readyState === 'complete') fill(); else window.addEventListener('load', fill);
+  }
+})();
+</script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 // AEUN Tools — shared service worker (cache: aeun-tools-v3)
-var CACHE = 'aeun-tools-v3';
+var CACHE = 'aeun-tools-v4';
 var CORE = [
-  './',
+  './', 'index.html', 'core.js',
   'aeun-memo-maker-download.html','aeun-profit-calculator.html','aeun-post-kit.html',
   'aeun-baki-khata.html','aeun-poster-maker.html','aeun-appointment-book.html',
   'aeun-cv-maker.html','aeun-qr-maker.html','aeun-photo-kit.html','aeun-link-page.html',

@@ -1,41 +1,134 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="AEUN Tools — ছোট ব্যবসার প্রতিদিনের কাজের ১২টা ফ্রি বাংলা টুল, এক জায়গায়।">
+<meta name="theme-color" content="#0B1F3A">
 <title>AEUN Tools — সব টুল এক জায়গায়</title>
+<link rel="manifest" href="aeun-tools-manifest.webmanifest">
+<link rel="apple-touch-icon" href="aeun-icon-192.png">
+<link rel="icon" href="aeun-icon-192.png">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif; background: #0B1F3A; color: #F4F7FB; min-height: 100vh; padding: 32px 16px 48px; }
-.wrap { max-width: 720px; margin: 0 auto; }
-h1 { font-size: 28px; text-align: center; margin-bottom: 6px; }
-h1 span { color: #00C2A8; }
-p.sub { text-align: center; color: #B9C6D8; margin-bottom: 28px; font-size: 15px; }
-a.tool { display: block; background: #12294d; border: 1px solid #1D6FF2; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; color: #F4F7FB; text-decoration: none; }
-a.tool:hover { background: #17335e; }
-a.tool .name { font-size: 18px; font-weight: 700; }
-a.tool .desc { font-size: 14px; color: #B9C6D8; margin-top: 2px; }
-footer { text-align: center; color: #7d90ab; font-size: 13px; margin-top: 28px; }
+  @font-face{ font-family:'Bornomala'; src:url('fonts/Bornomala-Regular.ttf') format('truetype'); font-weight:400; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+  @font-face{ font-family:'Bornomala'; src:url('fonts/Bornomala-Bold.ttf') format('truetype'); font-weight:700; font-display:swap; unicode-range:U+0980-09FF,U+200C-200D; }
+  :root{ --navy:#0B1F3A; --blue:#1D6FF2; --bg:#F4F7FB; --card:#fff; --ink:#0B1F3A; --body:#334155; --mut:#64748B; --line:#E1EAF3; }
+  @media (prefers-color-scheme: dark){ :root{ --bg:#081627; --card:#0E2233; --ink:#E8EEF7; --body:#B9C6D8; --mut:#8FA5BF; --line:#1E3A52; } }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Bornomala',system-ui,sans-serif; background:linear-gradient(180deg,#E3EDFB 0,#F4F7FB 300px); background-color:var(--bg); color:var(--body); line-height:1.55; }
+  @media (prefers-color-scheme: dark){ body{ background:var(--bg); } }
+  header{ background:linear-gradient(135deg,#0B1F3A 0%,#14386B 70%,#1D6FF2 130%); color:#fff; border-radius:0 0 26px 26px; padding:26px 18px 24px; box-shadow:0 14px 34px rgba(11,31,58,.22); }
+  .hin{ max-width:860px; margin:0 auto; }
+  .brandline{ letter-spacing:.26em; font-weight:700; color:#9CC2FF; font-size:.8rem; }
+  h1{ margin:6px 0 6px; font-size:2rem; line-height:1.2; }
+  header p{ margin:0; color:#C7D6EA; max-width:52ch; }
+  .pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .pills span{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#E7F0FE; border-radius:99px; padding:5px 12px; font-size:.82rem; font-weight:600; }
+  main{ max-width:860px; margin:0 auto; padding:20px 14px 40px; }
+  .search{ width:100%; padding:14px 16px; border:1.5px solid var(--line); border-radius:14px; font:inherit; font-size:1rem; background:var(--card); color:var(--ink); }
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 6px; }
+  .chip{ border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:99px; padding:8px 16px; font:inherit; font-weight:700; cursor:pointer; min-height:40px; }
+  .chip.on{ background:var(--blue); border-color:var(--blue); color:#fff; }
+  h2.sec{ font-size:1.05rem; color:var(--ink); margin:22px 0 10px; display:flex; align-items:center; gap:10px; }
+  h2.sec::before{ content:''; width:5px; height:20px; border-radius:3px; background:linear-gradient(180deg,#2B7FFF,#1D6FF2); }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:560px){ .grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:340px){ .grid{ grid-template-columns:1fr; } }
+  a.tool{ display:block; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px; text-decoration:none; color:inherit; box-shadow:0 10px 28px rgba(11,31,58,.06); }
+  a.tool:active{ transform:translateY(1px); }
+  .ic{ width:52px; height:52px; border-radius:15px; background:#0B1F3A; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:10px; }
+  .tname{ font-weight:700; color:var(--ink); font-size:1.08rem; }
+  .tdesc{ font-size:.9rem; color:var(--mut); margin-top:2px; }
+  .free{ display:inline-block; margin-top:10px; background:#EAF1FA; color:#0B1F3A; border:1px solid #BFD7F8; font-size:.76rem; font-weight:700; border-radius:99px; padding:3px 10px; }
+  @media (prefers-color-scheme: dark){ .free{ background:#123058; color:#BFD7F8; border-color:#1E3A52; } }
+  #none{ display:none; color:var(--mut); padding:10px 2px; }
+  footer{ text-align:center; color:var(--mut); font-size:.84rem; padding:0 16px 34px; line-height:1.7; }
+  footer a{ color:var(--blue); font-weight:700; text-decoration:none; }
 </style>
 </head>
 <body>
-<div class="wrap">
-<h1>AEUN <span>Tools</span></h1>
-<p class="sub">ছোট ব্যবসার জন্য AEUN-এর ১১টা ফ্রি টুল — যেকোনোটায় চাপ দিলেই খুলবে</p>
+<header>
+  <div class="hin">
+    <div class="brandline">AEUN TOOLS</div>
+    <h1>আপনার সব টুল, এক জায়গায়</h1>
+    <p>ছোট ব্যবসার প্রতিদিনের কাজের ১২টা ফ্রি টুল। একটা শিখলেই সবগুলো পারবেন — সবখানে একই সাজ, একই নিয়ম।</p>
+    <div class="pills"><span>✓ সম্পূর্ণ ফ্রি</span><span>✓ অফলাইনেও চলে</span><span>✓ ডেটা আপনার ফোনেই থাকে</span></div>
+  </div>
+</header>
+<main>
+  <input class="search" id="q" type="search" placeholder="🔍 কোন টুলটা খুঁজছেন? নাম লিখুন…" aria-label="টুল খুঁজুন">
+  <div class="chips" role="group" aria-label="বিভাগ">
+    <button class="chip on" data-f="all">সব</button>
+    <button class="chip" data-f="sell">বেচাকেনা</button>
+    <button class="chip" data-f="customer">কাস্টমার ও সময়</button>
+    <button class="chip" data-f="promo">প্রচার</button>
+    <button class="chip" data-f="docs">কাগজপত্র</button>
+  </div>
 
-<a class="tool" href="aeun-memo-maker-download.html"><div class="name">🧾 Memo Maker by AEUN</div><div class="desc">ক্যাশ মেমো / ইনভয়েস বানানো, WhatsApp-এ পাঠানো</div></a>
-<a class="tool" href="aeun-profit-calculator.html"><div class="name">💰 Profit Calculator by AEUN</div><div class="desc">পণ্যের লাভ-ক্ষতির হিসাব</div></a>
-<a class="tool" href="aeun-post-kit.html"><div class="name">✍️ Post Kit by AEUN</div><div class="desc">Facebook পোস্টের ক্যাপশন, হ্যাশট্যাগ আর রিপ্লাই</div></a>
-<a class="tool" href="aeun-baki-khata.html"><div class="name">📒 Baki Khata by AEUN</div><div class="desc">বাকির হিসাব রাখা আর রিমাইন্ডার</div></a>
-<a class="tool" href="aeun-poster-maker.html"><div class="name">🎨 Poster Maker by AEUN</div><div class="desc">অফার আর দামের পোস্টার বানানো</div></a>
-<a class="tool" href="aeun-appointment-book.html"><div class="name">📅 Appointment Book by AEUN</div><div class="desc">অ্যাপয়েন্টমেন্ট আর বুকিংয়ের খাতা</div></a>
-<a class="tool" href="aeun-cv-maker.html"><div class="name">📄 CV Maker by AEUN</div><div class="desc">সহজে সুন্দর CV বানানো</div></a>
-<a class="tool" href="aeun-qr-maker.html"><div class="name">🔳 QR Maker by AEUN</div><div class="desc">দোকানের QR তৈরী বানানো</div></a>
-<a class="tool" href="aeun-photo-kit.html"><div class="name">📷 Photo Kit by AEUN</div><div class="desc">পণ্যের ছবি সাজানো</div></a>
-<a class="tool" href="aeun-link-page.html"><div class="name">🔗 Link Page by AEUN</div><div class="desc">সব লিংক এক পেজে</div></a>
-<a class="tool" href="aeun-stock-book.html"><div class="name">📦 Stock Book by AEUN</div><div class="desc">মজুদ পণ্যের হিসাব</div></a>
+  <div id="recentWrap" style="display:none">
+    <h2 class="sec">সাম্প্রতিক ব্যবহার</h2>
+    <div class="grid" id="recentGrid"></div>
+  </div>
 
-<footer>AEUN — AI Engineering &amp; Utility Network</footer>
-</div>
+  <h2 class="sec">সব টুল</h2>
+  <div class="grid" id="grid"></div>
+  <p id="none">এই নামে কোনো টুল পাওয়া যাচ্ছে না — অন্য নামে খুঁজে দেখুন।</p>
+</main>
+<footer>
+  সব টুলের ডেটা আপনার নিজের ফোনেই থাকে — কোথাও পাঠানো হয় না।<br>
+  <a href="https://aeun.vercel.app/tools.html">AEUN ওয়েবসাইট</a> · AEUN — AI Engineering &amp; Utility Network
+</footer>
+<script>
+  var TOOLS = [
+    { slug:'aeun-memo-maker-download', name:'Memo Maker', icon:'🧾', cat:'sell', desc:'বাংলা মেমো ও ইনভয়েস — হিসাব নিজে নিজে মিলে যায়।' },
+    { slug:'aeun-order-bot', name:'Order Bot', icon:'🤖', cat:'sell', desc:'ফেসবুক/WhatsApp অর্ডার গোছানো আর এক ট্যাপে কনফার্ম মেসেজ।' },
+    { slug:'aeun-baki-khata', name:'Baki Khata', icon:'📒', cat:'sell', desc:'বাকির হিসাব — কার কাছে কত পাওনা, এক জায়গায়।' },
+    { slug:'aeun-stock-book', name:'Stock Book', icon:'📦', cat:'sell', desc:'দোকানের মজুদ পণ্যের হিসাব।' },
+    { slug:'aeun-profit-calculator', name:'Profit Calculator', icon:'📊', cat:'sell', desc:'সব খরচ মিলিয়ে আসল লাভের হিসাব।' },
+    { slug:'aeun-appointment-book', name:'Appointment Book', icon:'🕐', cat:'customer', desc:'বুকিং আর WhatsApp কনফার্ম ও রিমাইন্ডার।' },
+    { slug:'aeun-qr-maker', name:'QR Maker', icon:'🔳', cat:'customer', desc:'বিকাশ/WhatsApp QR স্ট্যান্ড — প্রিন্টের জন্য তৈরি।' },
+    { slug:'aeun-link-page', name:'Link Page', icon:'🔗', cat:'customer', desc:'সব লিংক একটা সুন্দর "শপ কার্ড" পেজে।' },
+    { slug:'aeun-poster-maker', name:'Poster Maker', icon:'🖼️', cat:'promo', desc:'অফার আর ছাড়ের সুন্দর পোস্টার।' },
+    { slug:'aeun-post-kit', name:'Post Kit', icon:'✍️', cat:'promo', desc:'ক্যাপশন, হ্যাশট্যাগ আর তৈরি উত্তর।' },
+    { slug:'aeun-photo-kit', name:'Photo Kit', icon:'📷', cat:'promo', desc:'পণ্যের ছবি পোস্টের জন্য তৈরি করুন।' },
+    { slug:'aeun-cv-maker', name:'CV Maker', icon:'📄', cat:'docs', desc:'ফোন থেকেই পরিষ্কার, প্রফেশনাল সিভি।' }
+  ];
+  function card(t){
+    var a = document.createElement('a');
+    a.className = 'tool'; a.href = t.slug + '.html'; a.setAttribute('data-cat', t.cat);
+    a.innerHTML = '<div class="ic" aria-hidden="true">' + t.icon + '</div><div class="tname">' + t.name + '</div><div class="tdesc">' + t.desc + '</div><span class="free">ফ্রি</span>';
+    return a;
+  }
+  var grid = document.getElementById('grid');
+  TOOLS.forEach(function(t){ grid.appendChild(card(t)); });
+  // recents (recorded by core.js when a tool is opened)
+  try {
+    var recents = JSON.parse(localStorage.getItem('aeun.launcher.recents.v1') || '[]');
+    var bySlug = {}; TOOLS.forEach(function(t){ bySlug[t.slug] = t; });
+    var rg = document.getElementById('recentGrid'), shown = 0;
+    recents.forEach(function(s){ if (bySlug[s]){ rg.appendChild(card(bySlug[s])); shown++; } });
+    if (shown) document.getElementById('recentWrap').style.display = '';
+  } catch(e){}
+  // search + filter
+  var f = 'all', q = document.getElementById('q'), none = document.getElementById('none');
+  function apply(){
+    var s = (q.value || '').toLowerCase().trim(), vis = 0;
+    Array.prototype.forEach.call(grid.children, function(c){
+      var okC = (f === 'all' || c.getAttribute('data-cat') === f);
+      var okQ = (!s || c.textContent.toLowerCase().indexOf(s) > -1);
+      c.style.display = (okC && okQ) ? '' : 'none';
+      if (okC && okQ) vis++;
+    });
+    none.style.display = vis ? 'none' : 'block';
+  }
+  q.addEventListener('input', apply);
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(ch){
+    ch.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(x){ x.classList.remove('on'); });
+      ch.classList.add('on'); f = ch.getAttribute('data-f'); apply();
+    });
+  });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+</script>
 </body>
 </html>

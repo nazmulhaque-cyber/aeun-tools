@@ -257,6 +257,7 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
         </div>
         <button class="btn btn-wa" id="btnWaDetail" type="button">💬 WhatsApp রিমাইন্ডার</button>
       </div>
+      <button class="btn btn-ghost" id="btnStmt" type="button" style="margin-top:12px;width:100%">📷 হিসাবের ছবি বানান (কাস্টমারকে পাঠাতে)</button>
     </div>
 
     <div class="panel">
@@ -533,6 +534,50 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
     var c = getCust(currentId); if(c) openWhatsApp(c);
   });
 
+  document.getElementById("btnStmt").addEventListener("click", function(){
+    var c = getCust(currentId); if(!c) return;
+    var entries = (c.entries||[]).slice().sort(function(a,b){ return (a.date||"").localeCompare(b.date||"") || (a.ts||0)-(b.ts||0); }).slice(-15);
+    var W = 820, rowH = 52, headH = 190, footH = 120;
+    var H = headH + Math.max(entries.length,1)*rowH + footH;
+    var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    var x = cv.getContext("2d");
+    x.fillStyle = "#FFFFFF"; x.fillRect(0,0,W,H);
+    x.fillStyle = "#0B1F3A"; x.fillRect(0,0,W,130);
+    x.fillStyle = "#FFFFFF"; x.font = "700 40px Bornomala, sans-serif"; x.textAlign = "left";
+    x.fillText(state.shopName || "আমার দোকান", 40, 58);
+    x.fillStyle = "#9CC2FF"; x.font = "700 24px Bornomala, sans-serif";
+    x.fillText("বাকির হিসাব — Baki Khata by AEUN", 40, 100);
+    x.fillStyle = "#0B1F3A"; x.font = "700 32px Bornomala, sans-serif";
+    x.fillText(c.name || "কাস্টমার", 40, 168);
+    x.fillStyle = "#64748B"; x.font = "400 24px Bornomala, sans-serif";
+    var y = headH + 10;
+    x.font = "400 25px Bornomala, sans-serif";
+    if (!entries.length){
+      x.fillStyle = "#64748B"; x.fillText("এখনো কোনো হিসাব যোগ হয়নি।", 40, y + 30); y += rowH;
+    }
+    entries.forEach(function(e){
+      x.fillStyle = "#334155";
+      var left = toBn(e.date || "") + (e.note ? "  ·  " + e.note : "") + "  ·  " + (e.type === "pay" ? "টাকা দিল" : "বাকি নিল");
+      x.fillText(left, 40, y + 32);
+      x.textAlign = "right";
+      x.fillStyle = e.type === "pay" ? "#12805C" : "#C81E1E";
+      x.font = "700 26px Bornomala, sans-serif";
+      x.fillText((e.type === "pay" ? "− " : "+ ") + money(e.amount), W - 40, y + 32);
+      x.textAlign = "left"; x.font = "400 25px Bornomala, sans-serif";
+      x.strokeStyle = "#E2E8F0"; x.beginPath(); x.moveTo(40, y + rowH - 8); x.lineTo(W - 40, y + rowH - 8); x.stroke();
+      y += rowH;
+    });
+    x.fillStyle = "#0B1F3A"; x.font = "700 34px Bornomala, sans-serif";
+    x.fillText("বর্তমান বাকি: " + money(custDue(c)), 40, y + 52);
+    x.fillStyle = "#94A3B8"; x.font = "400 21px Bornomala, sans-serif";
+    x.fillText("AEUN Baki Khata দিয়ে তৈরি", 40, y + 88);
+    var a = document.createElement("a");
+    a.href = cv.toDataURL("image/png");
+    a.download = "baki-hisab-" + (c.name || "customer") + ".png";
+    document.body.appendChild(a); a.click(); a.remove();
+    toast("হিসাবের ছবি ডাউনলোড হয়েছে 📷");
+  });
+
   document.getElementById("btnAddEntry").addEventListener("click", function(){
     var c = getCust(currentId); if(!c) return;
     var amt = parseFloat(document.getElementById("eAmount").value);
@@ -612,5 +657,6 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
 </script>
 <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+<script src="core.js"></script>
 </body>
 </html>

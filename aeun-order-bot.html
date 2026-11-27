@@ -1007,9 +1007,19 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
               b.addEventListener("click", fn);
               return b;
             }
+
+        function memoHandoff(o){
+          try {
+            localStorage.setItem("aeun.handoff.memo.v1", JSON.stringify({
+              customer: o.customer || {}, items: o.items || [], ts: Date.now()
+            }));
+          } catch(e){}
+          window.open("https://nazmulhaque-cyber.github.io/aeun-tools/aeun-memo-maker-download.html", "_blank");
+        }
             acts.appendChild(mkBtn("WhatsApp: কনফার্মেশন", "btn-wa", function(){ sendWhatsApp(o, "confirm"); }));
             acts.appendChild(mkBtn("WhatsApp: ডেলিভারিতে", "btn-wa", function(){ sendWhatsApp(o, "delivery"); }));
             acts.appendChild(mkBtn("WhatsApp: ধন্যবাদ", "btn-wa", function(){ sendWhatsApp(o, "done"); }));
+            acts.appendChild(mkBtn("🧾 মেমো বানান", "btn-ghost", function(){ memoHandoff(o); }));
             acts.appendChild(mkBtn("বদলান", "btn-ghost", function(){ loadOrderForEdit(o); }));
             acts.appendChild(mkBtn("মুছুন", "btn-danger-ghost", function(){
               askConfirm("অর্ডারটা মুছে ফেলবেন?", "অর্ডার নং " + toBn(o.no) + " (" + (o.customer.name || "") + ") স্থায়ীভাবে মুছে যাবে।", function(){
@@ -1182,5 +1192,25 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
     </script>
   <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+<script src="core.js"></script>
+<script>
+(function(){
+  if (!window.AEUNCore) return;
+  function $(id){ return document.getElementById(id); }
+  function fire(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+  var map = { shopName:'name', shopWhatsApp:'whatsapp', shopBkash:'bkash' };
+  var prof = AEUNCore.getProfile();
+  Object.keys(map).forEach(function(id){
+    var el = $(id); if (!el) return;
+    if (!el.value && prof[map[id]]){ el.value = prof[map[id]]; fire(el); }
+  });
+  var btn = $('btnSaveShop');
+  if (btn) btn.addEventListener('click', function(){
+    var patch = {}; Object.keys(map).forEach(function(id){ var e=$(id); if(e) patch[map[id]] = e.value.trim(); });
+    AEUNCore.setProfile(patch);
+  });
+})();
+</script>
+
 </body>
 </html>
