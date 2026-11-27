@@ -205,29 +205,49 @@
 .dl-btn{color:#fff !important}
 .brand h1 .en{color:#9CC2FF !important}
 </style>
+
+<style id="aeun-ui3">
+body{ background:linear-gradient(180deg,#E3EDFB 0,#F4F7FB 260px) , var(--bg); background-color:var(--bg); }
+.topbar{ background:linear-gradient(135deg,#0B1F3A 0%,#14386B 70%,#1D6FF2 130%); border-radius:0 0 26px 26px; padding:22px 18px 24px; box-shadow:0 14px 34px rgba(11,31,58,.25); }
+.tb-row{ display:flex; align-items:center; gap:14px; }
+.app-ic{ width:58px; height:58px; flex:0 0 58px; border-radius:17px; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-size:29px; }
+.topbar h1{ font-size:1.75rem; }
+.topbar h1 .accent{ color:#8FBBFF; }
+.by-line{ color:#8FBBFF; font-weight:700; letter-spacing:.24em; font-size:.74rem; margin-top:1px; }
+.topbar p{ margin-top:12px; font-size:.97rem; }
+.tb-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.tb-pills span{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#E7F0FE; border-radius:99px; padding:5px 12px; font-size:.82rem; font-weight:600; }
+.wrap{ padding-top:22px; }
+.card{ border-radius:20px; padding:22px; border-color:#E1EAF3; box-shadow:0 10px 28px rgba(11,31,58,.06); margin-bottom:20px; }
+.card h2{ display:flex; align-items:center; gap:11px; font-size:1.28rem; }
+.card h2::before{ content:''; width:5px; height:23px; border-radius:3px; background:linear-gradient(180deg,#2B7FFF,#1D6FF2); flex:0 0 5px; }
+input[type="text"], input[type="tel"], input[type="number"], textarea{ border-radius:14px; min-height:50px; padding:12px 14px; background:#F8FAFD; }
+@media (prefers-color-scheme: dark){ input[type="text"], input[type="tel"], input[type="number"], textarea{ background:var(--input-bg); } }
+.btn{ border-radius:14px; }
+.btn-blue,.btn-teal,.btn-amber{ background:linear-gradient(180deg,#2B7FFF,#1D6FF2); color:#fff; box-shadow:0 6px 16px rgba(29,111,242,.25); }
+.btn-ghost{ border-radius:14px; }
+.totals-box{ border-radius:16px; }
+.dl-card{ border:1.5px solid #BFD7F8; background:linear-gradient(180deg, rgba(29,111,242,.07), rgba(29,111,242,0) 70%), var(--card); }
+</style>
 </head>
   <body>
 <nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
     <header class="topbar">
       <div class="topbar-inner">
-        <h1>Memo <span class="accent">Maker</span></h1>
-        <div style="color:#1D6FF2;font-weight:700;letter-spacing:.22em;font-size:.78rem;margin-top:2px">BY AEUN</div>
+        <div class="tb-row">
+          <div class="app-ic" aria-hidden="true">🧾</div>
+          <div>
+            <h1>Memo <span class="accent">Maker</span></h1>
+            <div class="by-line">BY AEUN</div>
+          </div>
+        </div>
         <p>ফেসবুক ও WhatsApp বিক্রেতাদের জন্য সহজ বাংলা মেমো — একবার দোকানের তথ্য দিলেই প্রতিটা অর্ডারের সুন্দর মেমো তৈরি।</p>
+        <div class="tb-pills"><span>✓ সম্পূর্ণ ফ্রি</span><span>✓ অফলাইনেও চলে</span><span>✓ ডেটা আপনার ফোনেই থাকে</span></div>
       </div>
     </header>
 
     <main class="wrap">
 
-      <!-- Download this tool -->
-      <section class="card dl-card" aria-labelledby="dl-h">
-        <h2 id="dl-h">⬇️ এই টুলটা নিজের কাছে রাখুন</h2>
-        <p class="hint" style="margin-bottom:10px;">নিচের বোতামে চাপ দিলে পুরো টুলটা একটা মাত্র HTML ফাইল হিসেবে ডাউনলোড হবে। ফাইলটা নিজের কম্পিউটার/ফোনে রেখে সরাসরি খুলতে পারবেন, অথবা নিজের ওয়েবসাইটে বসাতে পারবেন।</p>
-        <button class="btn btn-amber" id="btnDownloadTool" type="button">📥 Memo Maker ডাউনলোড করুন (HTML ফাইল)</button>
-        <ol class="dl-steps">
-          <li>নিজের ওয়েবসাইটে বসাতে চাইলে ফাইলটা GitHub Pages বা Netlify-তে আপলোড করলেই চলবে — আলাদা কোনো সার্ভার লাগবে না।</li>
-          <li>দোকানের তথ্য আর সব মেমো প্রত্যেক ব্যবহারকারীর নিজের ব্রাউজারেই সেভ থাকে — একজনের তথ্য আরেকজন দেখতে পায় না।</li>
-        </ol>
-      </section>
 
       <!-- Shop profile -->
       <section class="card" aria-labelledby="shop-h">
@@ -359,6 +379,17 @@
       </div>
 
       <!-- History -->
+      <!-- Download this tool -->
+      <section class="card dl-card" aria-labelledby="dl-h">
+        <h2 id="dl-h">⬇️ এই টুলটা নিজের কাছে রাখুন</h2>
+        <p class="hint" style="margin-bottom:10px;">নিচের বোতামে চাপ দিলে পুরো টুলটা একটা মাত্র HTML ফাইল হিসেবে ডাউনলোড হবে। ফাইলটা নিজের কম্পিউটার/ফোনে রেখে সরাসরি খুলতে পারবেন, অথবা নিজের ওয়েবসাইটে বসাতে পারবেন।</p>
+        <button class="btn btn-amber" id="btnDownloadTool" type="button">📥 Memo Maker ডাউনলোড করুন (HTML ফাইল)</button>
+        <ol class="dl-steps">
+          <li>নিজের ওয়েবসাইটে বসাতে চাইলে ফাইলটা GitHub Pages বা Netlify-তে আপলোড করলেই চলবে — আলাদা কোনো সার্ভার লাগবে না।</li>
+          <li>দোকানের তথ্য আর সব মেমো প্রত্যেক ব্যবহারকারীর নিজের ব্রাউজারেই সেভ থাকে — একজনের তথ্য আরেকজন দেখতে পায় না।</li>
+        </ol>
+      </section>
+
       <section class="card" aria-labelledby="hist-h">
         <h2 id="hist-h">🗂️ আগের মেমোসমূহ</h2>
         <p class="hint">সেভ করা মেমো এই ব্রাউজারেই থাকে। যেকোনো মেমো আবার খুলে ছবি ডাউনলোড বা WhatsApp-এ পাঠাতে পারবেন।</p>
@@ -1005,6 +1036,6 @@
       })();
     </script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
-<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 </body>
 </html>

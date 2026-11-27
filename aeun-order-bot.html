@@ -254,16 +254,33 @@
 .aeun-foot{font-family:'Bornomala',sans-serif;text-align:center;color:#64748B;font-size:.82rem;padding:22px 16px 30px;line-height:1.7}
 .aeun-foot a{color:#1D6FF2;text-decoration:none;font-weight:700}
 </style>
+<style id="aeun-ui3">
+header.top, header.topbar, header.hero, .topband{ background:linear-gradient(135deg,#0B1F3A 0%,#14386B 70%,#1D6FF2 130%) !important; border-bottom:none !important; border-radius:0 0 26px 26px; box-shadow:0 14px 34px rgba(11,31,58,.22); }
+
+.card, .panel{ border-radius:20px !important; box-shadow:0 10px 28px rgba(11,31,58,.06); }
+.box{ border-radius:16px; box-shadow:0 8px 22px rgba(11,31,58,.05); }
+.card h2, .panel h2{ display:flex; align-items:center; gap:11px; }
+.card h2::before, .panel h2::before{ content:''; width:5px; height:23px; border-radius:3px; background:linear-gradient(180deg,#2B7FFF,#1D6FF2); flex:0 0 5px; }
+input[type="text"], input[type="tel"], input[type="number"], input[type="date"], input[type="time"], input[type="email"], input[type="url"], input[type="search"], textarea, select{ border-radius:14px !important; }
+@media (prefers-color-scheme: light){ input[type="text"], input[type="tel"], input[type="number"], input[type="date"], input[type="time"], input[type="email"], input[type="url"], input[type="search"], textarea, select{ background-color:#F8FAFD; } body{ background:linear-gradient(180deg,#E3EDFB 0,#F4F7FB 260px); } }
+.btn-primary, .btn-blue, .btn-amber, .btn-teal, .btn-download, .btn-poster, .btn-copy, .btn-download-page, .dl-btn{ background:linear-gradient(180deg,#2B7FFF,#1D6FF2) !important; color:#fff !important; box-shadow:0 6px 16px rgba(29,111,242,.25); border-radius:14px; }
+.tb-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; flex:1 1 100%; }
+.tb-pills span{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:#E7F0FE; border-radius:99px; padding:5px 12px; font-size:.82rem; font-weight:600; }
+.app-ic{ width:58px; height:58px; flex:0 0 58px; border-radius:17px; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-size:29px; margin-bottom:12px; }
+.brand-row .app-ic, .brandrow .app-ic{ margin-bottom:0; }
+</style>
 </head>
   <body>
 <nav class="aeun-bar"><a href="https://aeun.vercel.app/tools.html">&#8592; সব টুল</a><span class="aeun-brand">AEUN</span></nav>
     <header class="topbar">
       <div class="topbar-inner">
+<div class="app-ic" aria-hidden="true">🤖</div>
         <h1>Order <span class="accent">Bot</span></h1>
         <div class="brand-line">BY AEUN</div>
         <p>ফেসবুক ও WhatsApp বিক্রেতাদের জন্য অর্ডার রাখার সহজ বাংলা অ্যাপ — অর্ডার নিন, স্ট্যাটাস গুছিয়ে রাখুন, আর এক ট্যাপে ক্রেতাকে WhatsApp মেসেজ পাঠান।</p>
         <div class="honest"><b>সোজা কথা:</b> এই অ্যাপ নিজে নিজে WhatsApp-এ মেসেজ পাঠায় না বা অটো-রিপ্লাই দেয় না। এটি মেসেজ তৈরি করে WhatsApp-এ খুলে দেয় — আপনি দেখে এক ট্যাপে পাঠিয়ে দিলেই হবে।</div>
-      </div>
+      <div class="tb-pills"><span>✓ সম্পূর্ণ ফ্রি</span><span>✓ অফলাইনেও চলে</span><span>✓ ডেটা আপনার ফোনেই থাকে</span></div>
+</div>
     </header>
     <nav class="navchips" aria-label="বিভাগসমূহ">
       <div class="navchips-inner">
@@ -1163,7 +1180,7 @@
         renderAll();
       })();
     </script>
-  <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.0 · AEUN — AI Engineering &amp; Utility Network</footer>
+  <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 </body>
 </html>
