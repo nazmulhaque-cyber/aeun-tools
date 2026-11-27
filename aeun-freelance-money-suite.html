@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freelance Money Suite by AEUN — Rate Calculator & Income Tracker</title>
+<style>
+  :root{
+    --accent:#6C4CF1;
+    --accent-dark:#5438d6;
+    --accent-soft:#efeaff;
+    --navy:#161d33;
+    --navy-2:#2a3350;
+    --muted:#6b7280;
+    --faint:#9aa1b5;
+    --bg:#f6f6fb;
+    --card:#ffffff;
+    --line:#e7e7f0;
+    --good:#0e9f6e;
+    --good-soft:#e5f7ef;
+    --warn:#d97706;
+    --warn-soft:#fdf1e0;
+    --bad:#dc2626;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(22,29,51,.04),0 10px 30px rgba(22,29,51,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--navy);line-height:1.5;
+    padding:22px 16px 40px;
+  }
+  .wrap{max-width:1060px;margin:0 auto}
+  /* ---------- header ---------- */
+  header.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+  .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#9a7bff);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:800;box-shadow:var(--shadow)}
+  .brand h1{font-size:1.28rem;letter-spacing:-.01em;line-height:1.15}
+  .brand p{font-size:.83rem;color:var(--muted)}
+  .currency-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:8px 12px;box-shadow:var(--shadow)}
+  .currency-box label{font-size:.8rem;color:var(--muted);font-weight:600}
+  select,input,button{font:inherit}
+  select,input[type="text"],input[type="number"],input[type="date"]{
+    border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;color:var(--navy);
+    outline:none;transition:border-color .15s, box-shadow .15s;width:100%}
+  select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .currency-box select{width:auto;border:none;box-shadow:none;padding:2px 4px;font-weight:700}
+  .currency-box select:focus{box-shadow:none}
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:6px;background:#e9e9f4;border-radius:14px;padding:5px;margin-bottom:20px}
+  .tabs button{flex:1;border:none;background:transparent;padding:11px 10px;border-radius:10px;cursor:pointer;
+    font-weight:700;color:var(--navy-2);font-size:.95rem;transition:background .15s,color .15s}
+  .tabs button.active{background:#fff;color:var(--accent-dark);box-shadow:0 2px 8px rgba(22,29,51,.10)}
+  /* ---------- cards & layout ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+  .card h2{font-size:1.02rem;margin-bottom:4px}
+  .card .sub{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .grid-rate{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.83rem;font-weight:600;color:var(--navy-2);margin-bottom:6px}
+  .field .hint{font-size:.76rem;color:var(--faint);margin-top:4px}
+  .input-money{position:relative}
+  .input-money span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint);font-weight:700;pointer-events:none}
+  .input-money input{padding-left:28px}
+  .seg{display:flex;background:#eeeef6;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:none;background:transparent;padding:7px;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted)}
+  .seg button.active{background:#fff;color:var(--accent-dark);box-shadow:0 1px 4px rgba(22,29,51,.12)}
+  .range-row{display:flex;align-items:center;gap:12px}
+  .range-row input[type="range"]{flex:1;accent-color:var(--accent)}
+  .range-val{font-weight:800;min-width:52px;text-align:right;color:var(--accent-dark)}
+  /* results */
+  .big-rates{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+  .big-rate{background:var(--accent-soft);border-radius:14px;padding:14px 12px;text-align:center}
+  .big-rate.hero{grid-column:1/-1;background:linear-gradient(135deg,var(--accent),#8a6bff);color:#fff;padding:20px 12px}
+  .big-rate .lbl{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.75}
+  .big-rate .val{font-size:1.5rem;font-weight:800;letter-spacing:-.01em;margin-top:2px}
+  .big-rate.hero .val{font-size:2.3rem}
+  .breakdown{border-top:1px dashed var(--line);padding-top:14px}
+  .breakdown h3{font-size:.88rem;margin-bottom:10px}
+  .b-row{display:flex;justify-content:space-between;font-size:.9rem;padding:6px 0;color:var(--navy-2)}
+  .b-row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:800;color:var(--navy);font-size:1rem}
+  .b-bar{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:12px 0 4px;background:#eeeef6}
+  .b-bar div{height:100%}
+  .b-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin-bottom:6px}
+  .b-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+  /* ---------- tracker ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .stat .lbl{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .stat .val{font-size:1.45rem;font-weight:800;margin-top:3px;letter-spacing:-.01em}
+  .stat .note{font-size:.78rem;color:var(--faint);margin-top:2px}
+  .stat.warn .val{color:var(--warn)}
+  .chart{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end;min-width:0}
+  .chart .bar{width:100%;max-width:64px;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#8a6bff,var(--accent));min-height:4px;transition:height .3s}
+  .chart .col.cur .bar{background:linear-gradient(180deg,#ffb35c,#f59e0b)}
+  .chart .m{font-size:.74rem;color:var(--muted);font-weight:600;white-space:nowrap}
+  .chart .amt{font-size:.72rem;color:var(--faint);font-weight:700;white-space:nowrap}
+  .entry-form{display:grid;grid-template-columns:150px 1fr 1fr 130px 120px auto;gap:10px;align-items:end}
+  .entry-form .field{margin-bottom:0}
+  .btn{border:none;border-radius:11px;padding:10px 18px;cursor:pointer;font-weight:700;transition:background .15s,transform .05s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-dark)}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--navy-2)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent-dark)}
+  .btn-small{padding:7px 12px;font-size:.83rem;border-radius:9px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+  .toolbar .seg{width:250px}
+  .toolbar .spacer{flex:1}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th{text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+    padding:9px 10px;border-bottom:2px solid var(--line)}
+  td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.76rem;font-weight:700}
+  .pill.paid{background:var(--good-soft);color:var(--good)}
+  .pill.pending{background:var(--warn-soft);color:var(--warn)}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--navy-2)}
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent-dark)}
+  .icon-btn.danger:hover{border-color:var(--bad);color:var(--bad)}
+  .empty{border:1.5px dashed var(--line);border-radius:14px;padding:34px 18px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:1.05rem;font-weight:700;color:var(--navy-2);margin-bottom:5px}
+  .empty p{font-size:.88rem;margin-bottom:14px}
+  .stack{display:grid;gap:18px}
+  .data-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+  .data-bar .note{font-size:.8rem;color:var(--faint);margin-right:auto}
+  footer.app{margin-top:26px;text-align:center;color:var(--faint);font-size:.82rem}
+  footer.app b{color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;
+    padding:11px 20px;border-radius:12px;font-size:.9rem;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:50;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .err{color:var(--bad);font-size:.8rem;margin-top:6px;display:none}
+  .hidden{display:none!important}
+  #printArea{display:none}
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    .entry-form{grid-template-columns:1fr 1fr}
+    .entry-form .field.full{grid-column:1/-1}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:680px){
+    .grid-rate{grid-template-columns:1fr}
+    .big-rates{grid-template-columns:1fr 1fr}
+    .big-rate.hero{grid-column:1/-1}
+    table,thead,tbody,tr,td{display:block}
+    thead{display:none}
+    tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 4px;background:#fff}
+    td{border:none;padding:5px 10px}
+    td.amt-cell{font-weight:800;font-size:1.02rem}
+    .row-actions{justify-content:flex-start}
+  }
+  /* ---------- print ---------- */
+  @media print{
+    body{background:#fff;padding:0}
+    .wrap{display:none!important}
+    .toast{display:none!important}
+    #printArea{display:block;font-size:13px;color:#000}
+    #printArea h1{font-size:20px;margin-bottom:2px}
+    #printArea h2{font-size:15px;margin:18px 0 8px}
+    #printArea p.sub{color:#444;margin-bottom:14px}
+    #printArea table{font-size:12.5px}
+    #printArea th,#printArea td{border-bottom:1px solid #ccc;padding:6px 8px}
+    #printArea .tot{font-weight:800}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo">£</div>
+      <div>
+        <h1>Freelance Money Suite</h1>
+        <p>Know your rate. Track every payment. By AEUN.</p>
+      </div>
+    </div>
+    <div class="currency-box">
+      <label for="currencySel">Currency</label>
+      <select id="currencySel">
+        <option value="USD">USD $</option>
+        <option value="GBP">GBP £</option>
+        <option value="EUR">EUR €</option>
+      </select>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button id="tabBtnRate" class="active" role="tab">💰 Rate Calculator</button>
+    <button id="tabBtnTrack" role="tab">📊 Income Tracker</button>
+  </nav>
+
+  <!-- ================= TAB A : RATE CALCULATOR ================= -->
+  <section id="tabRate">
+    <div class="grid-rate">
+      <div class="card">
+        <h2>Your numbers</h2>
+        <p class="sub">Tell the calculator what you want to earn and how you work. Your rate updates live.</p>
+
+        <div class="field">
+          <label>Target income</label>
+          <div class="seg" style="margin-bottom:8px">
+            <button type="button" id="segMonthly" class="active">Monthly</button>
+            <button type="button" id="segAnnual">Annual</button>
+          </div>
+          <div class="input-money"><span class="curSym">$</span>
+            <input type="number" id="inTarget" min="0" step="50" value="5000">
+          </div>
+          <div class="hint" id="targetHint">What you want to take home each month, before tax.</div>
+        </div>
+
+        <div class="field">
+          <label for="inHours">Billable hours per week</label>
+          <input type="number" id="inHours" min="1" max="80" step="1" value="25">
+          <div class="hint">Only hours you can actually charge clients for — not admin or marketing.</div>
+        </div>
+
+        <div class="field">
+          <label for="inWeeksOff">Weeks off per year</label>
+          <input type="number" id="inWeeksOff" min="0" max="20" step="1" value="4">
+          <div class="hint">Holidays, sick days and quiet weeks count too.</div>
+        </div>
+
+        <div class="field">
+          <label for="inExpenses">Business expenses per month</label>
+          <div class="input-money"><span class="curSym">$</span>
+            <input type="number" id="inExpenses" min="0" step="10" value="300">
+          </div>
+          <div class="hint">Software, gear, coworking, accountant, subscriptions…</div>
+        </div>
+
+        <div class="field">
+          <label>Estimated tax rate</label>
+          <div class="range-row">
+            <input type="range" id="inTax" min="0" max="50" step="1" value="20">
+            <div class="range-val" id="taxVal">20%</div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:2px">
+          <label>Profit margin / safety buffer</label>
+          <div class="range-row">
+            <input type="range" id="inMargin" min="0" max="50" step="1" value="10">
+            <div class="range-val" id="marginVal">10%</div>
+          </div>
+          <div class="hint">Extra on top, so slow months and surprises don't hurt.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Your minimum rates</h2>
+        <p class="sub">Charge less than this and you are paying to work. Revisit whenever your costs change.</p>
+
+        <div class="big-rates">
+          <div class="big-rate hero">
+            <div class="lbl">Minimum hourly rate</div>
+            <div class="val" id="outHourly">$0</div>
+          </div>
+          <div class="big-rate">
+            <div class="lbl">Day rate (8h)</div>
+            <div class="val" id="outDay">$0</div>
+          </div>
+          <div class="big-rate">
+            <div class="lbl">Billable hrs / year</div>
+            <div class="val" id="outHours">0</div>
+          </div>
+          <div class="big-rate">
+            <div class="lbl">Gross needed / year</div>
+            <div class="val" id="outGross">$0</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="inProjectHours">Sample project size (hours)</label>
+          <input type="number" id="inProjectHours" min="1" step="1" value="20">
+        </div>
+        <div class="big-rates" style="grid-template-columns:1fr;margin-bottom:4px">
+          <div class="big-rate">
+            <div class="lbl">Minimum project price</div>
+            <div class="val" id="outProject">$0</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <h3>How your hourly rate is built</h3>
+          <div class="b-bar">
+            <div id="barBase" style="background:#6C4CF1"></div>
+            <div id="barExp" style="background:#9a7bff"></div>
+            <div id="barMargin" style="background:#f59e0b"></div>
+            <div id="barTax" style="background:#38bdf8"></div>
+          </div>
+          <div class="b-legend">
+            <span><i style="background:#6C4CF1"></i>Income</span>
+            <span><i style="background:#9a7bff"></i>Expenses</span>
+            <span><i style="background:#f59e0b"></i>Margin</span>
+            <span><i style="background:#38bdf8"></i>Tax</span>
+          </div>
+          <div class="b-row"><span>Income + expenses (base)</span><b id="bdBase">$0/hr</b></div>
+          <div class="b-row"><span>+ Profit margin</span><b id="bdMargin">$0/hr</b></div>
+          <div class="b-row"><span>+ Tax allowance</span><b id="bdTax">$0/hr</b></div>
+          <div class="b-row total"><span>Minimum hourly rate</span><span id="bdTotal">$0/hr</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TAB B : INCOME TRACKER ================= -->
+  <section id="tabTrack" class="hidden">
+    <div class="stats">
+      <div class="stat"><div class="lbl">This month</div><div class="val" id="stThis">$0</div><div class="note" id="stThisNote">—</div></div>
+      <div class="stat"><div class="lbl">Last month</div><div class="val" id="stLast">$0</div><div class="note" id="stLastNote">—</div></div>
+      <div class="stat"><div class="lbl">Best month</div><div class="val" id="stBest">$0</div><div class="note" id="stBestNote">—</div></div>
+      <div class="stat warn"><div class="lbl">Pending (owed to you)</div><div class="val" id="stPending">$0</div><div class="note" id="stPendingNote">—</div></div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <h2>Last 6 months</h2>
+        <p class="sub">Total invoiced per month, paid and pending combined.</p>
+        <div class="chart" id="chart"></div>
+      </div>
+
+      <div class="card">
+        <h2 id="formTitle">Log income</h2>
+        <p class="sub">Every invoice you send or payment you receive — if it isn't logged, it didn't happen.</p>
+        <form class="entry-form" id="entryForm" novalidate>
+          <div class="field"><label for="fDate">Date</label><input type="date" id="fDate"></div>
+          <div class="field"><label for="fClient">Client *</label><input type="text" id="fClient" placeholder="e.g. Acme Studio"></div>
+          <div class="field"><label for="fProject">Project</label><input type="text" id="fProject" placeholder="e.g. Website redesign"></div>
+          <div class="field"><label for="fAmount">Amount *</label><input type="number" id="fAmount" min="0" step="0.01" placeholder="0.00"></div>
+          <div class="field"><label for="fStatus">Status</label>
+            <select id="fStatus"><option value="Paid">Paid</option><option value="Pending">Pending</option></select>
+          </div>
+          <div class="field">
+            <button type="submit" class="btn btn-primary" id="btnAdd">Add entry</button>
+            <button type="button" class="btn btn-ghost hidden" id="btnCancelEdit">Cancel</button>
+          </div>
+        </form>
+        <div class="err" id="formErr"></div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Filter by status">
+            <button type="button" data-filter="All" class="active">All</button>
+            <button type="button" data-filter="Paid">Paid</button>
+            <button type="button" data-filter="Pending">Pending</button>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-small" id="btnPrint" type="button">🖨 Print summary</button>
+        </div>
+        <div id="tableWrap">
+          <table>
+            <thead><tr><th>Date</th><th>Client</th><th>Project</th><th style="text-align:right">Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty hidden" id="emptyState">
+          <div class="big">No income logged yet</div>
+          <p>Add your first entry above, or load the demo data to see how the tracker feels with real numbers in it.</p>
+          <button class="btn btn-primary" id="btnDemo2" type="button">Load demo data</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-bar">
+      <span class="note">Your data lives only in this browser, on this device.</span>
+      <button class="btn btn-ghost btn-small" id="btnDemo" type="button">Load demo data</button>
+      <button class="btn btn-ghost btn-small" id="btnExport" type="button">⬇ Export backup (JSON)</button>
+      <label class="btn btn-ghost btn-small" style="cursor:pointer">⬆ Import backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+      <button class="btn btn-ghost btn-small" id="btnClear" type="button" style="color:var(--bad)">Clear all data</button>
+    </div>
+  </section>
+
+  <footer class="app">
+    <b>Freelance Money Suite by AEUN</b> — estimates only, not tax advice. For real tax decisions, talk to a qualified accountant.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var LS_KEY = "freelance_money_suite_v1";
+  var SYMBOLS = { USD:"$", GBP:"£", EUR:"€" };
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  var DEFAULTS = {
+    currency: "USD",
+    rate: { mode:"monthly", target:5000, hours:25, weeksOff:4, expenses:300, tax:20, margin:10, projectHours:20 },
+    entries: []
+  };
+
+  var state = load();
+  var filter = "All";
+  var editingId = null;
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if(!raw) return JSON.parse(JSON.stringify(DEFAULTS));
+      var d = JSON.parse(raw);
+      if(!d || typeof d !== "object") return JSON.parse(JSON.stringify(DEFAULTS));
+      var s = JSON.parse(JSON.stringify(DEFAULTS));
+      if(SYMBOLS[d.currency]) s.currency = d.currency;
+      if(d.rate) for(var k in s.rate){ if(typeof d.rate[k] === "number" || typeof d.rate[k] === "string") s.rate[k] = d.rate[k]; }
+      if(Array.isArray(d.entries)) s.entries = d.entries.filter(function(e){ return e && e.date && typeof e.amount === "number"; });
+      return s;
+    }catch(e){ return JSON.parse(JSON.stringify(DEFAULTS)); }
+  }
+  function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+  function sym(){ return SYMBOLS[state.currency] || "$"; }
+  function num(n){ n = Number(n)||0; return n.toLocaleString("en-US",{minimumFractionDigits:0, maximumFractionDigits:2}); }
+  function money(n){ return sym() + num(n); }
+  function moneyShort(n){
+    n = Number(n)||0;
+    if(Math.abs(n) >= 1000) return sym() + (Math.round(n/100)/10).toLocaleString("en-US") + "k";
+    return money(n);
+  }
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove("show"); }, 2400);
+  }
+  function uid(){ return "e" + Date.now().toString(36) + Math.floor(Math.random()*9999); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function monthKey(dateStr){ return (dateStr||"").slice(0,7); }
+  function monthLabel(key){
+    var y = key.slice(0,4), m = parseInt(key.slice(5,7),10);
+    return MONTHS[m-1] + " " + y;
+  }
+  function keyOf(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0"); }
+  function shiftKey(key, delta){
+    var y = parseInt(key.slice(0,4),10), m = parseInt(key.slice(5,7),10) - 1 + delta;
+    var d = new Date(y, m, 1);
+    return keyOf(d);
+  }
+  function fmtDate(dateStr){
+    var p = (dateStr||"").split("-");
+    if(p.length !== 3) return dateStr || "—";
+    return MONTHS[parseInt(p[1],10)-1] + " " + parseInt(p[2],10) + ", " + p[0];
+  }
+
+  /* =============== TABS =============== */
+  function showTab(which){
+    $("tabRate").classList.toggle("hidden", which !== "rate");
+    $("tabTrack").classList.toggle("hidden", which !== "track");
+    $("tabBtnRate").classList.toggle("active", which === "rate");
+    $("tabBtnTrack").classList.toggle("active", which === "track");
+  }
+  $("tabBtnRate").addEventListener("click", function(){ showTab("rate"); });
+  $("tabBtnTrack").addEventListener("click", function(){ showTab("track"); });
+
+  /* =============== CURRENCY =============== */
+  $("currencySel").value = state.currency;
+  $("currencySel").addEventListener("change", function(){
+    state.currency = this.value; save();
+    document.querySelectorAll(".curSym").forEach(function(el){ el.textContent = sym(); });
+    calcRate(); renderTracker();
+  });
+  document.querySelectorAll(".curSym").forEach(function(el){ el.textContent = sym(); });
+
+  /* =============== RATE CALCULATOR =============== */
+  var r = state.rate;
+  $("inTarget").value = r.target;
+  $("inHours").value = r.hours;
+  $("inWeeksOff").value = r.weeksOff;
+  $("inExpenses").value = r.expenses;
+  $("inTax").value = r.tax;
+  $("inMargin").value = r.margin;
+  $("inProjectHours").value = r.projectHours;
+
+  function syncMode(){
+    $("segMonthly").classList.toggle("active", state.rate.mode === "monthly");
+    $("segAnnual").classList.toggle("active", state.rate.mode === "annual");
+    $("targetHint").textContent = state.rate.mode === "monthly"
+      ? "What you want to take home each month, before tax."
+      : "What you want to take home in a full year, before tax.";
+  }
+  $("segMonthly").addEventListener("click", function(){ setMode("monthly"); });
+  $("segAnnual").addEventListener("click", function(){ setMode("annual"); });
+  function setMode(m){
+    if(state.rate.mode === m) return;
+    var v = parseFloat($("inTarget").value) || 0;
+    state.rate.target = m === "annual" ? Math.round(v*12) : Math.round(v/12);
+    state.rate.mode = m;
+    $("inTarget").value = state.rate.target;
+    syncMode(); readRateInputs();
+  }
+
+  function readRateInputs(){
+    var R = state.rate;
+    R.target = Math.max(0, parseFloat($("inTarget").value) || 0);
+    R.hours = Math.min(80, Math.max(0, parseFloat($("inHours").value) || 0));
+    R.weeksOff = Math.min(51, Math.max(0, parseFloat($("inWeeksOff").value) || 0));
+    R.expenses = Math.max(0, parseFloat($("inExpenses").value) || 0);
+    R.tax = parseFloat($("inTax").value) || 0;
+    R.margin = parseFloat($("inMargin").value) || 0;
+    R.projectHours = Math.max(0, parseFloat($("inProjectHours").value) || 0);
+    $("taxVal").textContent = R.tax + "%";
+    $("marginVal").textContent = R.margin + "%";
+    save(); calcRate();
+  }
+  ["inTarget","inHours","inWeeksOff","inExpenses","inTax","inMargin","inProjectHours"].forEach(function(id){
+    $(id).addEventListener("input", readRateInputs);
+    $(id).addEventListener("change", readRateInputs);
+  });
+
+  function calcRate(){
+    var R = state.rate;
+    var annualTarget = R.mode === "monthly" ? R.target * 12 : R.target;
+    var expensesAnnual = R.expenses * 12;
+    var base = annualTarget + expensesAnnual;
+    var withMargin = base * (1 + R.margin/100);
+    var gross = R.tax >= 100 ? withMargin : withMargin / (1 - R.tax/100);
+    var billable = R.hours * Math.max(0, 52 - R.weeksOff);
+    var hourly = billable > 0 ? gross / billable : 0;
+
+    var baseHr = billable > 0 ? base / billable : 0;
+    var marginHr = billable > 0 ? (withMargin - base) / billable : 0;
+    var taxHr = billable > 0 ? (gross - withMargin) / billable : 0;
+
+    $("outHourly").textContent = money(Math.round(hourly * 100) / 100);
+    $("outDay").textContent = money(Math.round(hourly * 8));
+    $("outHours").textContent = num(billable);
+    $("outGross").textContent = money(Math.round(gross));
+    $("outProject").textContent = money(Math.round(hourly * R.projectHours));
+
+    $("bdBase").textContent = money(Math.round(baseHr*100)/100) + "/hr";
+    $("bdMargin").textContent = money(Math.round(marginHr*100)/100) + "/hr";
+    $("bdTax").textContent = money(Math.round(taxHr*100)/100) + "/hr";
+    $("bdTotal").textContent = money(Math.round(hourly*100)/100) + "/hr";
+
+    var tot = baseHr + marginHr + taxHr;
+    function pct(x){ return tot > 0 ? (x/tot*100) : 0; }
+    $("barBase").style.width = pct(baseHr) + "%";
+    $("barExp").style.width = "0%";
+    // expenses shown as their own slice of the base:
+    var expHr = billable > 0 ? expensesAnnual / billable : 0;
+    var incHr = baseHr - expHr;
+    $("barBase").style.width = pct(incHr) + "%";
+    $("barExp").style.width = pct(expHr) + "%";
+    $("barMargin").style.width = pct(marginHr) + "%";
+    $("barTax").style.width = pct(taxHr) + "%";
+  }
+  syncMode();
+  $("taxVal").textContent = r.tax + "%";
+  $("marginVal").textContent = r.margin + "%";
+  calcRate();
+
+  /* =============== INCOME TRACKER =============== */
+  function monthTotals(){
+    var t = {};
+    state.entries.forEach(function(e){
+      var k = monthKey(e.date);
+      if(k) t[k] = (t[k] || 0) + (Number(e.amount) || 0);
+    });
+    return t;
+  }
+  function renderTracker(){
+    var totals = monthTotals();
+    var nowK = keyOf(new Date());
+    var lastK = shiftKey(nowK, -1);
+
+    var thisTotal = totals[nowK] || 0;
+    var lastTotal = totals[lastK] || 0;
+    $("stThis").textContent = money(thisTotal);
+    $("stLast").textContent = money(lastTotal);
+
+    var thisEntries = state.entries.filter(function(e){ return monthKey(e.date) === nowK; });
+    var thisPaid = thisEntries.filter(function(e){ return e.status === "Paid"; }).length;
+    $("stThisNote").textContent = thisEntries.length ? thisEntries.length + (thisEntries.length===1?" entry":" entries") + " · " + thisPaid + " paid" : "Nothing logged yet";
+    $("stLastNote").textContent = monthLabel(lastK);
+    if(lastTotal > 0 && thisTotal > 0){
+      var diff = Math.round((thisTotal - lastTotal) / lastTotal * 100);
+      $("stThisNote").textContent += " · " + (diff >= 0 ? "▲ " : "▼ ") + Math.abs(diff) + "% vs last month";
+    }
+
+    var bestK = null, bestV = 0;
+    for(var k in totals){ if(totals[k] > bestV){ bestV = totals[k]; bestK = k; } }
+    $("stBest").textContent = money(bestV);
+    $("stBestNote").textContent = bestK ? monthLabel(bestK) : "—";
+
+    var pending = state.entries.filter(function(e){ return e.status === "Pending"; });
+    var pendingTotal = pending.reduce(function(s,e){ return s + (Number(e.amount)||0); }, 0);
+    $("stPending").textContent = money(pendingTotal);
+    $("stPendingNote").textContent = pending.length ? pending.length + (pending.length===1?" invoice":" invoices") + " waiting" : "Nothing outstanding 🎉";
+
+    renderChart(totals, nowK);
+    renderTable();
+  }
+
+  function renderChart(totals, nowK){
+    var keys = [];
+    for(var i = 5; i >= 0; i--) keys.push(shiftKey(nowK, -i));
+    var max = 0;
+    keys.forEach(function(k){ max = Math.max(max, totals[k] || 0); });
+    var html = "";
+    keys.forEach(function(k){
+      var v = totals[k] || 0;
+      var h = max > 0 ? Math.max(3, v / max * 100) : 3;
+      var lbl = MONTHS[parseInt(k.slice(5,7),10)-1];
+      html += '<div class="col' + (k === nowK ? " cur" : "") + '">' +
+        '<div class="amt">' + (v > 0 ? moneyShort(v) : "") + '</div>' +
+        '<div class="bar" style="height:' + h + '%"></div>' +
+        '<div class="m">' + lbl + '</div></div>';
+    });
+    $("chart").innerHTML = html;
+  }
+
+  function renderTable(){
+    var rows = state.entries.slice().sort(function(a,b){
+      if(a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return (b.createdAt||0) - (a.createdAt||0);
+    });
+    if(filter !== "All") rows = rows.filter(function(e){ return e.status === filter; });
+
+    var hasAny = state.entries.length > 0;
+    $("emptyState").classList.toggle("hidden", hasAny);
+    $("tableWrap").classList.toggle("hidden", !hasAny);
+
+    if(!rows.length && hasAny){
+      $("tbody").innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:22px">No ' + esc(filter.toLowerCase()) + ' entries yet.</td></tr>';
+      return;
+    }
+    $("tbody").innerHTML = rows.map(function(e){
+      return '<tr>' +
+        '<td style="white-space:nowrap">' + esc(fmtDate(e.date)) + '</td>' +
+        '<td><b>' + esc(e.client) + '</b></td>' +
+        '<td>' + esc(e.project || "—") + '</td>' +
+        '<td class="amt-cell" style="text-align:right">' + money(e.amount) + '</td>' +
+        '<td><span class="pill ' + (e.status === "Paid" ? "paid" : "pending") + '">' + esc(e.status) + '</span></td>' +
+        '<td><div class="row-actions">' +
+          '<button class="icon-btn" data-edit="' + e.id + '">Edit</button>' +
+          '<button class="icon-btn danger" data-del="' + e.id + '">Delete</button>' +
+        '</div></td></tr>';
+    }).join("");
+  }
+
+  document.querySelectorAll("[data-filter]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      filter = this.getAttribute("data-filter");
+      document.querySelectorAll("[data-filter]").forEach(function(b){ b.classList.toggle("active", b === btn); });
+      renderTable();
+    });
+  });
+
+  $("tbody").addEventListener("click", function(ev){
+    var ed = ev.target.closest("[data-edit]");
+    var del = ev.target.closest("[data-del]");
+    if(ed) startEdit(ed.getAttribute("data-edit"));
+    if(del){
+      var id = del.getAttribute("data-del");
+      var e = state.entries.find(function(x){ return x.id === id; });
+      if(e && confirm("Delete this entry?\n" + e.client + " — " + money(e.amount))){
+        state.entries = state.entries.filter(function(x){ return x.id !== id; });
+        if(editingId === id) cancelEdit();
+        save(); renderTracker(); toast("Entry deleted");
+      }
+    }
+  });
+
+  /* ---- entry form ---- */
+  function todayStr(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  $("fDate").value = todayStr();
+
+  function showErr(msg){
+    var el = $("formErr");
+    if(msg){ el.textContent = msg; el.style.display = "block"; }
+    else el.style.display = "none";
+  }
+  $("entryForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var date = $("fDate").value;
+    var client = $("fClient").value.trim();
+    var project = $("fProject").value.trim();
+    var amount = parseFloat($("fAmount").value);
+    var status = $("fStatus").value;
+    if(!date){ showErr("Please pick a date."); return; }
+    if(!client){ showErr("Client name is required."); $("fClient").focus(); return; }
+    if(!(amount > 0)){ showErr("Amount must be greater than zero."); $("fAmount").focus(); return; }
+    showErr(null);
+    if(editingId){
+      var e = state.entries.find(function(x){ return x.id === editingId; });
+      if(e){ e.date = date; e.client = client; e.project = project; e.amount = amount; e.status = status; }
+      toast("Entry updated");
+      cancelEdit();
+    } else {
+      state.entries.push({ id: uid(), date: date, client: client, project: project, amount: amount, status: status, createdAt: Date.now() });
+      toast("Income logged 🎉");
+      $("fClient").value = ""; $("fProject").value = ""; $("fAmount").value = "";
+      $("fDate").value = todayStr();
+    }
+    save(); renderTracker();
+  });
+
+  function startEdit(id){
+    var e = state.entries.find(function(x){ return x.id === id; });
+    if(!e) return;
+    editingId = id;
+    $("fDate").value = e.date;
+    $("fClient").value = e.client;
+    $("fProject").value = e.project || "";
+    $("fAmount").value = e.amount;
+    $("fStatus").value = e.status;
+    $("btnAdd").textContent = "Save changes";
+    $("btnCancelEdit").classList.remove("hidden");
+    $("formTitle").textContent = "Edit entry";
+    $("fClient").focus();
+    window.scrollTo({ top: $("formTitle").getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" });
+  }
+  function cancelEdit(){
+    editingId = null;
+    $("btnAdd").textContent = "Add entry";
+    $("btnCancelEdit").classList.add("hidden");
+    $("formTitle").textContent = "Log income";
+    $("fClient").value = ""; $("fProject").value = ""; $("fAmount").value = "";
+    $("fDate").value = todayStr(); showErr(null);
+  }
+  $("btnCancelEdit").addEventListener("click", cancelEdit);
+
+  /* ---- demo data ---- */
+  function dateIn(monthOffset, day){
+    var d = new Date();
+    var t = new Date(d.getFullYear(), d.getMonth() - monthOffset, day);
+    return t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") + "-" + String(t.getDate()).padStart(2,"0");
+  }
+  function loadDemo(){
+    if(state.entries.length && !confirm("Replace your current data with the demo data?")) return;
+    state.rate = { mode:"monthly", target:5200, hours:26, weeksOff:5, expenses:340, tax:22, margin:12, projectHours:24 };
+    var r = state.rate;
+    $("inTarget").value = r.target; $("inHours").value = r.hours; $("inWeeksOff").value = r.weeksOff;
+    $("inExpenses").value = r.expenses; $("inTax").value = r.tax; $("inMargin").value = r.margin;
+    $("inProjectHours").value = r.projectHours;
+    syncMode(); $("taxVal").textContent = r.tax + "%"; $("marginVal").textContent = r.margin + "%";
+    var demo = [
+      { off:5, day:6,  client:"GreenLeaf NGO",    project:"Annual report design",  amount:900,  status:"Paid" },
+      { off:4, day:11, client:"Tom Becker",       project:"Portfolio site",        amount:1400, status:"Paid" },
+      { off:3, day:8,  client:"Harbor Legal",     project:"Brand identity",        amount:1750, status:"Paid" },
+      { off:2, day:14, client:"PixelForge",       project:"Landing page pack",     amount:1600, status:"Paid" },
+      { off:1, day:5,  client:"BluePeak SaaS",    project:"Onboarding flow UX",    amount:2400, status:"Paid" },
+      { off:1, day:19, client:"Marta's Bakery",   project:"Online shop setup",     amount:1100, status:"Paid" },
+      { off:0, day:3,  client:"Northwind Studio", project:"Website redesign",      amount:2200, status:"Paid" },
+      { off:0, day:12, client:"FitCoach App",     project:"App UI sprint",         amount:1850, status:"Pending" }
+    ];
+    state.entries = demo.map(function(d, i){
+      return { id: uid() + i, date: dateIn(d.off, d.day), client: d.client, project: d.project, amount: d.amount, status: d.status, createdAt: Date.now() - (demo.length - i) * 1000 };
+    });
+    cancelEdit();
+    save(); calcRate(); renderTracker();
+    toast("Demo data loaded — explore, then clear it when you're ready");
+  }
+  $("btnDemo").addEventListener("click", loadDemo);
+  $("btnDemo2").addEventListener("click", loadDemo);
+
+  /* ---- data management ---- */
+  $("btnClear").addEventListener("click", function(){
+    if(!confirm("Clear ALL data — rate settings and every income entry? This cannot be undone.")) return;
+    state = JSON.parse(JSON.stringify(DEFAULTS));
+    state.currency = $("currencySel").value;
+    cancelEdit(); save(); readRateInputsFromState(); calcRate(); renderTracker();
+    toast("All data cleared");
+  });
+  function readRateInputsFromState(){
+    var R = state.rate;
+    $("inTarget").value = R.target; $("inHours").value = R.hours; $("inWeeksOff").value = R.weeksOff;
+    $("inExpenses").value = R.expenses; $("inTax").value = R.tax; $("inMargin").value = R.margin;
+    $("inProjectHours").value = R.projectHours;
+    syncMode(); $("taxVal").textContent = R.tax + "%"; $("marginVal").textContent = R.margin + "%";
+  }
+
+  $("btnExport").addEventListener("click", function(){
+    var payload = { app:"freelance-money-suite", version:1, exportedAt:new Date().toISOString(), data: state };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "freelance-money-suite-backup.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    toast("Backup downloaded");
+  });
+
+  $("importFile").addEventListener("change", function(){
+    var f = this.files && this.files[0];
+    if(!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var parsed = JSON.parse(reader.result);
+        var d = parsed && parsed.data ? parsed.data : parsed;
+        if(!d || !Array.isArray(d.entries)) throw new Error("bad file");
+        if(!confirm("Import this backup? It will replace your current data.")) return;
+        var fresh = JSON.parse(JSON.stringify(DEFAULTS));
+        if(SYMBOLS[d.currency]){ fresh.currency = d.currency; $("currencySel").value = d.currency; }
+        if(d.rate) for(var k in fresh.rate){ if(d.rate[k] !== undefined) fresh.rate[k] = d.rate[k]; }
+        fresh.entries = d.entries.filter(function(e){ return e && e.date && typeof e.amount === "number" && e.client; })
+          .map(function(e){ return { id: e.id || uid(), date: e.date, client: String(e.client), project: String(e.project||""), amount: Number(e.amount)||0, status: e.status === "Pending" ? "Pending" : "Paid", createdAt: e.createdAt || Date.now() }; });
+        state = fresh;
+        document.querySelectorAll(".curSym").forEach(function(el){ el.textContent = sym(); });
+        cancelEdit(); save(); readRateInputsFromState(); calcRate(); renderTracker();
+        toast("Backup imported ✓");
+      }catch(err){ alert("That file doesn't look like a Freelance Money Suite backup."); }
+    };
+    reader.readAsText(f);
+    this.value = "";
+  });
+
+  /* ---- print summary ---- */
+  $("btnPrint").addEventListener("click", function(){
+    var totals = monthTotals();
+    var nowK = keyOf(new Date());
+    var keys = Object.keys(totals).sort().reverse();
+    var grand = state.entries.reduce(function(s,e){ return s + (Number(e.amount)||0); }, 0);
+    var paid = state.entries.filter(function(e){ return e.status === "Paid"; }).reduce(function(s,e){ return s + (Number(e.amount)||0); }, 0);
+    var pending = grand - paid;
+    var rows = state.entries.slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; }).map(function(e){
+      return "<tr><td>" + esc(fmtDate(e.date)) + "</td><td>" + esc(e.client) + "</td><td>" + esc(e.project||"—") + "</td><td style='text-align:right'>" + money(e.amount) + "</td><td>" + esc(e.status) + "</td></tr>";
+    }).join("");
+    var mrows = keys.map(function(k){
+      return "<tr><td>" + monthLabel(k) + "</td><td style='text-align:right'>" + money(totals[k]) + "</td></tr>";
+    }).join("");
+    $("printArea").innerHTML =
+      "<h1>Freelance Money Suite — Income Summary</h1>" +
+      "<p class='sub'>Generated " + fmtDate(todayStr()) + " · Currency: " + state.currency + "</p>" +
+      "<p><b>This month (" + monthLabel(nowK) + "):</b> " + money(totals[nowK]||0) +
+      " &nbsp;·&nbsp; <b>Total paid:</b> " + money(paid) +
+      " &nbsp;·&nbsp; <b>Pending:</b> " + money(pending) +
+      " &nbsp;·&nbsp; <b>All-time total:</b> " + money(grand) + "</p>" +
+      "<h2>Monthly totals</h2><table><tr><th>Month</th><th style='text-align:right'>Total</th></tr>" + mrows +
+      "<tr class='tot'><td>All time</td><td style='text-align:right'>" + money(grand) + "</td></tr></table>" +
+      "<h2>All entries</h2><table><tr><th>Date</th><th>Client</th><th>Project</th><th style='text-align:right'>Amount</th><th>Status</th></tr>" + rows + "</table>" +
+      "<p class='sub' style='margin-top:16px'>Freelance Money Suite by AEUN — estimates only, not tax advice.</p>";
+    window.print();
+  });
+
+  renderTracker();
+})();
+</script>
+</body>
+</html>

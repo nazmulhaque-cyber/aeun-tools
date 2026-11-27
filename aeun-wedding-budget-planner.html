@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Budget Planner by AEUN</title>
+<style>
+  :root{
+    --bg:#FBF7F2;
+    --card:#FFFFFF;
+    --ink:#33272E;
+    --body:#57444E;
+    --muted:#9A8590;
+    --line:#EDDFD4;
+    --accent:#B4552D;
+    --accent-dark:#96431F;
+    --accent-soft:#F7E8DE;
+    --good:#2E7D52;
+    --bad:#C0392B;
+    --shadow:0 10px 30px rgba(90,50,30,.08);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--body);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.55;
+  }
+  h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",Times,serif;color:var(--ink);font-weight:600}
+  .wrap{max-width:1060px;margin:0 auto;padding:20px 16px 48px}
+  /* header */
+  header.top{
+    background:linear-gradient(135deg,#3A2733 0%,#5A3548 60%,#7A4636 100%);
+    color:#FFF6EE;border-radius:0 0 28px 28px;padding:30px 20px 26px;margin-bottom:22px;
+    box-shadow:var(--shadow);
+  }
+  header.top .inner{max-width:1060px;margin:0 auto}
+  .brandline{letter-spacing:.28em;font-size:.72rem;font-weight:700;color:#E9BFA5;text-transform:uppercase}
+  header.top h1{color:#FFF6EE;margin:8px 0 4px;font-size:2rem;line-height:1.2}
+  header.top p{margin:0;color:#F0D9C8;max-width:56ch}
+  .countdown{
+    display:inline-flex;align-items:center;gap:10px;margin-top:16px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 18px;font-weight:600;color:#FFF6EE;
+  }
+  .countdown b{font-size:1.25rem;font-family:Georgia,serif}
+  /* layout */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card h2{margin:0 0 6px;font-size:1.25rem}
+  .card h3{margin:0 0 8px;font-size:1.05rem}
+  .sub{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+  label{display:block;font-size:.82rem;font-weight:700;color:var(--ink);margin:12px 0 5px}
+  label:first-of-type{margin-top:0}
+  input,select,textarea{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:.97rem;
+    background:#FFFDFB;color:var(--ink);
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:480px){.row2{grid-template-columns:1fr}}
+  .btn{
+    border:0;cursor:pointer;font:inherit;font-weight:700;border-radius:99px;padding:12px 22px;min-height:46px;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;
+  }
+  .btn-accent{background:var(--accent);color:#fff}
+  .btn-accent:hover{background:var(--accent-dark)}
+  .btn-ghost{background:var(--accent-soft);color:var(--accent-dark)}
+  .btn-line{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-sm{padding:8px 14px;min-height:38px;font-size:.88rem}
+  .btn-danger{background:#FBEAE7;color:var(--bad)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  /* stat cards */
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}
+  .stat .k{font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .stat .v{font-family:Georgia,serif;font-size:1.3rem;color:var(--ink);margin-top:3px}
+  .stat.warn .v{color:var(--bad)}
+  .stat.good .v{color:var(--good)}
+  .meter{height:12px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin-top:8px}
+  .meter i{display:block;height:100%;background:linear-gradient(90deg,#D98E5F,var(--accent));border-radius:99px;transition:width .3s}
+  .meter i.over{background:var(--bad)}
+  /* category bars */
+  .catbar{padding:12px 0;border-bottom:1px dashed var(--line)}
+  .catbar:last-child{border-bottom:0}
+  .catbar .head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.94rem}
+  .catbar .head b{color:var(--ink)}
+  .catbar .nums{color:var(--muted);font-size:.86rem}
+  .flag{display:inline-block;background:#FBEAE7;color:var(--bad);font-size:.72rem;font-weight:700;border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+  .okflag{display:inline-block;background:#E5F2EA;color:var(--good);font-size:.72rem;font-weight:700;border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+  /* items table */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .toolbar select{width:auto;min-width:170px}
+  .toolbar input[type=search]{width:auto;flex:1;min-width:160px}
+  table{width:100%;border-collapse:collapse;font-size:.93rem}
+  th{ text-align:left;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 8px;border-bottom:2px solid var(--line)}
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  th.num{text-align:right}
+  .itemname{font-weight:700;color:var(--ink)}
+  .vendor{color:var(--muted);font-size:.84rem}
+  .pill{display:inline-block;font-size:.72rem;font-weight:700;border-radius:99px;padding:3px 10px;white-space:nowrap}
+  .pill-full{background:#E5F2EA;color:var(--good)}
+  .pill-part{background:#FBF0DC;color:#96690F}
+  .pill-none{background:#F1E9E4;color:var(--muted)}
+  .iconbtn{background:none;border:0;cursor:pointer;font-size:1rem;padding:6px;border-radius:8px;line-height:1}
+  .iconbtn:hover{background:var(--accent-soft)}
+  .tablewrap{overflow-x:auto}
+  /* empty state */
+  .empty{text-align:center;padding:38px 20px}
+  .empty .big{font-size:2.6rem}
+  .empty h2{margin:10px 0 6px}
+  .empty p{color:var(--muted);max-width:46ch;margin:0 auto 18px}
+  .hidden{display:none!important}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 30px}
+  .toast{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:99;background:#33272E;color:#FFF3E8;
+    padding:12px 20px;border-radius:12px;font-weight:600;box-shadow:0 14px 34px rgba(0,0,0,.25);display:none;max-width:92vw;text-align:center;
+  }
+  dialog{border:1px solid var(--line);border-radius:20px;padding:0;max-width:520px;width:calc(100vw - 32px);box-shadow:0 30px 70px rgba(51,39,46,.3)}
+  dialog::backdrop{background:rgba(51,39,46,.45)}
+  dialog .body{padding:22px}
+  dialog h2{margin:0 0 4px;font-size:1.3rem}
+  @media print{
+    body{background:#fff}
+    header.top{background:#fff;color:#000;box-shadow:none;border-bottom:2px solid #333;border-radius:0;padding:10px 0}
+    header.top h1,header.top p,.brandline{color:#000}
+    .countdown{border-color:#999;color:#000}
+    .no-print{display:none!important}
+    .card,.stat{box-shadow:none;border-color:#ccc}
+    .wrap{padding:0}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="brandline">Wedding Budget Planner · by AEUN</div>
+    <h1 id="hdrTitle">Our Wedding Budget</h1>
+    <p>Every cost in one calm place — estimates, real costs and payments, so the big day never turns into a money surprise.</p>
+    <div class="countdown" id="countdownBox"><span>💍</span><span id="countdownText">Set your wedding date below</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- SETUP -->
+  <section class="card" aria-label="Wedding setup">
+    <h2>The wedding</h2>
+    <p class="sub">The basics. Everything else on this page updates from these numbers.</p>
+    <div class="grid">
+      <div>
+        <label for="coupleNames">Couple names</label>
+        <input id="coupleNames" type="text" placeholder="e.g. Emma &amp; James" autocomplete="off">
+        <div class="row2">
+          <div>
+            <label for="weddingDate">Wedding date</label>
+            <input id="weddingDate" type="date">
+          </div>
+          <div>
+            <label for="guestCount">Guest count</label>
+            <input id="guestCount" type="number" min="0" step="1" placeholder="e.g. 120">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="row2">
+          <div>
+            <label for="totalBudget">Total budget</label>
+            <input id="totalBudget" type="number" min="0" step="0.01" placeholder="e.g. 25000">
+          </div>
+          <div>
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="USD">$ — US Dollar (USD)</option>
+              <option value="GBP">£ — British Pound (GBP)</option>
+              <option value="EUR">€ — Euro (EUR)</option>
+            </select>
+          </div>
+        </div>
+        <p class="sub" style="margin-top:14px" id="perGuestLine">Add a budget and guest count to see your cost per guest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section aria-label="Budget dashboard">
+    <div class="stats">
+      <div class="stat"><div class="k">Total budget</div><div class="v" id="stBudget">—</div></div>
+      <div class="stat"><div class="k">Estimated</div><div class="v" id="stEst">—</div></div>
+      <div class="stat" id="statActual"><div class="k">Actual cost</div><div class="v" id="stActual">—</div></div>
+      <div class="stat good"><div class="k">Paid so far</div><div class="v" id="stPaid">—</div></div>
+      <div class="stat warn"><div class="k">Still to pay</div><div class="v" id="stDue">—</div></div>
+    </div>
+    <div class="card">
+      <h3>Budget used</h3>
+      <p class="sub" id="budgetMeterText">Actual cost against your total budget.</p>
+      <div class="meter"><i id="budgetMeter" style="width:0%"></i></div>
+      <h3 style="margin-top:22px">By category</h3>
+      <p class="sub">Actual spend against the estimate for each category. Categories over their estimate are flagged.</p>
+      <div id="catBars"><p class="sub">No items yet — add your first cost below.</p></div>
+    </div>
+  </section>
+
+  <!-- ITEMS -->
+  <section class="card" aria-label="Budget items">
+    <h2>Costs &amp; payments</h2>
+    <p class="sub">One line per booking or purchase. “Actual” is the real agreed price; “Paid” is what you have handed over so far.</p>
+    <div class="toolbar no-print">
+      <select id="filterCat" aria-label="Filter by category"><option value="">All categories</option></select>
+      <select id="filterStatus" aria-label="Filter by payment status">
+        <option value="">All payments</option>
+        <option value="due">Still to pay</option>
+        <option value="part">Partly paid</option>
+        <option value="full">Paid in full</option>
+        <option value="none">Nothing paid yet</option>
+      </select>
+      <input type="search" id="searchBox" placeholder="Search items or vendors…" aria-label="Search items">
+      <button class="btn btn-accent btn-sm" id="btnAdd" type="button">＋ Add a cost</button>
+    </div>
+    <div id="emptyState" class="empty hidden">
+      <div class="big">🌸</div>
+      <h2>Nothing here yet</h2>
+      <p>Start by adding your venue, or load the demo wedding to see exactly how the planner works — you can clear it in one click.</p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn btn-accent" id="btnAdd2" type="button">＋ Add your first cost</button>
+        <button class="btn btn-ghost" id="btnDemo" type="button">Load demo data</button>
+      </div>
+    </div>
+    <div class="tablewrap" id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th><th>Category</th>
+            <th class="num">Estimated</th><th class="num">Actual</th><th class="num">Paid</th><th class="num">Due</th>
+            <th>Status</th><th class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="font-weight:700;color:var(--ink)">Totals (shown)</td>
+            <td class="num" id="ftEst" style="font-weight:700">—</td>
+            <td class="num" id="ftAct" style="font-weight:700">—</td>
+            <td class="num" id="ftPaid" style="font-weight:700">—</td>
+            <td class="num" id="ftDue" style="font-weight:700">—</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- STILL TO PAY -->
+  <section class="card" aria-label="Still to pay">
+    <h2>Still to pay</h2>
+    <p class="sub">Every booking with money outstanding, biggest first — your payment to-do list.</p>
+    <div id="dueList"><p class="sub">Nothing outstanding. 🎉</p></div>
+  </section>
+
+  <!-- DATA -->
+  <section class="card no-print" aria-label="Your data">
+    <h2>Your data</h2>
+    <p class="sub">Everything is saved automatically in this browser on this device — no account, no server. Export a backup before switching devices.</p>
+    <div class="actions">
+      <button class="btn btn-line" id="btnExport" type="button">⬇ Export backup (JSON)</button>
+      <label class="btn btn-line" for="importFile" style="margin:0">⬆ Import backup</label>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <button class="btn btn-line" id="btnPrint" type="button">🖨 Print summary</button>
+      <button class="btn btn-danger" id="btnClear" type="button">Clear everything</button>
+    </div>
+    <div class="actions" style="align-items:flex-end">
+      <div style="flex:1;min-width:200px">
+        <label for="newCat" style="margin-top:0">Add a custom category</label>
+        <input id="newCat" type="text" placeholder="e.g. Honeymoon, Fireworks…">
+      </div>
+      <button class="btn btn-ghost" id="btnAddCat" type="button">Add category</button>
+    </div>
+    <p class="sub" id="catListLine" style="margin-top:10px"></p>
+  </section>
+
+</div>
+
+<footer>Wedding Budget Planner by AEUN · Your data never leaves this device.</footer>
+
+<!-- ITEM DIALOG -->
+<dialog id="itemDlg">
+  <div class="body">
+    <h2 id="dlgTitle">Add a cost</h2>
+    <p class="sub">Leave “Actual” empty until you have a real quote — the estimate will be used in its place for totals.</p>
+    <form id="itemForm" method="dialog">
+      <label for="fName">Item name *</label>
+      <input id="fName" type="text" placeholder="e.g. Rosewood Hall booking" required>
+      <div class="row2">
+        <div>
+          <label for="fCat">Category</label>
+          <select id="fCat"></select>
+        </div>
+        <div>
+          <label for="fVendor">Vendor</label>
+          <input id="fVendor" type="text" placeholder="e.g. Rosewood Events Ltd">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="fEst">Estimated cost</label>
+          <input id="fEst" type="number" min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div>
+          <label for="fAct">Actual cost</label>
+          <input id="fAct" type="number" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <label for="fPaid">Paid so far</label>
+      <input id="fPaid" type="number" min="0" step="0.01" placeholder="0.00">
+      <p class="sub" id="dlgErr" style="color:var(--bad);min-height:1.2em;margin-top:8px"></p>
+      <div class="actions">
+        <button class="btn btn-accent" id="btnSaveItem" type="submit">Save</button>
+        <button class="btn btn-line" id="btnCancelItem" type="button">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  'use strict';
+  var KEY = 'wedding_budget_planner_v1';
+  var DEFAULT_CATS = ['Venue','Catering','Photography','Flowers & Decor','Attire','Music','Cake','Rings','Stationery','Transport','Other'];
+  var SYMBOLS = { USD:'$', GBP:'£', EUR:'€' };
+
+  function blank(){
+    return {
+      setup: { names:'', date:'', budget:'', guests:'', currency:'USD' },
+      customCats: [],
+      items: []
+    };
+  }
+  function load(){
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return blank();
+      var d = JSON.parse(raw);
+      if (!d || typeof d !== 'object') return blank();
+      if (!d.setup) d.setup = blank().setup;
+      if (!Array.isArray(d.customCats)) d.customCats = [];
+      if (!Array.isArray(d.items)) d.items = [];
+      return d;
+    } catch(e){ return blank(); }
+  }
+  var state = load();
+  var editingId = null;
+
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+  function $(id){ return document.getElementById(id); }
+  function num(v){ var n = parseFloat(v); return (isFinite(n) && n > 0) ? n : 0; }
+  function sym(){ return SYMBOLS[state.setup.currency] || '$'; }
+  function money(n){
+    var s = sym();
+    var v = Math.round((Number(n) || 0) * 100) / 100;
+    var parts = v.toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return s + parts[0] + (parts[1] === '00' ? '' : '.' + parts[1]);
+  }
+  function esc(t){
+    return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function uid(){ return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = 'none'; }, 2600);
+  }
+  function allCats(){
+    var out = DEFAULT_CATS.slice();
+    state.customCats.forEach(function(c){ if (out.indexOf(c) === -1) out.push(c); });
+    state.items.forEach(function(it){ if (it.category && out.indexOf(it.category) === -1) out.push(it.category); });
+    return out;
+  }
+  function effActual(it){ return num(it.actual) > 0 ? num(it.actual) : num(it.estimated); }
+  function statusOf(it){
+    var a = effActual(it), p = num(it.paid);
+    if (a > 0 && p >= a) return 'full';
+    if (p > 0) return 'part';
+    return 'none';
+  }
+  function totals(list){
+    var t = { est:0, act:0, paid:0, due:0 };
+    list.forEach(function(it){
+      var a = effActual(it), p = Math.min(num(it.paid), a);
+      t.est += num(it.estimated); t.act += a; t.paid += p; t.due += (a - p);
+    });
+    return t;
+  }
+
+  /* ---------- setup ---------- */
+  function fillSetup(){
+    $('coupleNames').value = state.setup.names || '';
+    $('weddingDate').value = state.setup.date || '';
+    $('totalBudget').value = state.setup.budget === '' ? '' : state.setup.budget;
+    $('guestCount').value = state.setup.guests === '' ? '' : state.setup.guests;
+    $('currency').value = state.setup.currency || 'USD';
+  }
+  function readSetup(){
+    state.setup.names = $('coupleNames').value.trim();
+    state.setup.date = $('weddingDate').value;
+    state.setup.budget = $('totalBudget').value === '' ? '' : Math.max(0, parseFloat($('totalBudget').value) || 0);
+    state.setup.guests = $('guestCount').value === '' ? '' : Math.max(0, parseInt($('guestCount').value, 10) || 0);
+    state.setup.currency = $('currency').value;
+    save(); render();
+  }
+  ['coupleNames','weddingDate','totalBudget','guestCount','currency'].forEach(function(id){
+    $(id).addEventListener('input', readSetup);
+    $(id).addEventListener('change', readSetup);
+  });
+
+  function renderHeader(){
+    var names = state.setup.names;
+    $('hdrTitle').textContent = names ? names + ' — Wedding Budget' : 'Our Wedding Budget';
+    var box = $('countdownText');
+    if (!state.setup.date){ box.textContent = 'Set your wedding date below'; return; }
+    var today = new Date(); today.setHours(0,0,0,0);
+    var parts = state.setup.date.split('-');
+    var d = new Date(+parts[0], (+parts[1]) - 1, +parts[2]);
+    var days = Math.round((d - today) / 86400000);
+    if (days > 1) box.innerHTML = '<b>' + days + '</b> days to go';
+    else if (days === 1) box.innerHTML = '<b>1</b> day to go — tomorrow!';
+    else if (days === 0) box.innerHTML = '🎉 <b>Today is the day!</b>';
+    else box.innerHTML = 'Married ' + Math.abs(days) + (Math.abs(days) === 1 ? ' day' : ' days') + ' ago 💛';
+  }
+
+  /* ---------- dashboard ---------- */
+  function renderDashboard(){
+    var t = totals(state.items);
+    var budget = num(state.setup.budget);
+    $('stBudget').textContent = budget ? money(budget) : 'Not set';
+    $('stEst').textContent = money(t.est);
+    $('stActual').textContent = money(t.act);
+    $('stPaid').textContent = money(t.paid);
+    $('stDue').textContent = money(t.due);
+    $('statActual').className = 'stat' + (budget && t.act > budget ? ' warn' : '');
+    var pct = budget ? Math.min(100, Math.round(t.act / budget * 100)) : 0;
+    var meter = $('budgetMeter');
+    meter.style.width = pct + '%';
+    meter.className = (budget && t.act > budget) ? 'over' : '';
+    $('budgetMeterText').textContent = budget
+      ? ('Actual cost ' + money(t.act) + ' of ' + money(budget) + ' budget (' + pct + '%). ' +
+         (t.act > budget ? 'You are ' + money(t.act - budget) + ' over budget.' : money(budget - t.act) + ' still in hand.'))
+      : 'Set a total budget above to track how much of it you have used.';
+    var guests = num(state.setup.guests);
+    $('perGuestLine').textContent = (budget && guests)
+      ? 'That works out at about ' + money(budget / guests) + ' per guest (' + guests + ' guests).'
+      : 'Add a budget and guest count to see your cost per guest.';
+
+    // category bars
+    var cats = allCats();
+    var byCat = {};
+    cats.forEach(function(c){ byCat[c] = { est:0, act:0 }; });
+    state.items.forEach(function(it){
+      var c = it.category || 'Other';
+      if (!byCat[c]) byCat[c] = { est:0, act:0 };
+      byCat[c].est += num(it.estimated); byCat[c].act += effActual(it);
+    });
+    var used = cats.filter(function(c){ return byCat[c].est > 0 || byCat[c].act > 0; });
+    if (!used.length){
+      $('catBars').innerHTML = '<p class="sub">No items yet — add your first cost below.</p>';
+    } else {
+      $('catBars').innerHTML = used.map(function(c){
+        var d = byCat[c];
+        var base = Math.max(d.est, d.act, 1);
+        var pctA = Math.min(100, Math.round(d.act / base * 100));
+        var over = d.est > 0 && d.act > d.est;
+        return '<div class="catbar"><div class="head"><span><b>' + esc(c) + '</b>' +
+          (over ? '<span class="flag">Over estimate by ' + money(d.act - d.est) + '</span>'
+                : (d.act > 0 && d.est > 0 ? '<span class="okflag">On track</span>' : '')) +
+          '</span><span class="nums">Spent ' + money(d.act) + ' of ' + money(d.est) + ' estimated</span></div>' +
+          '<div class="meter"><i class="' + (over ? 'over' : '') + '" style="width:' + pctA + '%"></i></div></div>';
+      }).join('');
+    }
+  }
+
+  /* ---------- items ---------- */
+  function fillCatSelects(keepFilter){
+    var cats = allCats();
+    var f = $('filterCat'), cur = keepFilter ? f.value : '';
+    f.innerHTML = '<option value="">All categories</option>' + cats.map(function(c){
+      return '<option value="' + esc(c) + '"' + (c === cur ? ' selected' : '') + '>' + esc(c) + '</option>';
+    }).join('');
+    $('fCat').innerHTML = cats.map(function(c){ return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('');
+    $('catListLine').textContent = state.customCats.length
+      ? 'Your custom categories: ' + state.customCats.join(', ')
+      : 'Using the standard wedding categories. Add your own above if you need one.';
+  }
+  function visibleItems(){
+    var fc = $('filterCat').value, fs = $('filterStatus').value, q = $('searchBox').value.trim().toLowerCase();
+    return state.items.filter(function(it){
+      if (fc && it.category !== fc) return false;
+      if (fs === 'due' && !(effActual(it) - Math.min(num(it.paid), effActual(it)) > 0)) return false;
+      if (fs && fs !== 'due' && statusOf(it) !== fs) return false;
+      if (q && ((it.name || '') + ' ' + (it.vendor || '')).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+  function renderItems(){
+    var list = visibleItems();
+    $('emptyState').classList.toggle('hidden', state.items.length > 0);
+    $('tableWrap').style.display = state.items.length ? '' : 'none';
+    var pill = { full:'<span class="pill pill-full">Paid in full</span>', part:'<span class="pill pill-part">Partly paid</span>', none:'<span class="pill pill-none">Nothing paid</span>' };
+    $('itemsBody').innerHTML = list.map(function(it){
+      var a = effActual(it), p = Math.min(num(it.paid), a), due = a - p;
+      return '<tr><td><div class="itemname">' + esc(it.name) + '</div>' +
+        (it.vendor ? '<div class="vendor">' + esc(it.vendor) + '</div>' : '') + '</td>' +
+        '<td>' + esc(it.category || 'Other') + '</td>' +
+        '<td class="num">' + money(it.estimated) + '</td>' +
+        '<td class="num">' + money(it.actual) + (num(it.actual) === 0 && num(it.estimated) > 0 ? ' <span class="vendor">(est.)</span>' : '') + '</td>' +
+        '<td class="num">' + money(it.paid) + '</td>' +
+        '<td class="num">' + (due > 0 ? money(due) : '—') + '</td>' +
+        '<td>' + pill[statusOf(it)] + '</td>' +
+        '<td class="no-print" style="white-space:nowrap"><button class="iconbtn" data-edit="' + it.id + '" title="Edit" aria-label="Edit item">✏️</button>' +
+        '<button class="iconbtn" data-del="' + it.id + '" title="Delete" aria-label="Delete item">🗑️</button></td></tr>';
+    }).join('') || '<tr><td colspan="8" style="color:var(--muted)">No items match this filter.</td></tr>';
+    var t = totals(list);
+    $('ftEst').textContent = money(t.est); $('ftAct').textContent = money(t.act);
+    $('ftPaid').textContent = money(t.paid); $('ftDue').textContent = money(t.due);
+    // still to pay
+    var dueItems = state.items.map(function(it){
+      var a = effActual(it); return { it: it, due: a - Math.min(num(it.paid), a) };
+    }).filter(function(x){ return x.due > 0; }).sort(function(x, y){ return y.due - x.due; });
+    $('dueList').innerHTML = dueItems.length ? dueItems.map(function(x){
+      return '<div class="catbar"><div class="head"><span><b>' + esc(x.it.name) + '</b> <span class="vendor">' +
+        esc(x.it.category || 'Other') + (x.it.vendor ? ' · ' + esc(x.it.vendor) : '') + '</span></span>' +
+        '<span class="nums"><b style="color:var(--bad)">' + money(x.due) + '</b> still to pay</span></div></div>';
+    }).join('') : '<p class="sub">Nothing outstanding. 🎉</p>';
+  }
+  function render(){ renderHeader(); renderDashboard(); fillCatSelects(true); renderItems(); }
+
+  /* ---------- item dialog ---------- */
+  var dlg = $('itemDlg');
+  function openDlg(item){
+    editingId = item ? item.id : null;
+    $('dlgTitle').textContent = item ? 'Edit cost' : 'Add a cost';
+    $('dlgErr').textContent = '';
+    $('fName').value = item ? (item.name || '') : '';
+    $('fCat').value = item ? (item.category || 'Other') : 'Venue';
+    $('fVendor').value = item ? (item.vendor || '') : '';
+    $('fEst').value = item && num(item.estimated) ? item.estimated : '';
+    $('fAct').value = item && num(item.actual) ? item.actual : '';
+    $('fPaid').value = item && num(item.paid) ? item.paid : '';
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    setTimeout(function(){ $('fName').focus(); }, 50);
+  }
+  function closeDlg(){ if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
+  $('btnAdd').addEventListener('click', function(){ openDlg(null); });
+  $('btnAdd2').addEventListener('click', function(){ openDlg(null); });
+  $('btnCancelItem').addEventListener('click', closeDlg);
+  $('itemForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = $('fName').value.trim();
+    var est = $('fEst').value === '' ? 0 : parseFloat($('fEst').value);
+    var act = $('fAct').value === '' ? 0 : parseFloat($('fAct').value);
+    var paid = $('fPaid').value === '' ? 0 : parseFloat($('fPaid').value);
+    if (!name){ $('dlgErr').textContent = 'Please give the item a name.'; return; }
+    if ([est, act, paid].some(function(n){ return !isFinite(n) || n < 0; })){
+      $('dlgErr').textContent = 'Amounts must be numbers of 0 or more.'; return;
+    }
+    var eff = act > 0 ? act : est;
+    if (paid > eff && eff > 0){ $('dlgErr').textContent = 'Paid so far cannot be more than the cost (' + money(eff) + ').'; return; }
+    var data = { name: name, category: $('fCat').value || 'Other', vendor: $('fVendor').value.trim(), estimated: est, actual: act, paid: paid };
+    if (editingId){
+      state.items.forEach(function(it){ if (it.id === editingId) Object.assign(it, data); });
+      toast('Cost updated ✓');
+    } else {
+      data.id = uid(); state.items.unshift(data);
+      toast('Cost added ✓');
+    }
+    save(); closeDlg(); render();
+  });
+  $('itemsBody').addEventListener('click', function(e){
+    var eb = e.target.closest('[data-edit]'), db = e.target.closest('[data-del]');
+    if (eb){
+      var it = state.items.filter(function(x){ return x.id === eb.getAttribute('data-edit'); })[0];
+      if (it) openDlg(it);
+    }
+    if (db){
+      var id = db.getAttribute('data-del');
+      var item = state.items.filter(function(x){ return x.id === id; })[0];
+      if (item && confirm('Delete "' + item.name + '"? This cannot be undone.')){
+        state.items = state.items.filter(function(x){ return x.id !== id; });
+        save(); render(); toast('Deleted');
+      }
+    }
+  });
+  ['filterCat','filterStatus','searchBox'].forEach(function(id){
+    $(id).addEventListener('input', renderItems);
+    $(id).addEventListener('change', renderItems);
+  });
+
+  /* ---------- categories ---------- */
+  $('btnAddCat').addEventListener('click', function(){
+    var c = $('newCat').value.trim();
+    if (!c) return;
+    if (allCats().some(function(x){ return x.toLowerCase() === c.toLowerCase(); })){ toast('That category already exists'); return; }
+    state.customCats.push(c);
+    $('newCat').value = '';
+    save(); render(); toast('Category added ✓');
+  });
+
+  /* ---------- demo / clear / backup ---------- */
+  function demoData(){
+    var d = blank();
+    d.setup.names = 'Emma & James';
+    var dt = new Date(); dt.setDate(dt.getDate() + 45);
+    function p(n){ return (n < 10 ? '0' : '') + n; }
+    d.setup.date = dt.getFullYear() + '-' + p(dt.getMonth() + 1) + '-' + p(dt.getDate());
+    d.setup.budget = 25000; d.setup.guests = 120; d.setup.currency = 'USD';
+    var rows = [
+      ['Rosewood Hall (full day)','Venue','Rosewood Events',6000,5800,2000],
+      ['Three-course dinner, 120 guests','Catering','Golden Fork Catering',7200,6950,2500],
+      ['Full-day photography + album','Photography','Lily & Co. Studio',2400,2400,1200],
+      ['Bouquets, centrepieces & arch','Flowers & Decor','Wild Stem Florist',1500,1620,500],
+      ['Dress, suit & alterations','Attire','Bridal House',2100,1980,1980],
+      ['DJ + live singer, evening','Music','Nightingale Music',900,900,0],
+      ['Three-tier cake, 130 servings','Cake','Sugar Lane Bakery',550,520,100],
+      ['Wedding bands (pair)','Rings','Hartley Jewellers',1200,1150,0],
+      ['Invitations & signage','Stationery','Paper Bloom',380,410,410],
+      ['Vintage car, 4 hours','Transport','Classic Rides',450,450,150]
+    ];
+    d.items = rows.map(function(r, i){
+      return { id: uid() + i, name: r[0], category: r[1], vendor: r[2], estimated: r[3], actual: r[4], paid: r[5] };
+    });
+    return d;
+  }
+  $('btnDemo').addEventListener('click', function(){
+    state = demoData(); save(); fillSetup(); render(); toast('Demo wedding loaded — explore, then clear it when you are ready');
+  });
+  $('btnClear').addEventListener('click', function(){
+    if (confirm('Clear everything — setup, categories and all costs? This cannot be undone. Export a backup first if you need one.')){
+      state = blank(); save(); fillSetup(); render(); toast('All cleared');
+    }
+  });
+  $('btnExport').addEventListener('click', function(){
+    var env = { app: 'wedding-budget-planner', by: 'AEUN', version: 1, exportedAt: new Date().toISOString(), data: state };
+    var blob = new Blob([JSON.stringify(env, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'wedding-budget-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    toast('Backup downloaded ✓');
+  });
+  $('importFile').addEventListener('change', function(){
+    var f = this.files && this.files[0]; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      try {
+        var env = JSON.parse(rd.result);
+        var d = (env && env.data) ? env.data : env;
+        if (!d || !Array.isArray(d.items) || !d.setup) throw new Error('bad');
+        if (!confirm('Import this backup? It will replace everything currently in the planner.')) return;
+        state = d;
+        if (!Array.isArray(state.customCats)) state.customCats = [];
+        save(); fillSetup(); render(); toast('Backup imported ✓');
+      } catch(e){ toast('That file is not a Wedding Budget Planner backup.'); }
+    };
+    rd.readAsText(f);
+    this.value = '';
+  });
+  $('btnPrint').addEventListener('click', function(){ window.print(); });
+
+  /* ---------- init ---------- */
+  fillSetup();
+  render();
+})();
+</script>
+</body>
+</html>

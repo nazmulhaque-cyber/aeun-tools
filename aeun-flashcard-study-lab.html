@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard Study Lab by AEUN</title>
+<style>
+  :root{
+    --navy:#0e2238;
+    --navy-soft:#33506e;
+    --accent:#0284c7;
+    --accent-dark:#0369a1;
+    --accent-soft:#e0f2fe;
+    --bg:#f6f9fc;
+    --card:#ffffff;
+    --line:#e2eaf2;
+    --muted:#64798c;
+    --good:#059669;
+    --easy:#0284c7;
+    --again:#dc2626;
+    --shadow:0 6px 24px rgba(14,34,56,.08);
+    --shadow-lg:0 16px 44px rgba(14,34,56,.14);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--navy);min-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  button{font-family:inherit;cursor:pointer}
+  input,textarea,select{font-family:inherit}
+  .wrap{width:100%;max-width:1060px;margin:0 auto;padding:0 18px}
+
+  /* ---------- Header ---------- */
+  header{background:linear-gradient(135deg,#0e2238 0%,#12395c 100%);color:#fff;padding:26px 0 22px}
+  .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{width:48px;height:48px;border-radius:13px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(2,132,199,.45);flex:none}
+  .brand h1{font-size:1.45rem;font-weight:800;letter-spacing:.2px}
+  .brand p{color:#b9cee2;font-size:.9rem;margin-top:2px}
+  .brand .spacer{flex:1}
+  .hbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:10px;padding:9px 14px;font-size:.86rem;font-weight:600;transition:.15s}
+  .hbtn:hover{background:rgba(255,255,255,.2)}
+
+  /* ---------- Stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:-2px 0 6px;padding:20px 0 4px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+  .stat .num{font-size:1.7rem;font-weight:800;color:var(--navy)}
+  .stat .num.accent{color:var(--accent)}
+  .stat .lbl{font-size:.82rem;color:var(--muted);margin-top:2px;font-weight:600}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- Buttons ---------- */
+  .btn{border:none;border-radius:11px;padding:11px 18px;font-size:.92rem;font-weight:700;transition:.15s;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(2,132,199,.3)}
+  .btn-primary:hover{background:var(--accent-dark)}
+  .btn-ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-danger-ghost{background:#fff;color:var(--again);border:1.5px solid #fecaca}
+  .btn-danger-ghost:hover{background:#fef2f2}
+  .btn-sm{padding:8px 13px;font-size:.84rem;border-radius:9px}
+  .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+
+  /* ---------- Deck grid ---------- */
+  .section-head{display:flex;align-items:center;gap:12px;margin:26px 0 14px;flex-wrap:wrap}
+  .section-head h2{font-size:1.2rem;font-weight:800}
+  .section-head .spacer{flex:1}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding-bottom:10px}
+  .deck-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;transition:.15s}
+  .deck-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+  .deck-card h3{font-size:1.12rem;font-weight:800;word-break:break-word}
+  .deck-card .desc{color:var(--muted);font-size:.88rem;line-height:1.45;min-height:1.2em;word-break:break-word}
+  .deck-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .pill{font-size:.76rem;font-weight:700;border-radius:99px;padding:4px 10px;background:#eef4f9;color:var(--navy-soft)}
+  .pill.due{background:var(--accent-soft);color:var(--accent-dark)}
+  .pill.done{background:#ecfdf5;color:var(--good)}
+  .deck-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .deck-actions .btn{flex:1}
+
+  /* ---------- Empty state ---------- */
+  .empty{background:var(--card);border:2px dashed var(--line);border-radius:var(--radius);padding:44px 26px;text-align:center;margin:8px 0 20px}
+  .empty .big{font-size:2.6rem;margin-bottom:10px}
+  .empty h3{font-size:1.2rem;margin-bottom:8px}
+  .empty p{color:var(--muted);max-width:480px;margin:0 auto 18px;line-height:1.55;font-size:.94rem}
+  .empty .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  /* ---------- Deck view / card table ---------- */
+  .backlink{background:none;border:none;color:var(--accent);font-weight:700;font-size:.92rem;padding:6px 0;display:inline-flex;gap:6px;align-items:center}
+  .backlink:hover{text-decoration:underline}
+  .deck-title-row{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:4px 0 4px}
+  .deck-title-row h2{font-size:1.5rem;font-weight:800;word-break:break-word}
+  .deck-title-row .spacer{flex:1}
+  table.cards{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin:14px 0 24px}
+  table.cards th{text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);background:#f1f6fa;padding:11px 14px}
+  table.cards td{padding:12px 14px;border-top:1px solid var(--line);font-size:.92rem;vertical-align:top}
+  table.cards td.q{font-weight:600;max-width:280px;word-break:break-word}
+  table.cards td.a{color:var(--navy-soft);max-width:280px;word-break:break-word}
+  table.cards td .due-lbl{font-size:.8rem;font-weight:700}
+  .due-now{color:var(--again)}
+  .due-soon{color:var(--accent-dark)}
+  .due-later{color:var(--muted)}
+  .icon-btn{background:none;border:1px solid var(--line);border-radius:8px;width:32px;height:32px;font-size:.85rem;transition:.15s}
+  .icon-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .icon-btn.del:hover{border-color:var(--again);background:#fef2f2}
+  @media(max-width:640px){table.cards td.q,table.cards td.a{max-width:130px}}
+
+  /* ---------- Study mode ---------- */
+  .study-wrap{max-width:680px;margin:0 auto;padding-bottom:30px}
+  .progress{height:10px;background:#e3edf5;border-radius:99px;overflow:hidden;margin:14px 0 6px}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--accent),#38bdf8);border-radius:99px;transition:width .35s ease}
+  .progress-lbl{font-size:.84rem;color:var(--muted);font-weight:600;text-align:center}
+  .flashcard{perspective:1400px;height:340px;margin:22px 0 18px;cursor:pointer;outline:none}
+  @media(max-width:640px){.flashcard{height:290px}}
+  .flashcard-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.35,.15,.2,1)}
+  .flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;box-shadow:var(--shadow-lg);border:1px solid var(--line)}
+  .face.front{background:var(--card)}
+  .face.back{background:linear-gradient(150deg,#0e2238,#164a75);color:#fff;transform:rotateY(180deg);border:none}
+  .face .tag{font-size:.74rem;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;opacity:.55;margin-bottom:14px}
+  .face .txt{font-size:1.55rem;font-weight:700;line-height:1.4;word-break:break-word;overflow-y:auto;max-height:100%}
+  @media(max-width:640px){.face .txt{font-size:1.25rem}}
+  .face .hint{margin-top:16px;font-size:.82rem;color:var(--muted)}
+  .face.back .hint{color:#a9c6de}
+  .grade-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .grade{border:none;border-radius:14px;padding:15px 8px;font-size:1rem;font-weight:800;color:#fff;transition:.15s;box-shadow:var(--shadow)}
+  .grade small{display:block;font-weight:600;font-size:.74rem;opacity:.85;margin-top:3px}
+  .grade.again{background:var(--again)}.grade.again:hover{background:#b91c1c}
+  .grade.good{background:var(--good)}.grade.good:hover{background:#047857}
+  .grade.easy{background:var(--accent)}.grade.easy:hover{background:var(--accent-dark)}
+  .tap-hint{text-align:center;color:var(--muted);font-size:.88rem;margin-top:6px}
+  .summary{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px 26px;text-align:center;margin-top:24px}
+  .summary .big{font-size:2.4rem;margin-bottom:8px}
+  .summary h3{font-size:1.3rem;margin-bottom:8px}
+  .summary p{color:var(--muted);line-height:1.6;margin-bottom:18px}
+  .summary .nums{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+  .summary .nums div{background:#f1f6fa;border-radius:12px;padding:12px 20px}
+  .summary .nums b{display:block;font-size:1.4rem}
+  .summary .nums span{font-size:.78rem;color:var(--muted);font-weight:700}
+
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(10,26,43,.55);display:none;align-items:flex-start;justify-content:center;padding:26px 14px;z-index:60;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:#fff;border-radius:18px;width:100%;max-width:520px;padding:26px;box-shadow:var(--shadow-lg);animation:pop .18s ease}
+  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal h3{font-size:1.15rem;margin-bottom:16px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.84rem;font-weight:700;margin-bottom:6px;color:var(--navy-soft)}
+  .field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:.95rem;color:var(--navy);background:#fbfdff}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .field textarea{resize:vertical;min-height:74px}
+  .field .help{font-size:.8rem;color:var(--muted);margin-top:5px;line-height:1.5}
+  .field textarea.bulk{min-height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86rem}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;font-size:.9rem;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;transition:.3s;z-index:99;max-width:92vw;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+  .data-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin:6px 0 26px}
+  .data-bar .lbl{font-weight:800;font-size:.92rem}
+  .data-bar .spacer{flex:1}
+  .data-bar .note{font-size:.8rem;color:var(--muted);width:100%}
+
+  footer{margin-top:auto;padding:20px 0 26px;text-align:center;color:var(--muted);font-size:.84rem}
+  footer b{color:var(--navy-soft)}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap brand">
+    <div class="logo">🃏</div>
+    <div>
+      <h1>Flashcard Study Lab</h1>
+      <p>Learn faster with smart review scheduling</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="hbtn" id="btnNewDeckTop">＋ New Deck</button>
+  </div>
+</header>
+
+<main class="wrap" style="flex:1;width:100%">
+
+  <!-- ===== HOME VIEW ===== -->
+  <section id="viewHome">
+    <div class="stats">
+      <div class="stat"><div class="num" id="statDecks">0</div><div class="lbl">Total decks</div></div>
+      <div class="stat"><div class="num" id="statCards">0</div><div class="lbl">Total cards</div></div>
+      <div class="stat"><div class="num accent" id="statDue">0</div><div class="lbl">Due today</div></div>
+      <div class="stat"><div class="num" id="statMastered">0</div><div class="lbl">Mastered (16d+)</div></div>
+    </div>
+
+    <div class="section-head">
+      <h2>Your decks</h2>
+      <div class="spacer"></div>
+      <button class="btn btn-primary" id="btnNewDeck">＋ Create deck</button>
+    </div>
+
+    <div class="empty" id="emptyState">
+      <div class="big">📚</div>
+      <h3>No decks yet — let's fix that</h3>
+      <p>Create your first deck and add flashcards, or load the demo deck to see how studying, flipping and smart review scheduling work.</p>
+      <div class="row">
+        <button class="btn btn-primary" id="btnNewDeckEmpty">＋ Create my first deck</button>
+        <button class="btn btn-ghost" id="btnDemo">Load demo data</button>
+      </div>
+    </div>
+
+    <div class="grid" id="deckGrid"></div>
+
+    <div class="data-bar">
+      <span class="lbl">💾 Your library</span>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" id="btnExport">Export backup (JSON)</button>
+      <button class="btn btn-ghost btn-sm" id="btnImport">Import backup</button>
+      <input type="file" id="fileImport" accept=".json,application/json" class="hidden">
+      <button class="btn btn-danger-ghost btn-sm" id="btnClear">Clear all data</button>
+      <span class="note">Everything is stored only in this browser (localStorage). Export a backup before switching devices or clearing browser data.</span>
+    </div>
+  </section>
+
+  <!-- ===== DECK VIEW ===== -->
+  <section id="viewDeck" class="hidden">
+    <button class="backlink" id="btnBackHome">← All decks</button>
+    <div class="deck-title-row">
+      <div>
+        <h2 id="deckTitle">Deck</h2>
+        <p id="deckDesc" style="color:var(--muted);font-size:.92rem;margin-top:3px"></p>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" id="btnRenameDeck">✏️ Rename</button>
+      <button class="btn btn-danger-ghost btn-sm" id="btnDeleteDeck">🗑 Delete deck</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px">
+      <button class="btn btn-primary" id="btnStudyDeck">▶ Study this deck</button>
+      <button class="btn btn-ghost" id="btnAddCard">＋ Add card</button>
+      <button class="btn btn-ghost" id="btnBulk">⇪ Bulk import</button>
+    </div>
+    <div id="deckEmpty" class="empty hidden">
+      <div class="big">🗂️</div>
+      <h3>This deck has no cards yet</h3>
+      <p>Add cards one by one, or use bulk import to paste many cards at once in “question | answer” format.</p>
+      <div class="row">
+        <button class="btn btn-primary" id="btnAddCardEmpty">＋ Add a card</button>
+        <button class="btn btn-ghost" id="btnBulkEmpty">⇪ Bulk import</button>
+      </div>
+    </div>
+    <table class="cards" id="cardTable">
+      <thead><tr><th>Question</th><th>Answer</th><th>Next review</th><th style="width:84px"></th></tr></thead>
+      <tbody id="cardRows"></tbody>
+    </table>
+  </section>
+
+  <!-- ===== STUDY VIEW ===== -->
+  <section id="viewStudy" class="hidden">
+    <button class="backlink" id="btnExitStudy">← End session</button>
+    <div class="study-wrap">
+      <div class="progress"><div id="progFill" style="width:0%"></div></div>
+      <div class="progress-lbl" id="progLbl">Card 0 of 0</div>
+
+      <div id="studyMain">
+        <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard. Activate to flip.">
+          <div class="flashcard-inner">
+            <div class="face front">
+              <div class="tag">Question</div>
+              <div class="txt" id="fcFront"></div>
+              <div class="hint">Tap the card (or press Space) to flip</div>
+            </div>
+            <div class="face back">
+              <div class="tag">Answer</div>
+              <div class="txt" id="fcBack"></div>
+              <div class="hint">How well did you know it?</div>
+            </div>
+          </div>
+        </div>
+        <p class="tap-hint" id="preFlipHint">Think of your answer, then flip the card.</p>
+        <div class="grade-row hidden" id="gradeRow">
+          <button class="grade again" id="btnAgain">Again<small>See it again soon</small></button>
+          <button class="grade good" id="btnGood">Good<small id="goodNext">Next: 1 day</small></button>
+          <button class="grade easy" id="btnEasy">Easy<small id="easyNext">Next: 3 days</small></button>
+        </div>
+      </div>
+
+      <div class="summary hidden" id="studySummary">
+        <div class="big">🎉</div>
+        <h3>Session complete!</h3>
+        <p id="summaryText">Nice work. Your reviews are scheduled — come back when new cards are due.</p>
+        <div class="nums">
+          <div><b id="sumReviewed">0</b><span>Cards reviewed</span></div>
+          <div><b id="sumAgain">0</b><span>Marked “Again”</span></div>
+          <div><b id="sumDueLeft">0</b><span>Still due today</span></div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btnStudyAgain">Study more</button>
+          <button class="btn btn-ghost" id="btnSummaryHome">Back to decks</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Flashcard Study Lab <b>by AEUN</b> · Your data never leaves your browser</footer>
+
+<!-- ===== DECK MODAL ===== -->
+<div class="overlay" id="deckModal">
+  <div class="modal">
+    <h3 id="deckModalTitle">Create deck</h3>
+    <div class="field">
+      <label for="deckName">Deck name *</label>
+      <input type="text" id="deckName" placeholder="e.g. Spanish Essentials" maxlength="80">
+    </div>
+    <div class="field">
+      <label for="deckDescInput">Description (optional)</label>
+      <textarea id="deckDescInput" placeholder="What is this deck about?" maxlength="200"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="btnSaveDeck">Save deck</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD MODAL ===== -->
+<div class="overlay" id="cardModal">
+  <div class="modal">
+    <h3 id="cardModalTitle">Add card</h3>
+    <div class="field">
+      <label for="cardFront">Front — question *</label>
+      <textarea id="cardFront" placeholder="e.g. What is the Spanish word for “hello”?"></textarea>
+    </div>
+    <div class="field">
+      <label for="cardBack">Back — answer *</label>
+      <textarea id="cardBack" placeholder="e.g. Hola"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="btnSaveCard">Save card</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BULK IMPORT MODAL ===== -->
+<div class="overlay" id="bulkModal">
+  <div class="modal">
+    <h3>Bulk import cards</h3>
+    <div class="field">
+      <label for="bulkText">One card per line — question | answer</label>
+      <textarea class="bulk" id="bulkText" placeholder="What is the capital of France? | Paris&#10;2 + 2 = ? | 4&#10;Hola means… | Hello"></textarea>
+      <p class="help">Paste lines in the format <b>question | answer</b>. Lines without a “|” are skipped. New cards are due immediately.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="btnDoBulk">Import cards</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "flashcard_study_lab_v1";
+  var DAY = 86400000, MIN = 60000;
+  var STEPS = [1, 3, 7, 16, 35, 75, 150]; // interval ladder in days
+
+  /* ---------------- State ---------------- */
+  var db = load();
+  var currentDeckId = null;
+  var editingDeckId = null;
+  var editingCardId = null;
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(!raw) return { decks: [] };
+      var d = JSON.parse(raw);
+      if(!d || !Array.isArray(d.decks)) return { decks: [] };
+      return d;
+    }catch(e){ return { decks: [] }; }
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast("Could not save — browser storage may be full."); } }
+  function deckById(id){ for(var i=0;i<db.decks.length;i++) if(db.decks[i].id===id) return db.decks[i]; return null; }
+  function cardById(deck, id){ for(var i=0;i<deck.cards.length;i++) if(deck.cards[i].id===id) return deck.cards[i]; return null; }
+  function intervalOf(card){ return STEPS[Math.min(card.step || 0, STEPS.length - 1)]; }
+  function isDue(card, now){ return !card.dueAt || card.dueAt <= now; }
+  function dueCount(deck, now){ return deck.cards.filter(function(c){ return isDue(c, now); }).length; }
+
+  /* ---------------- Helpers ---------------- */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+  function fmtDue(card, now){
+    if(isDue(card, now)){
+      if(card.dueAt && card.dueAt > now - DAY && card.reps > 0 && card.dueAt - now <= 0 && card.lastAgain) return "Due now (again)";
+      return card.reps ? "Due now" : "New — due now";
+    }
+    var diff = card.dueAt - now;
+    if(diff < DAY) return "Due today";
+    var d = Math.round(diff / DAY);
+    if(d === 1) return "Due tomorrow";
+    return "Due in " + d + " days";
+  }
+  function dueClass(card, now){
+    if(isDue(card, now)) return "due-now";
+    if(card.dueAt - now < DAY) return "due-soon";
+    return "due-later";
+  }
+
+  /* ---------------- Views ---------------- */
+  function show(view){
+    $("viewHome").classList.toggle("hidden", view !== "home");
+    $("viewDeck").classList.toggle("hidden", view !== "deck");
+    $("viewStudy").classList.toggle("hidden", view !== "study");
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------- Home render ---------------- */
+  function renderHome(){
+    var now = Date.now();
+    var totalCards = 0, totalDue = 0, mastered = 0;
+    db.decks.forEach(function(d){
+      totalCards += d.cards.length;
+      totalDue += dueCount(d, now);
+      d.cards.forEach(function(c){ if(intervalOf(c) >= 16 && c.reps > 0) mastered++; });
+    });
+    $("statDecks").textContent = db.decks.length;
+    $("statCards").textContent = totalCards;
+    $("statDue").textContent = totalDue;
+    $("statMastered").textContent = mastered;
+
+    $("emptyState").classList.toggle("hidden", db.decks.length > 0);
+    var grid = $("deckGrid"); grid.innerHTML = "";
+    db.decks.forEach(function(d){
+      var due = dueCount(d, now);
+      var el = document.createElement("div");
+      el.className = "deck-card";
+      el.innerHTML =
+        "<h3>" + esc(d.name) + "</h3>" +
+        "<p class='desc'>" + esc(d.desc || "") + "</p>" +
+        "<div class='deck-meta'>" +
+          "<span class='pill'>" + d.cards.length + (d.cards.length === 1 ? " card" : " cards") + "</span>" +
+          (due > 0 ? "<span class='pill due'>" + due + " due today</span>" : "<span class='pill done'>✓ Nothing due</span>") +
+        "</div>" +
+        "<div class='deck-actions'>" +
+          "<button class='btn btn-primary btn-sm' data-act='study'>▶ Study</button>" +
+          "<button class='btn btn-ghost btn-sm' data-act='open'>Open</button>" +
+          "<button class='btn btn-ghost btn-sm' data-act='edit'>✏️ Edit</button>" +
+        "</div>";
+      el.querySelector("[data-act='study']").addEventListener("click", function(){ startStudy(d.id); });
+      el.querySelector("[data-act='open']").addEventListener("click", function(){ openDeck(d.id); });
+      el.querySelector("[data-act='edit']").addEventListener("click", function(){ openDeckModal(d.id); });
+      grid.appendChild(el);
+    });
+    show("home");
+  }
+
+  /* ---------------- Deck view ---------------- */
+  function openDeck(id){
+    currentDeckId = id;
+    renderDeck();
+  }
+  function renderDeck(){
+    var deck = deckById(currentDeckId);
+    if(!deck){ renderHome(); return; }
+    var now = Date.now();
+    $("deckTitle").textContent = deck.name;
+    $("deckDesc").textContent = deck.desc || "";
+    $("deckEmpty").classList.toggle("hidden", deck.cards.length > 0);
+    $("cardTable").classList.toggle("hidden", deck.cards.length === 0);
+    $("btnStudyDeck").disabled = deck.cards.length === 0;
+    var rows = $("cardRows"); rows.innerHTML = "";
+    deck.cards.forEach(function(c){
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td class='q'>" + esc(c.front) + "</td>" +
+        "<td class='a'>" + esc(c.back) + "</td>" +
+        "<td><span class='due-lbl " + dueClass(c, now) + "'>" + fmtDue(c, now) + "</span><br><span style='font-size:.78rem;color:var(--muted)'>Interval: " + (c.reps ? intervalOf(c) + "d" : "new") + "</span></td>" +
+        "<td style='white-space:nowrap'><button class='icon-btn' title='Edit card'>✏️</button> <button class='icon-btn del' title='Delete card'>🗑</button></td>";
+      var btns = tr.querySelectorAll(".icon-btn");
+      btns[0].addEventListener("click", function(){ openCardModal(c.id); });
+      btns[1].addEventListener("click", function(){
+        if(confirm("Delete this card?\n\n" + c.front)){
+          deck.cards = deck.cards.filter(function(x){ return x.id !== c.id; });
+          save(); renderDeck(); toast("Card deleted.");
+        }
+      });
+      rows.appendChild(tr);
+    });
+    show("deck");
+  }
+
+  /* ---------------- Deck modal ---------------- */
+  function openDeckModal(id){
+    editingDeckId = id || null;
+    var d = id ? deckById(id) : null;
+    $("deckModalTitle").textContent = d ? "Edit deck" : "Create deck";
+    $("deckName").value = d ? d.name : "";
+    $("deckDescInput").value = d ? (d.desc || "") : "";
+    $("deckModal").classList.add("open");
+    setTimeout(function(){ $("deckName").focus(); }, 40);
+  }
+  function closeModals(){ document.querySelectorAll(".overlay").forEach(function(o){ o.classList.remove("open"); }); }
+  $("btnSaveDeck").addEventListener("click", function(){
+    var name = $("deckName").value.trim();
+    if(!name){ toast("Give your deck a name first."); $("deckName").focus(); return; }
+    var desc = $("deckDescInput").value.trim();
+    if(editingDeckId){
+      var d = deckById(editingDeckId);
+      if(d){ d.name = name; d.desc = desc; }
+      save(); closeModals();
+      if(!$("viewDeck").classList.contains("hidden") && currentDeckId === editingDeckId) renderDeck(); else renderHome();
+      toast("Deck updated.");
+    }else{
+      var nd = { id: uid(), name: name, desc: desc, cards: [] };
+      db.decks.push(nd); save(); closeModals();
+      openDeck(nd.id); toast("Deck created — now add some cards.");
+    }
+    editingDeckId = null;
+  });
+
+  /* ---------------- Card modal ---------------- */
+  function openCardModal(cardId){
+    editingCardId = cardId || null;
+    var deck = deckById(currentDeckId);
+    var c = cardId && deck ? cardById(deck, cardId) : null;
+    $("cardModalTitle").textContent = c ? "Edit card" : "Add card";
+    $("cardFront").value = c ? c.front : "";
+    $("cardBack").value = c ? c.back : "";
+    $("cardModal").classList.add("open");
+    setTimeout(function(){ $("cardFront").focus(); }, 40);
+  }
+  $("btnSaveCard").addEventListener("click", function(){
+    var deck = deckById(currentDeckId); if(!deck) return;
+    var f = $("cardFront").value.trim(), b = $("cardBack").value.trim();
+    if(!f || !b){ toast("Both the question and the answer are needed."); return; }
+    if(editingCardId){
+      var c = cardById(deck, editingCardId);
+      if(c){ c.front = f; c.back = b; }
+      toast("Card updated.");
+    }else{
+      deck.cards.push({ id: uid(), front: f, back: b, step: 0, dueAt: Date.now(), reps: 0, lastAgain: false });
+      toast("Card added.");
+    }
+    editingCardId = null;
+    save(); closeModals(); renderDeck();
+  });
+
+  /* ---------------- Bulk import ---------------- */
+  $("btnDoBulk").addEventListener("click", function(){
+    var deck = deckById(currentDeckId); if(!deck) return;
+    var lines = $("bulkText").value.split(/\r?\n/);
+    var added = 0, now = Date.now();
+    lines.forEach(function(line){
+      var idx = line.indexOf("|");
+      if(idx < 0) return;
+      var f = line.slice(0, idx).trim(), b = line.slice(idx + 1).trim();
+      if(!f || !b) return;
+      deck.cards.push({ id: uid(), front: f, back: b, step: 0, dueAt: now, reps: 0, lastAgain: false });
+      added++;
+    });
+    if(!added){ toast("No valid lines found — use the format: question | answer"); return; }
+    $("bulkText").value = "";
+    save(); closeModals(); renderDeck();
+    toast(added + (added === 1 ? " card" : " cards") + " imported.");
+  });
+
+  /* ---------------- Study mode ---------------- */
+  var session = null;
+  function startStudy(deckId){
+    var deck = deckById(deckId); if(!deck) return;
+    var now = Date.now();
+    var due = deck.cards.filter(function(c){ return isDue(c, now); });
+    if(!due.length){
+      toast("Nothing is due in this deck right now. Come back later — or add new cards.");
+      if(currentDeckId !== deckId) openDeck(deckId);
+      return;
+    }
+    // shuffle due cards
+    for(var i = due.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = due[i]; due[i] = due[j]; due[j] = t; }
+    session = { deckId: deckId, queue: due.slice(), total: due.length, reviewed: 0, again: 0, flipped: false, requeued: {} };
+    currentDeckId = deckId;
+    $("studyMain").classList.remove("hidden");
+    $("studySummary").classList.add("hidden");
+    show("study");
+    nextCard();
+  }
+  function currentCard(){ return session && session.queue.length ? session.queue[0] : null; }
+  function nextCard(){
+    var c = currentCard();
+    if(!c){ endSession(); return; }
+    session.flipped = false;
+    $("flashcard").classList.remove("flipped");
+    $("fcFront").textContent = c.front;
+    $("fcBack").textContent = c.back;
+    $("gradeRow").classList.add("hidden");
+    $("preFlipHint").classList.remove("hidden");
+    var done = session.reviewed;
+    var total = session.total;
+    $("progFill").style.width = (total ? Math.round(done / total * 100) : 0) + "%";
+    $("progLbl").textContent = "Card " + Math.min(done + 1, total) + " of " + total + " · " + session.queue.length + " left in session";
+    // preview next intervals
+    var gStep = Math.min((c.step || 0) + 1, STEPS.length - 1);
+    var eStep = Math.min((c.step || 0) + 2, STEPS.length - 1);
+    $("goodNext").textContent = "Next: " + STEPS[gStep] + (STEPS[gStep] === 1 ? " day" : " days");
+    $("easyNext").textContent = "Next: " + STEPS[eStep] + (STEPS[eStep] === 1 ? " day" : " days");
+  }
+  function flip(){
+    if(!session || session.flipped) return;
+    session.flipped = true;
+    $("flashcard").classList.add("flipped");
+    $("gradeRow").classList.remove("hidden");
+    $("preFlipHint").classList.add("hidden");
+  }
+  function grade(kind){
+    var c = currentCard(); if(!c || !session.flipped) return;
+    var deck = deckById(session.deckId);
+    var card = deck ? cardById(deck, c.id) : c;
+    var now = Date.now();
+    card.reps = (card.reps || 0) + 1;
+    if(kind === "again"){
+      card.step = Math.max(0, (card.step || 0) - 1);
+      card.dueAt = now + 10 * MIN;
+      card.lastAgain = true;
+      session.again++;
+      session.queue.shift();
+      if(!session.requeued[card.id]){ session.requeued[card.id] = true; session.queue.push(card); session.total++; }
+    }else if(kind === "good"){
+      card.step = Math.min((card.step || 0) + 1, STEPS.length - 1);
+      card.dueAt = now + STEPS[card.step] * DAY;
+      card.lastAgain = false;
+      session.queue.shift();
+    }else{ // easy
+      card.step = Math.min((card.step || 0) + 2, STEPS.length - 1);
+      card.dueAt = now + STEPS[card.step] * DAY;
+      card.lastAgain = false;
+      session.queue.shift();
+    }
+    session.reviewed++;
+    save();
+    setTimeout(nextCard, 120);
+  }
+  function endSession(){
+    var deck = deckById(session.deckId);
+    var now = Date.now();
+    $("studyMain").classList.add("hidden");
+    $("studySummary").classList.remove("hidden");
+    $("progFill").style.width = "100%";
+    $("progLbl").textContent = "Session finished";
+    $("sumReviewed").textContent = session.reviewed;
+    $("sumAgain").textContent = session.again;
+    $("sumDueLeft").textContent = deck ? dueCount(deck, now) : 0;
+    session = null;
+  }
+  $("flashcard").addEventListener("click", flip);
+  $("flashcard").addEventListener("keydown", function(e){ if(e.key === " " || e.key === "Enter"){ e.preventDefault(); flip(); } });
+  document.addEventListener("keydown", function(e){
+    if($("viewStudy").classList.contains("hidden") || !session) return;
+    if(e.key === " " && !session.flipped){ e.preventDefault(); flip(); }
+    else if(session.flipped && e.key === "1") grade("again");
+    else if(session.flipped && e.key === "2") grade("good");
+    else if(session.flipped && e.key === "3") grade("easy");
+  });
+  $("btnAgain").addEventListener("click", function(){ grade("again"); });
+  $("btnGood").addEventListener("click", function(){ grade("good"); });
+  $("btnEasy").addEventListener("click", function(){ grade("easy"); });
+  $("btnExitStudy").addEventListener("click", function(){ session = null; if(currentDeckId) renderDeck(); else renderHome(); });
+  $("btnStudyAgain").addEventListener("click", function(){ if(currentDeckId) startStudy(currentDeckId); });
+  $("btnSummaryHome").addEventListener("click", renderHome);
+
+  /* ---------------- Deck view actions ---------------- */
+  $("btnBackHome").addEventListener("click", renderHome);
+  $("btnStudyDeck").addEventListener("click", function(){ startStudy(currentDeckId); });
+  $("btnAddCard").addEventListener("click", function(){ openCardModal(null); });
+  $("btnAddCardEmpty").addEventListener("click", function(){ openCardModal(null); });
+  $("btnBulk").addEventListener("click", function(){ $("bulkModal").classList.add("open"); });
+  $("btnBulkEmpty").addEventListener("click", function(){ $("bulkModal").classList.add("open"); });
+  $("btnRenameDeck").addEventListener("click", function(){ openDeckModal(currentDeckId); });
+  $("btnDeleteDeck").addEventListener("click", function(){
+    var deck = deckById(currentDeckId); if(!deck) return;
+    if(confirm("Delete the deck “" + deck.name + "” and all " + deck.cards.length + " of its cards? This cannot be undone.")){
+      db.decks = db.decks.filter(function(d){ return d.id !== currentDeckId; });
+      currentDeckId = null; save(); renderHome(); toast("Deck deleted.");
+    }
+  });
+
+  /* ---------------- Home actions ---------------- */
+  $("btnNewDeck").addEventListener("click", function(){ openDeckModal(null); });
+  $("btnNewDeckTop").addEventListener("click", function(){ openDeckModal(null); });
+  $("btnNewDeckEmpty").addEventListener("click", function(){ openDeckModal(null); });
+  document.querySelectorAll("[data-close]").forEach(function(b){ b.addEventListener("click", closeModals); });
+  document.querySelectorAll(".overlay").forEach(function(o){ o.addEventListener("click", function(e){ if(e.target === o) closeModals(); }); });
+
+  /* ---------------- Demo data ---------------- */
+  $("btnDemo").addEventListener("click", function(){
+    var now = Date.now();
+    var words = [
+      ["Hello", "Hola"], ["Thank you", "Gracias"], ["Good morning", "Buenos días"],
+      ["Goodbye", "Adiós"], ["Please", "Por favor"], ["Yes", "Sí"], ["No", "No"],
+      ["Water", "Agua"], ["House", "Casa"], ["Friend", "Amigo"]
+    ];
+    var cards = words.map(function(w, i){
+      var due = now, step = 0;
+      if(i === 8){ due = now - 2 * DAY; step = 1; }        // already due (overdue)
+      else if(i === 9){ due = now - 1 * DAY; step = 2; }   // already due (overdue)
+      else if(i === 6){ due = now + 3 * DAY; step = 1; }   // scheduled ahead
+      else if(i === 7){ due = now + 7 * DAY; step = 2; }   // scheduled ahead
+      return { id: uid(), front: "Spanish for: “" + w[0] + "”", back: w[1], step: step, dueAt: due, reps: step > 0 ? 2 : 0, lastAgain: false };
+    });
+    db.decks.push({ id: uid(), name: "Spanish Essentials", desc: "Ten everyday Spanish words — two are already due, so you can start studying right away.", cards: cards });
+    save(); renderHome();
+    toast("Demo deck loaded — hit “Study” to try it.");
+  });
+
+  /* ---------------- Backup / import / clear ---------------- */
+  $("btnExport").addEventListener("click", function(){
+    var blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "flashcard-study-lab-backup.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    toast("Backup downloaded.");
+  });
+  $("btnImport").addEventListener("click", function(){ $("fileImport").click(); });
+  $("fileImport").addEventListener("change", function(){
+    var f = this.files && this.files[0];
+    this.value = "";
+    if(!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(reader.result);
+        if(!data || !Array.isArray(data.decks)) throw new Error("bad format");
+        data.decks.forEach(function(d){
+          if(!d.id) d.id = uid();
+          if(!Array.isArray(d.cards)) d.cards = [];
+          d.cards.forEach(function(c){ if(!c.id) c.id = uid(); if(typeof c.step !== "number") c.step = 0; if(typeof c.reps !== "number") c.reps = 0; });
+        });
+        if(!confirm("Import this backup? It will REPLACE your current library (" + db.decks.length + " decks).")) return;
+        db = data; save(); currentDeckId = null; renderHome();
+        toast("Backup imported successfully.");
+      }catch(e){ toast("That file is not a valid Flashcard Study Lab backup."); }
+    };
+    reader.readAsText(f);
+  });
+  $("btnClear").addEventListener("click", function(){
+    if(!db.decks.length){ toast("There is nothing to clear."); return; }
+    if(confirm("Delete ALL decks and cards? This cannot be undone.\n\nTip: export a backup first if you might want them back.")){
+      db = { decks: [] }; currentDeckId = null; save(); renderHome();
+      toast("All data cleared.");
+    }
+  });
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
