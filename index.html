@@ -73,6 +73,23 @@
   <h2 class="sec">সব টুল</h2>
   <div class="grid" id="grid"></div>
   <p id="none">এই নামে কোনো টুল পাওয়া যাচ্ছে না — অন্য নামে খুঁজে দেখুন।</p>
+
+  <h2 class="sec">আরও AEUN পণ্য</h2>
+  <div class="grid">
+    <a class="tool" href="https://nazmulhaque-cyber.github.io/aeun-notes/" target="_blank" rel="noopener"><div class="ic" aria-hidden="true">📝</div><div class="tname">AEUN Notes ↗</div><div class="tdesc">নোট রাখার সহজ অ্যাপ — ফোনেই থাকে, অফলাইনেও চলে।</div><span class="free">ফ্রি</span></a>
+    <a class="tool" href="https://nazonsocial-alt.github.io/aeun-kids/" target="_blank" rel="noopener"><div class="ic" aria-hidden="true">🧒</div><div class="tname">AEUN Kids ↗</div><div class="tdesc">২–৭ বছরের বাচ্চাদের বাংলা ও ইংরেজি শেখা আর খেলা।</div><span class="free">ফ্রি</span></a>
+  </div>
+
+  <h2 class="sec">সব ডেটার ব্যাকআপ</h2>
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 28px rgba(11,31,58,.06)">
+    <p style="margin:0 0 6px">এই ১২টা টুলের <b>সব ডেটা এক ফাইলে</b> সেভ করে রাখুন — ফোন বদলালে বা ব্রাউজার পরিষ্কার হলে এই ফাইল দিয়েই সব ফিরে পাবেন।</p>
+    <p style="margin:0 0 14px;font-size:.88rem;color:var(--mut)">নোট: AEUN Notes আর AEUN Kids আলাদা ঠিকানায় চলে — ওদের ডেটা ওদের নিজের ব্যাকআপে থাকে।</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="chip on" id="btnBackup" type="button" style="min-height:46px">💾 ব্যাকআপ ডাউনলোড</button>
+      <label class="chip" style="min-height:46px;display:inline-flex;align-items:center;cursor:pointer">📥 ব্যাকআপ ফিরিয়ে আনুন<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+    </div>
+    <p id="backupMsg" style="margin:10px 0 0;font-size:.9rem;font-weight:700;color:var(--blue)"></p>
+  </div>
 </main>
 <footer>
   সব টুলের ডেটা আপনার নিজের ফোনেই থাকে — কোথাও পাঠানো হয় না।<br>
@@ -129,6 +146,36 @@
     });
   });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+</script>
+
+<script>
+  document.getElementById('btnBackup').addEventListener('click', function(){
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); data[k] = localStorage.getItem(k); }
+    var env = { aeun: 'backup', version: 1, exportedAt: new Date().toISOString(), data: data };
+    var blob = new Blob([JSON.stringify(env)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'aeun-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    document.getElementById('backupMsg').textContent = '✓ ব্যাকআপ ডাউনলোড হয়েছে — ফাইলটা যত্নে রাখুন।';
+  });
+  document.getElementById('importFile').addEventListener('change', function(){
+    var f = this.files && this.files[0]; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      try {
+        var env = JSON.parse(rd.result);
+        if (!env || env.aeun !== 'backup' || !env.data) throw new Error('bad');
+        Object.keys(env.data).forEach(function(k){ localStorage.setItem(k, env.data[k]); });
+        document.getElementById('backupMsg').textContent = '✓ ব্যাকআপ ফিরিয়ে আনা হয়েছে — পেজটা আবার লোড হচ্ছে…';
+        setTimeout(function(){ location.reload(); }, 900);
+      } catch(e){
+        document.getElementById('backupMsg').textContent = 'এই ফাইলটা AEUN ব্যাকআপ মনে হচ্ছে না — ঠিক ফাইলটা বেছে নিন।';
+      }
+    };
+    rd.readAsText(f);
+  });
 </script>
 </body>
 </html>

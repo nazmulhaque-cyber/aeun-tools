@@ -745,5 +745,21 @@ if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function()
 <footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 <script src="core.js"></script>
+<script>
+(function(){
+  if (!window.AEUNCore) return;
+  function $(id){ return document.getElementById(id); }
+  function fire(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+  var prof = AEUNCore.getProfile();
+  var sn = $('shopName');
+  if (sn && !sn.value && prof.name){ sn.value = prof.name; fire(sn); }
+  try {
+    var vi = $('valueInput');
+    var sel = document.querySelector('.type-card.sel, .type-card.active, [data-type].sel, [data-type].active');
+    if (vi && !vi.value && prof.bkash && sel && /বিকাশ|bkash/i.test(sel.textContent)){ vi.value = prof.bkash; fire(vi); }
+  } catch(e){}
+})();
+</script>
+
 </body>
 </html>

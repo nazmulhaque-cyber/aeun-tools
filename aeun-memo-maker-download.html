@@ -1082,5 +1082,29 @@ input[type="text"], input[type="tel"], input[type="number"], textarea{ border-ra
 })();
 </script>
 
+
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem('aeun_memo_history_v1') || '[]'); } catch(e){}
+  if (!Array.isArray(hist) || !hist.length) return;
+  var seen = {}, list = document.createElement('datalist'); list.id = 'aeunCustList';
+  hist.forEach(function(m){
+    var c = m && m.customer; if (!c || !c.name) return;
+    if (!seen[c.name]){ seen[c.name] = c; var o = document.createElement('option'); o.value = c.name; list.appendChild(o); }
+  });
+  document.body.appendChild(list);
+  var cn = $('custName'); if (!cn) return;
+  cn.setAttribute('list', 'aeunCustList');
+  cn.addEventListener('change', function(){
+    var c = seen[cn.value.trim()]; if (!c) return;
+    var ph = $('custPhone'), ad = $('custAddress');
+    if (ph && !ph.value && c.phone) ph.value = c.phone;
+    if (ad && !ad.value && c.address) ad.value = c.address;
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -666,6 +666,24 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
             + "<script>" + js + "<\/script>\n<footer class="aeun-foot">আপনার সব তথ্য এই ফোনেই থাকে — কোথাও পাঠানো হয় না।<br><a href="https://aeun.vercel.app/tools.html">AEUN Tools</a> · v2.1 · AEUN — AI Engineering &amp; Utility Network</footer>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
 <script src="core.js"></script>
+<script>
+(function(){
+  if (!window.AEUNCore) return;
+  function $(id){ return document.getElementById(id); }
+  function fire(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+  var map = { shopName:'name', bkash:'bkash', whatsapp:'whatsapp' };
+  var prof = AEUNCore.getProfile();
+  Object.keys(map).forEach(function(id){
+    var el = $(id); if (!el) return;
+    if (!el.value && prof[map[id]]){ el.value = prof[map[id]]; fire(el); }
+    el.addEventListener('change', function(){
+      var patch = {}; Object.keys(map).forEach(function(i2){ var e2 = $(i2); if (e2) patch[map[i2]] = e2.value.trim(); });
+      AEUNCore.setProfile(patch);
+    });
+  });
+})();
+</script>
+
 </body>\n</html>";
         }
         $("downloadPageBtn").addEventListener("click", function(){

@@ -532,5 +532,58 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
 })();
 </script>
 
+
+<style>
+.aeun-util{max-width:640px;margin:10px auto 0;padding:0 14px}
+.aeun-util button{width:100%;min-height:48px;border:1.5px solid #BFD7F8;background:#EAF1FA;color:#0B1F3A;border-radius:14px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.aeun-ov{position:fixed;inset:0;z-index:200;background:rgba(8,22,39,.55);display:none;align-items:flex-end;justify-content:center}
+.aeun-ov.open{display:flex}
+.aeun-sheet{background:#fff;color:#1E293B;width:100%;max-width:520px;max-height:82dvh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom))}
+.aeun-sheet h3{margin:0 0 10px;font-size:1.1rem}
+.aeun-sheet pre{white-space:pre-wrap;font-family:inherit;background:#F4F7FB;border:1px solid #E1EAF3;border-radius:14px;padding:14px;font-size:.95rem;line-height:1.6}
+.aeun-sheet .row{display:flex;gap:10px;margin-top:12px}
+.aeun-sheet .row a,.aeun-sheet .row button{flex:1;min-height:48px;border-radius:12px;font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
+.aeun-wa2{background:#12805C;color:#fff}
+.aeun-cp{background:#0B1F3A;color:#fff}
+.aeun-x{width:100%;margin-top:10px;background:none;border:0;color:#64748B;font-weight:700;min-height:44px;cursor:pointer;font-family:inherit}
+</style>
+
+<script>
+(function(){
+  var BN = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+  function toBn(s){ return String(s).replace(/[0-9]/g, function(c){ return BN[+c]; }); }
+  var bar = document.querySelector('.aeun-bar'); if (!bar) return;
+  var wrap = document.createElement('div'); wrap.className = 'aeun-util';
+  wrap.innerHTML = '<button type="button" id="aeunTodayBtn">📋 আজকের তালিকা — WhatsApp-এ পাঠান</button>';
+  bar.after(wrap);
+  var ov = document.createElement('div'); ov.className = 'aeun-ov';
+  ov.innerHTML = '<div class="aeun-sheet"><h3>আজকের অ্যাপয়েন্টমেন্ট</h3><pre id="aeunTodayText"></pre><div class="row"><a class="aeun-wa2" id="aeunTodayWa" target="_blank" rel="noopener">💬 WhatsApp-এ পাঠান</a><button class="aeun-cp" id="aeunTodayCp" type="button">📋 কপি করুন</button></div><button class="aeun-x" id="aeunTodayX" type="button">বন্ধ করুন</button></div>';
+  document.body.appendChild(ov);
+  function todayStr(){ var d = new Date(); function p(n){ return (n<10?'0':'')+n; } return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()); }
+  document.getElementById('aeunTodayBtn').addEventListener('click', function(){
+    var st = {}; try { st = JSON.parse(localStorage.getItem('aeun_appointment_book_v1') || '{}'); } catch(e){}
+    var list = (st.appointments || []).filter(function(a){ return a.date === todayStr() && a.status !== 'cancelled'; });
+    list.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+    var txt;
+    if (!list.length) txt = 'আজ কোনো অ্যাপয়েন্টমেন্ট নেই।';
+    else {
+      txt = '📋 আজকের অ্যাপয়েন্টমেন্ট (' + toBn(list.length) + 'টা)\n' + (st.bizName ? '🏪 ' + st.bizName + '\n' : '') + '\n' + list.map(function(a, i){
+        return toBn(i+1) + '. ' + toBn(a.time || '') + ' — ' + (a.name || '') + (a.service ? ' (' + a.service + ')' : '') + (a.phone ? ' · ' + toBn(a.phone) : '');
+      }).join('\n');
+    }
+    document.getElementById('aeunTodayText').textContent = txt;
+    document.getElementById('aeunTodayWa').href = 'https://wa.me/?text=' + encodeURIComponent(txt);
+    ov.classList.add('open');
+  });
+  document.getElementById('aeunTodayX').addEventListener('click', function(){ ov.classList.remove('open'); });
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.classList.remove('open'); });
+  document.getElementById('aeunTodayCp').addEventListener('click', function(){
+    var t = document.getElementById('aeunTodayText').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    this.textContent = '✓ কপি হয়েছে';
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1212,5 +1212,63 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="date"],
 })();
 </script>
 
+
+<style>
+.aeun-util{max-width:640px;margin:10px auto 0;padding:0 14px}
+.aeun-util button{width:100%;min-height:48px;border:1.5px solid #BFD7F8;background:#EAF1FA;color:#0B1F3A;border-radius:14px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.aeun-ov{position:fixed;inset:0;z-index:200;background:rgba(8,22,39,.55);display:none;align-items:flex-end;justify-content:center}
+.aeun-ov.open{display:flex}
+.aeun-sheet{background:#fff;color:#1E293B;width:100%;max-width:520px;max-height:82dvh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom))}
+.aeun-sheet h3{margin:0 0 10px;font-size:1.1rem}
+.aeun-sheet pre{white-space:pre-wrap;font-family:inherit;background:#F4F7FB;border:1px solid #E1EAF3;border-radius:14px;padding:14px;font-size:.95rem;line-height:1.6}
+.aeun-sheet .row{display:flex;gap:10px;margin-top:12px}
+.aeun-sheet .row a,.aeun-sheet .row button{flex:1;min-height:48px;border-radius:12px;font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
+.aeun-wa2{background:#12805C;color:#fff}
+.aeun-cp{background:#0B1F3A;color:#fff}
+.aeun-x{width:100%;margin-top:10px;background:none;border:0;color:#64748B;font-weight:700;min-height:44px;cursor:pointer;font-family:inherit}
+</style>
+
+<script>
+(function(){
+  var BN = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+  function toBn(s){ return String(s).replace(/[0-9]/g, function(c){ return BN[+c]; }); }
+  function money(n){ return '৳' + toBn(Math.round(Number(n)||0)); }
+  var bar = document.querySelector('.aeun-bar'); if (!bar) return;
+  var wrap = document.createElement('div'); wrap.className = 'aeun-util';
+  wrap.innerHTML = '<button type="button" id="aeunDayBtn">📊 দিনশেষের হিসাব দেখুন</button>';
+  bar.after(wrap);
+  var ov = document.createElement('div'); ov.className = 'aeun-ov';
+  ov.innerHTML = '<div class="aeun-sheet"><h3>দিনশেষের হিসাব</h3><pre id="aeunDayText"></pre><div class="row"><a class="aeun-wa2" id="aeunDayWa" target="_blank" rel="noopener">💬 WhatsApp-এ পাঠান</a><button class="aeun-cp" id="aeunDayCp" type="button">📋 কপি করুন</button></div><button class="aeun-x" id="aeunDayX" type="button">বন্ধ করুন</button></div>';
+  document.body.appendChild(ov);
+  function todayStr(){ var d = new Date(); function p(n){ return (n<10?'0':'')+n; } return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()); }
+  document.getElementById('aeunDayBtn').addEventListener('click', function(){
+    var orders = []; try { orders = JSON.parse(localStorage.getItem('aeun_orderbot_orders_v1') || '[]'); } catch(e){}
+    var t = todayStr();
+    var today = orders.filter(function(o){ return o.dateISO === t; });
+    var live = today.filter(function(o){ return o.status !== 'cancelled'; });
+    var sales = live.reduce(function(s,o){ return s + (Number(o.grand)||0); }, 0);
+    var due = live.reduce(function(s,o){ return s + (Number(o.due)||0); }, 0);
+    var by = { new:0, confirmed:0, delivering:0, done:0 };
+    live.forEach(function(o){ if (by[o.status] != null) by[o.status]++; });
+    var pendingAll = orders.filter(function(o){ return o.status === 'new' || o.status === 'confirmed' || o.status === 'delivering'; }).length;
+    var txt = '📊 আজকের হিসাব\n' +
+      'অর্ডার: ' + toBn(live.length) + 'টা · মোট বিক্রি: ' + money(sales) + '\n' +
+      'বাকি (ডিউ): ' + money(due) + '\n' +
+      'নতুন: ' + toBn(by.new) + ' · কনফার্ম: ' + toBn(by.confirmed) + ' · ডেলিভারিতে: ' + toBn(by.delivering) + ' · সম্পন্ন: ' + toBn(by.done) + '\n' +
+      'সব মিলিয়ে পেন্ডিং অর্ডার: ' + toBn(pendingAll) + 'টা';
+    document.getElementById('aeunDayText').textContent = txt;
+    document.getElementById('aeunDayWa').href = 'https://wa.me/?text=' + encodeURIComponent(txt);
+    ov.classList.add('open');
+  });
+  document.getElementById('aeunDayX').addEventListener('click', function(){ ov.classList.remove('open'); });
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.classList.remove('open'); });
+  document.getElementById('aeunDayCp').addEventListener('click', function(){
+    var t = document.getElementById('aeunDayText').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    this.textContent = '✓ কপি হয়েছে';
+  });
+})();
+</script>
+
 </body>
 </html>
