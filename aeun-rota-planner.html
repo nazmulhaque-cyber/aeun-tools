@@ -1,0 +1,1966 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>AEUN Rota Planner</title>
+    <style>
+      :root{
+        --navy:#0B1F3A; --navy-2:#12294D; --navy-3:#1B3A66;
+        --blue:#1D6FF2; --teal:#00C2A8; --amber:#FFB020;
+        --bg:#F4F7FB; --card:#FFFFFF; --ink:#1E293B; --ink-2:#475569;
+        --muted:#64748B; --line:#E2E8F0; --line-2:#CBD5E1;
+        --danger:#DC2626; --danger-bg:#FEF2F2;
+        --warn-bg:#FFFBEB; --warn-ink:#92400E;
+        --ok-bg:#ECFDF5; --ok-ink:#065F46;
+        --radius:10px;
+        --shadow:0 1px 3px rgba(11,31,58,.08),0 4px 14px rgba(11,31,58,.05);
+      }
+      *{box-sizing:border-box}
+      html,body{margin:0;padding:0}
+      body{
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+        background:var(--bg); color:var(--ink); font-size:15px; line-height:1.45;
+        -webkit-font-smoothing:antialiased;
+      }
+      button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+      button{font:inherit;cursor:pointer}
+      input,select,textarea{font:inherit;color:var(--ink)}
+      h1,h2,h3{margin:0;line-height:1.2}
+      a{color:var(--blue)}
+
+      /* ---------- Layout ---------- */
+      .app{display:flex;min-height:100vh}
+      .sidebar{
+        width:236px;flex:0 0 236px;background:var(--navy);color:#E6EDF7;
+        display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:30;
+      }
+      .brand{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.09)}
+      .brand .brand-name{font-size:19px;font-weight:800;letter-spacing:.4px;color:#fff}
+      .brand .brand-name span{color:var(--teal)}
+      .brand .brand-sub{font-size:12px;color:#9FB3CC;margin-top:2px}
+      .brand .brand-biz{font-size:13px;font-weight:600;color:#fff;margin-top:10px;word-break:break-word}
+      .nav{padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+      .nav button{
+        display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+        background:transparent;border:0;color:#C7D5E8;padding:9px 10px;border-radius:8px;
+        font-size:14.5px;font-weight:550;min-height:2.6rem;
+      }
+      .nav button .nav-ico{width:20px;text-align:center;font-size:15px;flex:0 0 20px}
+      .nav button:hover{background:var(--navy-2);color:#fff}
+      .nav button.active{background:var(--blue);color:#fff}
+      .nav .badge{
+        margin-left:auto;background:var(--amber);color:#3A2A00;font-size:11.5px;font-weight:700;
+        border-radius:999px;padding:1px 8px;line-height:1.5;
+      }
+      .side-foot{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.09);font-size:12px;color:#8FA5C2}
+      .main{flex:1;min-width:0;padding:26px 28px 60px}
+      .main-inner{max-width:1180px;margin:0 auto}
+      .view{display:none}
+      .view.active{display:block}
+      .view-head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-bottom:18px}
+      .view-head h1{font-size:24px;font-weight:750;color:var(--navy)}
+      .view-head .sub{color:var(--muted);font-size:13.5px;margin-top:3px}
+      .view-head .spacer{flex:1}
+      .head-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+      /* ---------- Buttons & forms ---------- */
+      .btn{
+        display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-2);
+        background:var(--card);color:var(--ink);border-radius:8px;padding:7px 14px;
+        font-size:14px;font-weight:600;min-height:2.4rem;text-decoration:none;
+      }
+      .btn:hover{border-color:var(--blue);color:var(--blue)}
+      .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+      .btn.primary:hover{background:#1559C7;color:#fff}
+      .btn.teal{background:var(--teal);border-color:var(--teal);color:#04352C}
+      .btn.teal:hover{background:#00AB94;color:#04352C}
+      .btn.danger{background:var(--card);border-color:#F3B4B4;color:var(--danger)}
+      .btn.danger:hover{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
+      .btn.danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+      .btn.danger-solid:hover{background:#B91C1C;color:#fff}
+      .btn.small{padding:4px 10px;font-size:13px;min-height:2.1rem}
+      .btn:disabled{opacity:.5;cursor:not-allowed}
+      .field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+      .field label{font-size:13px;font-weight:650;color:var(--ink-2)}
+      .field .hint{font-size:12px;color:var(--muted);font-weight:400}
+      .field input,.field select,.field textarea{
+        border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;background:#fff;width:100%;
+      }
+      .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid rgba(29,111,242,.35);border-color:var(--blue)}
+      .field textarea{resize:vertical;min-height:64px}
+      .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+      .form-grid .full{grid-column:1/-1}
+      input[type="color"]{padding:3px;height:2.5rem}
+
+      /* ---------- Cards / stats ---------- */
+      .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+      .card h2{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
+      .card h3{font-size:14.5px;font-weight:700;color:var(--navy)}
+      .grid{display:grid;gap:16px}
+      .grid.stats{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+      .grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+      .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+      .stat .stat-label{font-size:12.5px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+      .stat .stat-value{font-size:27px;font-weight:800;color:var(--navy);margin-top:4px;line-height:1.1}
+      .stat .stat-note{font-size:13px;color:var(--ink-2);margin-top:5px}
+      .section-gap{margin-top:16px}
+      .list-clean{list-style:none;margin:8px 0 0;padding:0}
+      .list-clean li{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+      .list-clean li:last-child{border-bottom:0}
+      .list-clean .who{font-weight:650}
+      .list-clean .meta{color:var(--muted);font-size:13px}
+      .empty{
+        border:1.5px dashed var(--line-2);border-radius:var(--radius);padding:28px 20px;text-align:center;
+        color:var(--muted);background:#FBFCFE;
+      }
+      .empty .empty-title{font-size:16px;font-weight:700;color:var(--ink-2);margin-bottom:5px}
+      .empty p{margin:0 auto 14px;max-width:440px;font-size:14px}
+      .note-line{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+      /* ---------- Tables ---------- */
+      .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}
+      table.data{border-collapse:collapse;width:100%;min-width:640px}
+      table.data th,table.data td{padding:10px 12px;text-align:left;font-size:14px;border-bottom:1px solid var(--line);vertical-align:middle}
+      table.data th{background:#F8FAFC;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-2);font-weight:700;white-space:nowrap}
+      table.data tr:last-child td{border-bottom:0}
+      .num{text-align:right !important;font-variant-numeric:tabular-nums;white-space:nowrap}
+      .bar{height:8px;background:#EDF2F7;border-radius:99px;overflow:hidden;min-width:90px}
+      .bar > i{display:block;height:100%;background:var(--teal);border-radius:99px}
+      .bar > i.over{background:var(--danger)}
+
+      /* ---------- Pills ---------- */
+      .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;line-height:1.6;white-space:nowrap}
+      .pill.pending{background:#FEF3C7;color:#92400E}
+      .pill.approved{background:#D1FAE5;color:#065F46}
+      .pill.declined{background:#FEE2E2;color:#991B1B}
+      .pill.leave-type{background:#E0EBFD;color:#1E40AF}
+      .pill.archived{background:#E2E8F0;color:#475569}
+      .pill.active{background:#D1FAE5;color:#065F46}
+
+      /* ---------- Rota grid ---------- */
+      .rota-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+      .rota-toolbar .week-label{font-size:16.5px;font-weight:750;color:var(--navy);margin:0 6px}
+      .rota-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}
+      table.rota{border-collapse:separate;border-spacing:0;width:100%;min-width:860px}
+      table.rota th,table.rota td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:0;vertical-align:top}
+      table.rota th:last-child,table.rota td:last-child{border-right:0}
+      table.rota thead th{background:#F8FAFC;padding:9px 8px;font-size:12.5px;color:var(--ink-2);text-align:center}
+      table.rota thead th .dname{display:block;font-size:13px;font-weight:750;color:var(--navy);text-transform:uppercase;letter-spacing:.4px}
+      table.rota thead th.today{background:#E8F0FE}
+      table.rota thead th.today .dname{color:var(--blue)}
+      table.rota th.emp-col,table.rota td.emp-col{
+        position:sticky;left:0;background:#fff;min-width:132px;max-width:170px;padding:10px;z-index:2;text-align:left;
+      }
+      table.rota thead th.emp-col{background:#F8FAFC;z-index:3}
+      table.rota td.emp-col .emp-name{font-weight:700;font-size:14px;color:var(--navy)}
+      table.rota td.emp-col .emp-role{font-size:12px;color:var(--muted)}
+      .rota-cell{width:100%;min-height:64px;border:0;background:transparent;text-align:left;padding:7px 8px;display:block;border-radius:0}
+      .rota-cell:hover{background:#F1F6FE}
+      .rota-cell .shift-box{border-left:4px solid var(--line-2);padding-left:7px}
+      .rota-cell .shift-time{font-weight:700;font-size:13.5px;color:var(--ink);display:block}
+      .rota-cell .shift-meta{font-size:12px;color:var(--muted);display:block;margin-top:1px}
+      .rota-cell .shift-note{font-size:12px;color:var(--ink-2);display:block;margin-top:2px;font-style:italic}
+      .rota-cell .cell-add{color:#B6C2D4;font-size:18px;font-weight:400;display:block;text-align:center;padding-top:8px}
+      .rota-cell:hover .cell-add{color:var(--blue)}
+      .rota-cell .dayoff{color:var(--muted);font-weight:650;font-size:13px;display:block;padding-top:4px}
+      .rota-cell.on-leave{background:#FFFBEB;cursor:default}
+      .rota-cell.on-leave:hover{background:#FFFBEB}
+      .rota-cell .leave-tag{font-weight:750;font-size:13px;color:var(--warn-ink);display:block}
+      .rota-cell .leave-sub{font-size:12px;color:var(--warn-ink);opacity:.85;display:block}
+      td.total-col,td.row-total{padding:10px 8px !important;text-align:right;background:#F8FAFC;min-width:86px}
+      .row-total .rt-hours{font-weight:800;font-size:15px;color:var(--navy);display:block;font-variant-numeric:tabular-nums}
+      .row-total .rt-cost{font-size:12px;color:var(--muted);display:block;font-variant-numeric:tabular-nums}
+      .row-total.over .rt-hours{color:var(--danger)}
+      .row-total .rt-warn{font-size:11.5px;color:var(--danger);font-weight:700;display:block}
+      table.rota tfoot td{background:var(--navy);color:#fff;padding:12px;font-weight:700;font-size:14.5px;border-bottom:0}
+      table.rota tfoot td .foot-sub{font-weight:500;font-size:12.5px;color:#B9CBE4;display:block}
+
+      /* ---------- Item cards (employees / templates / leave) ---------- */
+      .item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+      .item-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+      .item-card .ic-head{display:flex;align-items:flex-start;gap:10px}
+      .item-card .ic-title{font-size:16px;font-weight:750;color:var(--navy)}
+      .item-card .ic-sub{font-size:13px;color:var(--muted)}
+      .item-card .ic-rows{margin:12px 0 4px;font-size:13.5px}
+      .item-card .ic-rows div{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px solid #F1F5F9}
+      .item-card .ic-rows div:last-child{border-bottom:0}
+      .item-card .ic-rows dt{color:var(--muted)}
+      .item-card .ic-rows dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+      .ic-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+      .swatch{width:14px;height:38px;border-radius:5px;flex:0 0 14px;margin-top:2px}
+      .leave-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+      .leave-row .lr-main{flex:1;min-width:210px}
+      .leave-row .lr-name{font-weight:700;color:var(--navy)}
+      .leave-row .lr-dates{font-size:13.5px;color:var(--ink-2)}
+      .leave-row .lr-note{font-size:13px;color:var(--muted);font-style:italic}
+      .row-actions{display:flex;flex-wrap:wrap;gap:6px}
+
+      /* ---------- Modal ---------- */
+      .modal-back{
+        position:fixed;inset:0;background:rgba(11,31,58,.55);display:none;align-items:flex-start;justify-content:center;
+        padding:22px 14px;z-index:100;overflow-y:auto;
+      }
+      .modal-back.open{display:flex}
+      .modal{background:#fff;border-radius:14px;width:100%;max-width:520px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.3);margin:auto 0}
+      .modal.wide{max-width:620px}
+      .modal h2{font-size:19px;color:var(--navy);margin-bottom:4px}
+      .modal .modal-sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+      .modal-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:18px}
+      .modal-actions .left{margin-right:auto}
+      .seg{display:flex;border:1px solid var(--line-2);border-radius:9px;overflow:hidden;margin-bottom:14px}
+      .seg button{flex:1;background:#fff;border:0;padding:9px;font-weight:650;color:var(--ink-2);min-height:2.5rem}
+      .seg button.on{background:var(--blue);color:#fff}
+      .radio-line{display:flex;gap:16px;flex-wrap:wrap}
+      .radio-line label{display:inline-flex;align-items:center;gap:7px;padding:8px 4px;min-height:2.25rem;cursor:pointer;font-size:14px}
+
+      /* ---------- Toast ---------- */
+      #toast{
+        position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+        background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;
+        box-shadow:0 10px 30px rgba(11,31,58,.35);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:200;
+        max-width:calc(100vw - 32px);text-align:center;
+      }
+      #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+      .settings-block{margin-bottom:16px}
+      .danger-zone{border-color:#F3B4B4}
+      .danger-zone h2{color:var(--danger)}
+      .file-input-hidden{display:none}
+
+      /* ---------- Print ---------- */
+      #printArea{display:none}
+      #printArea.show-sheet{
+        display:block;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--shadow);padding:22px;margin:18px auto 40px;max-width:1180px;width:calc(100% - 28px);
+        color:#000;font-size:12.5px;overflow-x:auto;
+      }
+      #printArea.show-sheet h1{font-size:20px;margin:0 0 2px}
+      #printArea.show-sheet h2{font-size:14px;margin:18px 0 6px}
+      #printArea.show-sheet .p-sub{color:#444;margin:0 0 2px;font-size:12px}
+      #printArea.show-sheet table{border-collapse:collapse;width:100%;margin-top:10px;min-width:640px}
+      #printArea.show-sheet th,#printArea.show-sheet td{border:1px solid #999;padding:5px 6px;text-align:left;font-size:11.5px;vertical-align:top}
+      #printArea.show-sheet th{background:#EEE}
+      #printArea.show-sheet .p-note{margin-top:14px;font-size:12px}
+      #printArea.show-sheet .p-foot{margin-top:20px;border-top:1px solid #999;padding-top:6px;font-size:11px;color:#555;display:flex;justify-content:space-between}
+      .sheet-tools{
+        display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+        background:#E8F0FE;border:1px solid #B9D2FA;border-radius:8px;padding:10px 14px;margin-bottom:16px;
+        font-size:13.5px;color:var(--navy);
+      }
+      @media print{
+        body{background:#fff}
+        .app,#toast,.modal-back{display:none !important}
+        #printArea{display:block !important;color:#000;font-size:12px}
+        #printArea .no-print{display:none !important}
+        #printArea h1{font-size:20px;margin:0 0 2px}
+        #printArea h2{font-size:14px;margin:18px 0 6px}
+        #printArea .p-sub{color:#444;margin:0 0 2px;font-size:12px}
+        #printArea table{border-collapse:collapse;width:100%;margin-top:10px}
+        #printArea th,#printArea td{border:1px solid #999;padding:5px 6px;text-align:left;font-size:11.5px;vertical-align:top}
+        #printArea th{background:#EEE}
+        #printArea .p-note{margin-top:14px;font-size:12px}
+        #printArea .p-foot{margin-top:20px;border-top:1px solid #999;padding-top:6px;font-size:11px;color:#555;display:flex;justify-content:space-between}
+        @page{margin:14mm}
+      }
+
+      /* ---------- Responsive ---------- */
+      @media (max-width:860px){
+        .app{flex-direction:column}
+        .sidebar{width:100%;flex:none;height:auto;position:sticky;top:0}
+        .brand{padding:12px 16px 8px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:0}
+        .brand .brand-biz{margin-top:0}
+        .side-foot{display:none}
+        .nav{flex-direction:row;flex-wrap:wrap;overflow-x:visible;padding:6px 10px 12px;gap:4px}
+        .nav button{white-space:nowrap;width:auto;padding:8px 12px}
+        .nav .badge{margin-left:4px}
+        .main{padding:18px 14px 50px}
+        .form-grid{grid-template-columns:1fr}
+        .view-head h1{font-size:21px}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div>
+            <div class="brand-name">AEUN <span>Rota Planner</span></div>
+            <div class="brand-sub">Staff rotas, shifts &amp; leave</div>
+          </div>
+          <div class="brand-biz" id="brandBiz"></div>
+        </div>
+        <nav class="nav" id="mainNav" aria-label="Main">
+          <button type="button" data-view="dashboard" class="active"><span class="nav-ico">▦</span>Dashboard</button>
+          <button type="button" data-view="rota"><span class="nav-ico">▤</span>Weekly Rota</button>
+          <button type="button" data-view="leave"><span class="nav-ico">✈</span>Leave<span class="badge" id="pendingBadge" style="display:none"></span></button>
+          <button type="button" data-view="employees"><span class="nav-ico">☰</span>Employees</button>
+          <button type="button" data-view="templates"><span class="nav-ico">◷</span>Shift Templates</button>
+          <button type="button" data-view="settings"><span class="nav-ico">⚙</span>Settings</button>
+        </nav>
+        <div class="side-foot">AEUN Rota Planner<br />Your data stays in this browser.</div>
+      </aside>
+
+      <main class="main">
+        <div class="main-inner">
+
+          <!-- ================= DASHBOARD ================= -->
+          <section class="view active" id="view-dashboard">
+            <div class="view-head">
+              <div>
+                <h1>Dashboard</h1>
+                <div class="sub" id="dashDateLine"></div>
+              </div>
+              <div class="spacer"></div>
+              <div class="head-actions">
+                <button type="button" class="btn" id="dashPrintLeave">Print leave summary</button>
+                <button type="button" class="btn primary" data-goto="rota">Open weekly rota</button>
+              </div>
+            </div>
+            <div id="dashContent"></div>
+          </section>
+
+          <!-- ================= ROTA ================= -->
+          <section class="view" id="view-rota">
+            <div class="view-head">
+              <div>
+                <h1>Weekly Rota</h1>
+                <div class="sub">Click any cell to add or change a shift. Approved leave always shows first.</div>
+              </div>
+            </div>
+            <div class="rota-toolbar">
+              <button type="button" class="btn" id="weekPrev">← Previous week</button>
+              <button type="button" class="btn" id="weekToday">This week</button>
+              <button type="button" class="btn" id="weekNext">Next week →</button>
+              <span class="week-label" id="weekLabel"></span>
+              <span style="flex:1"></span>
+              <button type="button" class="btn" id="copyLastWeek">Copy last week</button>
+              <button type="button" class="btn danger" id="clearWeek">Clear week</button>
+              <button type="button" class="btn primary" id="printRotaBtn">Print rota</button>
+            </div>
+            <div id="rotaContent"></div>
+            <p class="note-line">Labour cost is an estimate only: paid hours × each person&rsquo;s hourly rate. It is not payroll and includes no tax or statutory calculations.</p>
+          </section>
+
+          <!-- ================= LEAVE ================= -->
+          <section class="view" id="view-leave">
+            <div class="view-head">
+              <div>
+                <h1>Leave</h1>
+                <div class="sub" id="leaveYearLine"></div>
+              </div>
+              <div class="spacer"></div>
+              <div class="head-actions">
+                <button type="button" class="btn" id="leavePrintBtn">Print leave summary</button>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Request leave</h2>
+              <p style="color:var(--muted);font-size:13.5px;margin:4px 0 14px">New requests start as <strong>Pending</strong>. Leave length counts working days only (Monday–Friday).</p>
+              <form id="leaveForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="lfEmployee">Employee</label>
+                    <select id="lfEmployee" required></select>
+                  </div>
+                  <div class="field">
+                    <label for="lfType">Leave type</label>
+                    <select id="lfType">
+                      <option>Annual leave</option>
+                      <option>Sick leave</option>
+                      <option>Unpaid leave</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="lfFirst">First day</label>
+                    <input type="date" id="lfFirst" required />
+                  </div>
+                  <div class="field">
+                    <label for="lfLast">Last day</label>
+                    <input type="date" id="lfLast" required />
+                  </div>
+                  <div class="field full">
+                    <label for="lfNote">Note <span class="hint">(optional)</span></label>
+                    <input type="text" id="lfNote" placeholder="e.g. Family trip" />
+                  </div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+                  <button type="submit" class="btn primary">Add leave request</button>
+                  <span id="lfDays" style="font-weight:650;color:var(--navy)"></span>
+                </div>
+              </form>
+            </div>
+
+            <div class="card section-gap">
+              <h2 id="balanceTitle">Leave balances</h2>
+              <div id="balanceContent" style="margin-top:12px"></div>
+            </div>
+
+            <div class="card section-gap">
+              <h2>All requests</h2>
+              <div id="leaveList" style="margin-top:8px"></div>
+            </div>
+          </section>
+
+          <!-- ================= EMPLOYEES ================= -->
+          <section class="view" id="view-employees">
+            <div class="view-head">
+              <div>
+                <h1>Employees</h1>
+                <div class="sub" id="empCountLine"></div>
+              </div>
+              <div class="spacer"></div>
+              <div class="head-actions">
+                <button type="button" class="btn primary" id="addEmployeeBtn">+ Add employee</button>
+              </div>
+            </div>
+            <div id="employeeContent"></div>
+            <p class="note-line">Hourly rates are used only to estimate rota labour cost. This app does not run payroll and makes no tax or statutory calculations.</p>
+          </section>
+
+          <!-- ================= TEMPLATES ================= -->
+          <section class="view" id="view-templates">
+            <div class="view-head">
+              <div>
+                <h1>Shift Templates</h1>
+                <div class="sub">Reusable shifts you can drop into the rota in one click. Paid hours already have the unpaid break taken off.</div>
+              </div>
+              <div class="spacer"></div>
+              <div class="head-actions">
+                <button type="button" class="btn primary" id="addTemplateBtn">+ Add template</button>
+              </div>
+            </div>
+            <div id="templateContent"></div>
+          </section>
+
+          <!-- ================= SETTINGS ================= -->
+          <section class="view" id="view-settings">
+            <div class="view-head">
+              <div>
+                <h1>Settings</h1>
+                <div class="sub">Business details, planning preferences and your data.</div>
+              </div>
+            </div>
+
+            <form id="settingsForm">
+              <div class="card settings-block">
+                <h2>Business profile</h2>
+                <p style="color:var(--muted);font-size:13.5px;margin:4px 0 14px">Shown in the sidebar and printed at the top of the rota sheet.</p>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="sfBizName">Business name</label>
+                    <input type="text" id="sfBizName" placeholder="e.g. The Corner Café" />
+                  </div>
+                  <div class="field">
+                    <label for="sfPhone">Phone</label>
+                    <input type="tel" id="sfPhone" />
+                  </div>
+                  <div class="field full">
+                    <label for="sfAddress">Address</label>
+                    <input type="text" id="sfAddress" />
+                  </div>
+                  <div class="field full">
+                    <label for="sfEmail">Email</label>
+                    <input type="email" id="sfEmail" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card settings-block">
+                <h2>Preferences</h2>
+                <div class="form-grid" style="margin-top:12px">
+                  <div class="field">
+                    <label for="sfCurrency">Currency</label>
+                    <select id="sfCurrency">
+                      <option value="USD">USD — US Dollar ($)</option>
+                      <option value="GBP">GBP — British Pound (£)</option>
+                      <option value="EUR">EUR — Euro (€)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="sfWeekStart">Week starts on</label>
+                    <select id="sfWeekStart">
+                      <option value="monday">Monday</option>
+                      <option value="sunday">Sunday</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="sfEntitlement">Default leave entitlement (days per year)</label>
+                    <input type="number" id="sfEntitlement" min="0" max="366" step="1" />
+                    <span class="hint">Used as the starting value when you add a new employee.</span>
+                  </div>
+                  <div class="field">
+                    <label for="sfRotaNote">Note printed on the rota sheet</label>
+                    <input type="text" id="sfRotaNote" placeholder="e.g. Please swap shifts only with the manager&rsquo;s approval" />
+                  </div>
+                </div>
+                <button type="submit" class="btn primary">Save settings</button>
+              </div>
+            </form>
+
+            <div class="card settings-block">
+              <h2>Backup &amp; restore</h2>
+              <p style="color:var(--muted);font-size:13.5px;margin:4px 0 14px">Everything is stored only in this browser. Export a backup file regularly so you never lose your rotas.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <button type="button" class="btn" id="exportBtn">Export backup (JSON)</button>
+                <button type="button" class="btn" id="importBtn">Import backup</button>
+                <input type="file" id="importFile" accept="application/json,.json" class="file-input-hidden" />
+              </div>
+            </div>
+
+            <div class="card settings-block">
+              <h2>Try it out</h2>
+              <p style="color:var(--muted);font-size:13.5px;margin:4px 0 14px">Load a ready-made example — a small café with six staff, four shift templates, this week&rsquo;s rota and some leave requests — to see how everything works. It replaces whatever is currently saved.</p>
+              <button type="button" class="btn teal" id="demoBtn">Load demo data</button>
+            </div>
+
+            <div class="card danger-zone">
+              <h2>Erase all data</h2>
+              <p style="color:var(--muted);font-size:13.5px;margin:4px 0 14px">Deletes every employee, shift, template, leave request and setting from this browser and starts again from empty. This cannot be undone — export a backup first if you might need it.</p>
+              <button type="button" class="btn danger-solid" id="eraseBtn">Erase all data</button>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- Cell editor modal -->
+    <div class="modal-back" id="cellModalBack">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cellModalTitle">
+        <h2 id="cellModalTitle">Edit shift</h2>
+        <div class="modal-sub" id="cellModalSub"></div>
+        <div class="seg" role="tablist">
+          <button type="button" id="segShift">Shift</button>
+          <button type="button" id="segDayOff">Day off</button>
+        </div>
+        <div id="cellShiftFields">
+          <div class="field">
+            <label for="cmTemplate">Shift template <span class="hint">(fills in the times — you can still adjust them)</span></label>
+            <select id="cmTemplate"></select>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="cmStart">Start time</label>
+              <input type="time" id="cmStart" />
+            </div>
+            <div class="field">
+              <label for="cmEnd">End time</label>
+              <input type="time" id="cmEnd" />
+            </div>
+            <div class="field">
+              <label for="cmBreak">Unpaid break (minutes)</label>
+              <input type="number" id="cmBreak" min="0" max="720" step="5" />
+            </div>
+            <div class="field">
+              <label>Paid time</label>
+              <div id="cmPaid" style="padding:9px 2px;font-weight:700;color:var(--navy)"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cmNote">Note <span class="hint">(optional)</span></label>
+            <input type="text" id="cmNote" placeholder="e.g. Covering the till" />
+          </div>
+          <p class="note-line" style="margin-top:0">A finish time earlier than the start time counts as running past midnight.</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn danger left" id="cmRemove" style="display:none">Remove entry</button>
+          <button type="button" class="btn" id="cmCancel">Cancel</button>
+          <button type="button" class="btn primary" id="cmSave">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee modal -->
+    <div class="modal-back" id="empModalBack">
+      <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="empModalTitle">
+        <h2 id="empModalTitle">Add employee</h2>
+        <div class="modal-sub">The hourly rate is used only to estimate rota labour cost — never for payroll.</div>
+        <form id="empForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="efName">Full name *</label>
+              <input type="text" id="efName" required />
+            </div>
+            <div class="field">
+              <label for="efRole">Job role</label>
+              <input type="text" id="efRole" placeholder="e.g. Barista" />
+            </div>
+            <div class="field">
+              <label for="efRate">Hourly rate</label>
+              <input type="number" id="efRate" min="0" step="0.01" />
+            </div>
+            <div class="field">
+              <label for="efContracted">Contracted hours per week</label>
+              <input type="number" id="efContracted" min="0" step="0.5" />
+            </div>
+            <div class="field">
+              <label for="efEntitlement">Leave entitlement (days per year)</label>
+              <input type="number" id="efEntitlement" min="0" max="366" step="1" />
+            </div>
+            <div class="field">
+              <label for="efStart">Start date</label>
+              <input type="date" id="efStart" />
+            </div>
+            <div class="field">
+              <label for="efPhone">Phone</label>
+              <input type="tel" id="efPhone" />
+            </div>
+            <div class="field">
+              <label for="efEmail">Email</label>
+              <input type="email" id="efEmail" />
+            </div>
+            <div class="field full">
+              <label for="efNotes">Notes</label>
+              <textarea id="efNotes" placeholder="e.g. First aider; cannot work Sundays"></textarea>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="efCancel">Cancel</button>
+            <button type="submit" class="btn primary">Save employee</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Template modal -->
+    <div class="modal-back" id="tplModalBack">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tplModalTitle">
+        <h2 id="tplModalTitle">Add shift template</h2>
+        <div class="modal-sub" id="tplPaidLine">Paid hours update as you type.</div>
+        <form id="tplForm">
+          <div class="field">
+            <label for="tfName">Template name *</label>
+            <input type="text" id="tfName" required placeholder="e.g. Early" />
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="tfStart">Start time</label>
+              <input type="time" id="tfStart" required />
+            </div>
+            <div class="field">
+              <label for="tfEnd">End time</label>
+              <input type="time" id="tfEnd" required />
+            </div>
+            <div class="field">
+              <label for="tfBreak">Unpaid break (minutes)</label>
+              <input type="number" id="tfBreak" min="0" max="720" step="5" />
+            </div>
+            <div class="field">
+              <label for="tfColor">Colour</label>
+              <input type="color" id="tfColor" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="tfCancel">Cancel</button>
+            <button type="submit" class="btn primary">Save template</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Leave edit modal -->
+    <div class="modal-back" id="leaveModalBack">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="leaveModalTitle">
+        <h2 id="leaveModalTitle">Edit leave request</h2>
+        <div class="modal-sub">Leave length counts working days only (Monday–Friday).</div>
+        <form id="leaveEditForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="lefEmployee">Employee</label>
+              <select id="lefEmployee"></select>
+            </div>
+            <div class="field">
+              <label for="lefType">Leave type</label>
+              <select id="lefType">
+                <option>Annual leave</option>
+                <option>Sick leave</option>
+                <option>Unpaid leave</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="lefFirst">First day</label>
+              <input type="date" id="lefFirst" required />
+            </div>
+            <div class="field">
+              <label for="lefLast">Last day</label>
+              <input type="date" id="lefLast" required />
+            </div>
+            <div class="field">
+              <label for="lefStatus">Status</label>
+              <select id="lefStatus">
+                <option>Pending</option>
+                <option>Approved</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Length</label>
+              <div id="lefDays" style="padding:9px 2px;font-weight:700;color:var(--navy)"></div>
+            </div>
+            <div class="field full">
+              <label for="lefNote">Note</label>
+              <input type="text" id="lefNote" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="lefCancel">Cancel</button>
+            <button type="submit" class="btn primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Confirm modal -->
+    <div class="modal-back" id="confirmBack">
+      <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <h2 id="confirmTitle">Are you sure?</h2>
+        <div class="modal-sub" id="confirmText" style="margin-bottom:0"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="confirmNo">Cancel</button>
+          <button type="button" class="btn danger-solid" id="confirmYes">Yes, continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info modal (leave blocking a rota cell) -->
+    <div class="modal-back" id="infoBack">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+        <h2 id="infoTitle">On approved leave</h2>
+        <div class="modal-sub" id="infoText" style="margin-bottom:0"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="infoGotoLeave">Open Leave view</button>
+          <button type="button" class="btn primary" id="infoOk">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="printArea" aria-hidden="true"></div>
+    <div id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   AEUN Rota Planner — single-file app.
+   All data lives in localStorage under one key.
+   ============================================================ */
+var LS_KEY = "aeun_rota_planner_v1";
+var CURRENCIES = { USD: "$", GBP: "£", EUR: "€" };
+var DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var DAY_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function uid(){ return "id" + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function num(v, fallback){ var n = parseFloat(v); return isFinite(n) ? n : (fallback || 0); }
+
+/* ---------- Dates (all local, ISO yyyy-mm-dd strings) ---------- */
+function pad2(n){ return (n < 10 ? "0" : "") + n; }
+function toISO(d){ return d.getFullYear() + "-" + pad2(d.getMonth()+1) + "-" + pad2(d.getDate()); }
+function fromISO(iso){
+  if(!iso) return null;
+  var p = iso.split("-"); if(p.length !== 3) return null;
+  var d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+  return isNaN(d.getTime()) ? null : d;
+}
+function todayISO(){ return toISO(new Date()); }
+function addDaysISO(iso, n){ var d = fromISO(iso); d.setDate(d.getDate()+n); return toISO(d); }
+function fmtDate(iso){
+  var d = fromISO(iso); if(!d) return "";
+  return DAY_SHORT[d.getDay()] + " " + d.getDate() + " " + MONTH_SHORT[d.getMonth()] + " " + d.getFullYear();
+}
+function fmtDateShort(iso){
+  var d = fromISO(iso); if(!d) return "";
+  return d.getDate() + " " + MONTH_SHORT[d.getMonth()];
+}
+function weekStartISO(iso, weekStart){
+  var d = fromISO(iso); var day = d.getDay();
+  var diff = (weekStart === "sunday") ? day : (day + 6) % 7;
+  d.setDate(d.getDate() - diff);
+  return toISO(d);
+}
+function weekDates(anchorISO, weekStart){
+  var start = weekStartISO(anchorISO, weekStart), out = [];
+  for(var i = 0; i < 7; i++) out.push(addDaysISO(start, i));
+  return out;
+}
+
+/* ---------- Core maths (exact rules) ---------- */
+function timeToMins(t){
+  if(!t) return 0;
+  var p = String(t).split(":"); return parseInt(p[0],10)*60 + parseInt(p[1]||"0",10);
+}
+function paidMinutes(start, end, breakMins){
+  var s = timeToMins(start), e = timeToMins(end);
+  var diff = e - s;
+  if(e <= s && e !== s) diff += 24*60;      /* runs past midnight */
+  if(s === e) diff = 0;
+  diff -= num(breakMins, 0);
+  return Math.max(0, diff);
+}
+function paidHours(start, end, breakMins){ return paidMinutes(start, end, breakMins) / 60; }
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function shiftCost(shift, employee){
+  if(!employee) return 0;
+  return round2(paidHours(shift.start, shift.end, shift.breakMins) * num(employee.rate, 0));
+}
+function workingDays(firstISO, lastISO){
+  var a = fromISO(firstISO), b = fromISO(lastISO);
+  if(!a || !b || b < a) return 0;
+  var count = 0, d = new Date(a.getTime());
+  while(d <= b){
+    var wd = d.getDay();
+    if(wd >= 1 && wd <= 5) count++;
+    d.setDate(d.getDate()+1);
+  }
+  return count;
+}
+function fmtHours(h){
+  var r = Math.round(h * 100) / 100;
+  return (r % 1 === 0) ? String(r) : String(r);
+}
+
+/* ---------- State ---------- */
+function defaultState(){
+  return {
+    settings: {
+      businessName: "", address: "", phone: "", email: "",
+      currency: "USD", weekStart: "monday", defaultEntitlement: 25, rotaNote: ""
+    },
+    employees: [], templates: [], shifts: [], leaves: []
+  };
+}
+var state = loadState();
+function loadState(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    var parsed = JSON.parse(raw);
+    var base = defaultState();
+    if(parsed && typeof parsed === "object"){
+      base.settings = Object.assign(base.settings, parsed.settings || {});
+      base.employees = Array.isArray(parsed.employees) ? parsed.employees : [];
+      base.templates = Array.isArray(parsed.templates) ? parsed.templates : [];
+      base.shifts = Array.isArray(parsed.shifts) ? parsed.shifts : [];
+      base.leaves = Array.isArray(parsed.leaves) ? parsed.leaves : [];
+    }
+    return base;
+  }catch(e){ return defaultState(); }
+}
+function saveState(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ /* storage full/blocked */ }
+}
+function currencySymbol(){ return CURRENCIES[state.settings.currency] || "$"; }
+function money(n){ return currencySymbol() + round2(n).toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+/* ---------- Lookups ---------- */
+function employeeById(id){ for(var i=0;i<state.employees.length;i++) if(state.employees[i].id===id) return state.employees[i]; return null; }
+function activeEmployees(){ return state.employees.filter(function(e){ return !e.archived; }); }
+function templateById(id){ for(var i=0;i<state.templates.length;i++) if(state.templates[i].id===id) return state.templates[i]; return null; }
+function shiftFor(empId, iso){
+  for(var i=0;i<state.shifts.length;i++) if(state.shifts[i].employeeId===empId && state.shifts[i].date===iso) return state.shifts[i];
+  return null;
+}
+function approvedLeaveOn(empId, iso){
+  for(var i=0;i<state.leaves.length;i++){
+    var l = state.leaves[i];
+    if(l.employeeId===empId && l.status==="Approved" && l.firstDay <= iso && iso <= l.lastDay) return l;
+  }
+  return null;
+}
+function leaveYearTotals(empId, year){
+  var approved = 0, pending = 0;
+  state.leaves.forEach(function(l){
+    if(l.employeeId !== empId) return;
+    var y = parseInt(String(l.firstDay).slice(0,4), 10);
+    if(y !== year) return;
+    var days = workingDays(l.firstDay, l.lastDay);
+    if(l.status === "Approved") approved += days;
+    else if(l.status === "Pending") pending += days;
+  });
+  return { approved: approved, pending: pending };
+}
+function leaveRemaining(emp, year){
+  var t = leaveYearTotals(emp.id, year);
+  return num(emp.entitlement, 0) - t.approved - t.pending;
+}
+function weekTotals(dates){
+  var hours = 0, cost = 0;
+  state.shifts.forEach(function(sh){
+    if(sh.type === "dayoff") return;
+    if(dates.indexOf(sh.date) === -1) return;
+    var emp = employeeById(sh.employeeId);
+    if(!emp) return;
+    hours += paidHours(sh.start, sh.end, sh.breakMins);
+    cost += shiftCost(sh, emp);
+  });
+  return { hours: hours, cost: round2(cost) };
+}
+function employeeWeekHours(empId, dates){
+  var h = 0;
+  state.shifts.forEach(function(sh){
+    if(sh.employeeId === empId && sh.type !== "dayoff" && dates.indexOf(sh.date) !== -1)
+      h += paidHours(sh.start, sh.end, sh.breakMins);
+  });
+  return h;
+}
+
+/* ---------- Toast & confirm ---------- */
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2600);
+}
+var confirmCb = null;
+function askConfirm(title, text, yesLabel, cb){
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmText").textContent = text;
+  document.getElementById("confirmYes").textContent = yesLabel || "Yes, continue";
+  confirmCb = cb;
+  document.getElementById("confirmBack").classList.add("open");
+}
+document.getElementById("confirmNo").addEventListener("click", function(){
+  document.getElementById("confirmBack").classList.remove("open"); confirmCb = null;
+});
+document.getElementById("confirmYes").addEventListener("click", function(){
+  document.getElementById("confirmBack").classList.remove("open");
+  var cb = confirmCb; confirmCb = null;
+  if(cb) cb();
+});
+
+/* ---------- Navigation ---------- */
+var currentView = "dashboard";
+var rotaAnchor = todayISO();   /* any date inside the displayed week */
+function showView(name){
+  currentView = name;
+  var btns = document.querySelectorAll("#mainNav button");
+  btns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-view") === name); });
+  var views = document.querySelectorAll(".view");
+  views.forEach(function(v){ v.classList.toggle("active", v.id === "view-" + name); });
+  renderAll();
+  window.scrollTo(0,0);
+}
+document.getElementById("mainNav").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-view]");
+  if(b) showView(b.getAttribute("data-view"));
+});
+document.querySelectorAll("[data-goto]").forEach(function(el){
+  el.addEventListener("click", function(){ showView(el.getAttribute("data-goto")); });
+});
+function updatePendingBadge(){
+  var n = state.leaves.filter(function(l){ return l.status === "Pending"; }).length;
+  var badge = document.getElementById("pendingBadge");
+  badge.style.display = n > 0 ? "" : "none";
+  badge.textContent = n;
+  document.getElementById("brandBiz").textContent = state.settings.businessName || "";
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard(){
+  var today = todayISO();
+  var ws = state.settings.weekStart;
+  var dates = weekDates(today, ws);
+  var totals = weekTotals(dates);
+  var actives = activeEmployees();
+  var year = new Date().getFullYear();
+
+  var workingToday = [], onLeaveToday = [];
+  actives.forEach(function(emp){
+    if(approvedLeaveOn(emp.id, today)) onLeaveToday.push(emp);
+    else {
+      var sh = shiftFor(emp.id, today);
+      if(sh && sh.type !== "dayoff") workingToday.push({ emp: emp, shift: sh });
+    }
+  });
+  var pendingCount = state.leaves.filter(function(l){ return l.status === "Pending"; }).length;
+
+  var awayThisWeek = [];
+  state.leaves.forEach(function(l){
+    if(l.status !== "Approved") return;
+    if(l.lastDay < dates[0] || l.firstDay > dates[6]) return;
+    var emp = employeeById(l.employeeId);
+    if(emp) awayThisWeek.push({ emp: emp, leave: l });
+  });
+  awayThisWeek.sort(function(a,b){ return a.leave.firstDay < b.leave.firstDay ? -1 : 1; });
+
+  var upcoming = state.leaves.filter(function(l){
+    return l.status === "Approved" && l.lastDay >= today;
+  }).sort(function(a,b){ return a.firstDay < b.firstDay ? -1 : 1; }).slice(0,5);
+
+  var uncovered = dates.filter(function(iso){
+    return !state.shifts.some(function(sh){ return sh.date === iso && sh.type !== "dayoff"; });
+  });
+
+  var d = fromISO(today);
+  document.getElementById("dashDateLine").textContent =
+    DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear() +
+    " · Week of " + fmtDateShort(dates[0]) + " – " + fmtDateShort(dates[6]);
+
+  var html = "";
+  if(actives.length === 0 && state.employees.length === 0){
+    html += '<div class="empty"><div class="empty-title">Welcome to AEUN Rota Planner</div>' +
+      '<p>Nothing is set up yet. Add your first employee, create a shift template or two, and your rota builds itself. You can also explore with ready-made example data from Settings.</p>' +
+      '<button type="button" class="btn primary" id="dashAddEmp">Add your first employee</button> ' +
+      '<button type="button" class="btn" data-goto-settings>Load demo data in Settings</button></div>';
+  }
+
+  html += '<div class="grid stats">' +
+    statCard("Active employees", String(actives.length), state.employees.length - actives.length > 0 ? (state.employees.length - actives.length) + " archived" : "Everyone on the team") +
+    statCard("Working today", String(workingToday.length), workingToday.length ? workingToday.map(function(w){ return esc(w.emp.name.split(" ")[0]); }).join(", ") : "Nobody is scheduled today") +
+    statCard("On leave today", String(onLeaveToday.length), onLeaveToday.length ? onLeaveToday.map(function(e){ return esc(e.name); }).join(", ") : "Nobody is away today") +
+    statCard("Scheduled hours this week", fmtHours(totals.hours) + " h", "Across " + actives.length + " active staff") +
+    statCard("Estimated labour cost this week", money(totals.cost), "Paid hours × hourly rates — estimate only") +
+    statCard("Pending leave requests", String(pendingCount), pendingCount ? "Waiting for a decision" : "Nothing waiting") +
+  '</div>';
+
+  html += '<div class="grid two section-gap">';
+  /* Away this week */
+  html += '<div class="card"><h2>Away this week</h2>';
+  if(awayThisWeek.length === 0){
+    html += '<p style="color:var(--muted);margin:6px 0 0">Nobody has approved leave overlapping this week.</p>';
+  } else {
+    html += '<ul class="list-clean">';
+    awayThisWeek.forEach(function(a){
+      html += '<li><span class="who">' + esc(a.emp.name) + '</span><span class="meta">' + esc(a.leave.type) + " · " +
+        fmtDateShort(a.leave.firstDay) + " – " + fmtDate(a.leave.lastDay) + " (" + workingDays(a.leave.firstDay, a.leave.lastDay) + ' working days)</span></li>';
+    });
+    html += '</ul>';
+  }
+  html += '</div>';
+  /* Upcoming leave */
+  html += '<div class="card"><h2>Upcoming approved leave</h2>';
+  if(upcoming.length === 0){
+    html += '<p style="color:var(--muted);margin:6px 0 0">No approved leave coming up.</p>';
+  } else {
+    html += '<ul class="list-clean">';
+    upcoming.forEach(function(l){
+      var emp = employeeById(l.employeeId);
+      html += '<li><span class="who">' + esc(emp ? emp.name : "Former employee") + '</span><span class="meta">' + esc(l.type) + " · " +
+        fmtDate(l.firstDay) + " – " + fmtDateShort(l.lastDay) + '</span></li>';
+    });
+    html += '</ul>';
+  }
+  html += '</div></div>';
+
+  /* Uncovered days */
+  html += '<div class="card section-gap"><h2>Days this week with nobody scheduled</h2>';
+  if(actives.length === 0){
+    html += '<p style="color:var(--muted);margin:6px 0 0">Add employees and shifts and this will show any day nobody is covering.</p>';
+  } else if(uncovered.length === 0){
+    html += '<p style="color:var(--ok-ink,#065F46);margin:6px 0 0;font-weight:600">Every day this week has at least one person scheduled. ✓</p>';
+  } else {
+    html += '<ul class="list-clean">';
+    uncovered.forEach(function(iso){
+      html += '<li><span class="who">' + fmtDate(iso) + '</span><span class="meta">No shifts on this day</span></li>';
+    });
+    html += '</ul>';
+  }
+  html += '<p class="note-line">Leave balances are tracked for ' + year + '. Remaining leave already counts both approved and pending requests.</p></div>';
+
+  document.getElementById("dashContent").innerHTML = html;
+  var addBtn = document.getElementById("dashAddEmp");
+  if(addBtn) addBtn.addEventListener("click", function(){ showView("employees"); openEmployeeModal(null); });
+  var gotoSettings = document.querySelector("[data-goto-settings]");
+  if(gotoSettings) gotoSettings.addEventListener("click", function(){ showView("settings"); });
+}
+function statCard(label, value, note){
+  return '<div class="stat"><div class="stat-label">' + esc(label) + '</div><div class="stat-value">' + esc(value) +
+    '</div><div class="stat-note">' + note + '</div></div>';
+}
+
+/* ============================================================
+   WEEKLY ROTA
+   ============================================================ */
+function renderRota(){
+  var ws = state.settings.weekStart;
+  var dates = weekDates(rotaAnchor, ws);
+  var actives = activeEmployees();
+  document.getElementById("weekLabel").textContent = fmtDate(dates[0]) + " – " + fmtDate(dates[6]);
+
+  var container = document.getElementById("rotaContent");
+  if(actives.length === 0){
+    container.innerHTML = '<div class="empty"><div class="empty-title">No active employees yet</div>' +
+      '<p>The rota needs people. Add employees first, then click any day to give them a shift.</p>' +
+      '<button type="button" class="btn primary" id="rotaAddEmp">Go to Employees</button></div>';
+    document.getElementById("rotaAddEmp").addEventListener("click", function(){ showView("employees"); });
+    return;
+  }
+
+  var today = todayISO();
+  var html = '<div class="rota-scroll"><table class="rota"><thead><tr><th class="emp-col">Employee</th>';
+  dates.forEach(function(iso){
+    var d = fromISO(iso);
+    html += '<th class="' + (iso === today ? "today" : "") + '"><span class="dname">' + DAY_SHORT[d.getDay()] + '</span>' +
+      d.getDate() + " " + MONTH_SHORT[d.getMonth()] + (iso === today ? " · Today" : "") + '</th>';
+  });
+  html += '<th style="min-width:86px">Week total</th></tr></thead><tbody>';
+
+  actives.forEach(function(emp){
+    html += '<tr><td class="emp-col"><span class="emp-name">' + esc(emp.name) + '</span>' +
+      (emp.role ? '<span class="emp-role" style="display:block">' + esc(emp.role) + '</span>' : "") + '</td>';
+    dates.forEach(function(iso){
+      var leave = approvedLeaveOn(emp.id, iso);
+      if(leave){
+        html += '<td><button type="button" class="rota-cell on-leave" data-leave-cell="' + emp.id + '|' + iso + '">' +
+          '<span class="leave-tag">On leave</span><span class="leave-sub">' + esc(leave.type) + '</span></button></td>';
+        return;
+      }
+      var sh = shiftFor(emp.id, iso);
+      if(!sh){
+        html += '<td><button type="button" class="rota-cell" data-cell="' + emp.id + '|' + iso + '"><span class="cell-add">+</span></button></td>';
+      } else if(sh.type === "dayoff"){
+        html += '<td><button type="button" class="rota-cell" data-cell="' + emp.id + '|' + iso + '"><span class="dayoff">Day off</span>' +
+          (sh.note ? '<span class="shift-note">' + esc(sh.note) + '</span>' : "") + '</button></td>';
+      } else {
+        var ph = paidHours(sh.start, sh.end, sh.breakMins);
+        html += '<td><button type="button" class="rota-cell" data-cell="' + emp.id + '|' + iso + '">' +
+          '<span class="shift-box" style="border-left-color:' + esc(sh.color || "#CBD5E1") + '">' +
+          '<span class="shift-time">' + esc(sh.start) + "–" + esc(sh.end) + '</span>' +
+          '<span class="shift-meta">' + (sh.templateName ? esc(sh.templateName) + " · " : "") + fmtHours(ph) + 'h paid</span>' +
+          (sh.note ? '<span class="shift-note">' + esc(sh.note) + '</span>' : "") +
+          '</span></button></td>';
+      }
+    });
+    var wh = employeeWeekHours(emp.id, dates);
+    var wCost = 0;
+    state.shifts.forEach(function(sh){
+      if(sh.employeeId === emp.id && sh.type !== "dayoff" && dates.indexOf(sh.date) !== -1) wCost += shiftCost(sh, emp);
+    });
+    var over = num(emp.contractedHours, 0) > 0 && wh > num(emp.contractedHours, 0);
+    html += '<td class="row-total' + (over ? " over" : "") + '"><span class="rt-hours">' + fmtHours(wh) + ' h</span>' +
+      '<span class="rt-cost">' + money(wCost) + '</span>' +
+      (over ? '<span class="rt-warn">Over ' + fmtHours(num(emp.contractedHours,0)) + 'h contract</span>' : "") + '</td></tr>';
+  });
+
+  var totals = weekTotals(dates);
+  html += '</tbody><tfoot><tr><td colspan="8">Week total<span class="foot-sub">All active employees</span></td>' +
+    '<td style="text-align:right">' + fmtHours(totals.hours) + ' h<span class="foot-sub">' + money(totals.cost) + ' labour</span></td></tr></tfoot></table></div>';
+  container.innerHTML = html;
+
+  container.querySelectorAll("[data-cell]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var parts = btn.getAttribute("data-cell").split("|");
+      openCellEditor(parts[0], parts[1]);
+    });
+  });
+  container.querySelectorAll("[data-leave-cell]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var parts = btn.getAttribute("data-leave-cell").split("|");
+      var emp = employeeById(parts[0]);
+      var leave = approvedLeaveOn(parts[0], parts[1]);
+      document.getElementById("infoText").textContent =
+        (emp ? emp.name : "This employee") + " is on approved " + (leave ? leave.type.toLowerCase() : "leave") +
+        " on " + fmtDate(parts[1]) + (leave ? " (" + fmtDate(leave.firstDay) + " – " + fmtDate(leave.lastDay) + ")" : "") +
+        ". A shift cannot be added over approved leave. To change this, decline or delete the leave request in the Leave view first.";
+      document.getElementById("infoBack").classList.add("open");
+    });
+  });
+}
+document.getElementById("infoOk").addEventListener("click", function(){ document.getElementById("infoBack").classList.remove("open"); });
+document.getElementById("infoGotoLeave").addEventListener("click", function(){
+  document.getElementById("infoBack").classList.remove("open"); showView("leave");
+});
+document.getElementById("weekPrev").addEventListener("click", function(){ rotaAnchor = addDaysISO(rotaAnchor, -7); renderRota(); });
+document.getElementById("weekNext").addEventListener("click", function(){ rotaAnchor = addDaysISO(rotaAnchor, 7); renderRota(); });
+document.getElementById("weekToday").addEventListener("click", function(){ rotaAnchor = todayISO(); renderRota(); });
+document.getElementById("copyLastWeek").addEventListener("click", function(){
+  var ws = state.settings.weekStart;
+  var dates = weekDates(rotaAnchor, ws);
+  var copied = 0, skippedLeave = 0;
+  dates.forEach(function(iso){
+    var srcISO = addDaysISO(iso, -7);
+    state.shifts.filter(function(sh){ return sh.date === srcISO; }).forEach(function(src){
+      var emp = employeeById(src.employeeId);
+      if(!emp || emp.archived) return;
+      if(approvedLeaveOn(src.employeeId, iso)){ skippedLeave++; return; }
+      var existing = shiftFor(src.employeeId, iso);
+      var copy = {
+        id: existing ? existing.id : uid(),
+        employeeId: src.employeeId, date: iso, type: src.type,
+        start: src.start, end: src.end, breakMins: src.breakMins,
+        templateName: src.templateName || "", color: src.color || "", note: src.note || ""
+      };
+      if(existing){ Object.assign(existing, copy); }
+      else state.shifts.push(copy);
+      copied++;
+    });
+  });
+  saveState(); renderAll();
+  toast(copied > 0 ? "Copied " + copied + " entr" + (copied === 1 ? "y" : "ies") + " from last week" + (skippedLeave ? " (" + skippedLeave + " skipped — on leave)" : "") : "Nothing to copy — last week has no entries for this team");
+});
+document.getElementById("clearWeek").addEventListener("click", function(){
+  var ws = state.settings.weekStart;
+  var dates = weekDates(rotaAnchor, ws);
+  var count = state.shifts.filter(function(sh){ return dates.indexOf(sh.date) !== -1; }).length;
+  if(count === 0){ toast("This week is already empty"); return; }
+  askConfirm("Clear this week?", "This removes all " + count + " shift entries between " + fmtDate(dates[0]) + " and " + fmtDate(dates[6]) + ". Leave requests are not affected.", "Clear week", function(){
+    state.shifts = state.shifts.filter(function(sh){ return dates.indexOf(sh.date) === -1; });
+    saveState(); renderAll(); toast("Week cleared");
+  });
+});
+
+/* ---------- Cell editor ---------- */
+var cellCtx = { empId: null, iso: null, mode: "shift" };
+function setCellMode(mode){
+  cellCtx.mode = mode;
+  document.getElementById("segShift").classList.toggle("on", mode === "shift");
+  document.getElementById("segDayOff").classList.toggle("on", mode === "dayoff");
+  document.getElementById("cellShiftFields").style.display = mode === "shift" ? "" : "none";
+}
+document.getElementById("segShift").addEventListener("click", function(){ setCellMode("shift"); });
+document.getElementById("segDayOff").addEventListener("click", function(){ setCellMode("dayoff"); });
+function updateCellPaid(){
+  var s = document.getElementById("cmStart").value, e = document.getElementById("cmEnd").value;
+  var b = num(document.getElementById("cmBreak").value, 0);
+  if(!s || !e){ document.getElementById("cmPaid").textContent = "—"; return; }
+  document.getElementById("cmPaid").textContent = fmtHours(paidHours(s, e, b)) + " h";
+}
+["cmStart","cmEnd","cmBreak"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", updateCellPaid);
+  document.getElementById(id).addEventListener("change", updateCellPaid);
+});
+document.getElementById("cmTemplate").addEventListener("change", function(){
+  var t = templateById(this.value);
+  if(!t) return;
+  document.getElementById("cmStart").value = t.start;
+  document.getElementById("cmEnd").value = t.end;
+  document.getElementById("cmBreak").value = t.breakMins;
+  updateCellPaid();
+});
+function openCellEditor(empId, iso){
+  var emp = employeeById(empId);
+  if(!emp) return;
+  cellCtx.empId = empId; cellCtx.iso = iso;
+  document.getElementById("cellModalTitle").textContent = emp.name;
+  document.getElementById("cellModalSub").textContent = fmtDate(iso) + (emp.role ? " · " + emp.role : "");
+  var sel = document.getElementById("cmTemplate");
+  sel.innerHTML = '<option value="">Custom times…</option>' + state.templates.map(function(t){
+    return '<option value="' + t.id + '">' + esc(t.name) + " (" + esc(t.start) + "–" + esc(t.end) + ")</option>";
+  }).join("");
+  var existing = shiftFor(empId, iso);
+  document.getElementById("cmRemove").style.display = existing ? "" : "none";
+  if(existing && existing.type === "dayoff"){
+    setCellMode("dayoff");
+    document.getElementById("cmNote").value = existing.note || "";
+    sel.value = ""; document.getElementById("cmStart").value = "09:00";
+    document.getElementById("cmEnd").value = "17:00"; document.getElementById("cmBreak").value = 0;
+  } else if(existing){
+    setCellMode("shift");
+    document.getElementById("cmStart").value = existing.start;
+    document.getElementById("cmEnd").value = existing.end;
+    document.getElementById("cmBreak").value = existing.breakMins;
+    document.getElementById("cmNote").value = existing.note || "";
+    var match = state.templates.filter(function(t){ return t.name === existing.templateName; })[0];
+    sel.value = match ? match.id : "";
+  } else {
+    setCellMode("shift");
+    sel.value = "";
+    document.getElementById("cmStart").value = "09:00";
+    document.getElementById("cmEnd").value = "17:00";
+    document.getElementById("cmBreak").value = 0;
+    document.getElementById("cmNote").value = "";
+  }
+  updateCellPaid();
+  document.getElementById("cellModalBack").classList.add("open");
+}
+function closeCellEditor(){ document.getElementById("cellModalBack").classList.remove("open"); }
+document.getElementById("cmCancel").addEventListener("click", closeCellEditor);
+document.getElementById("cmRemove").addEventListener("click", function(){
+  var existing = shiftFor(cellCtx.empId, cellCtx.iso);
+  if(existing){
+    state.shifts = state.shifts.filter(function(sh){ return sh.id !== existing.id; });
+    saveState(); closeCellEditor(); renderAll(); toast("Entry removed");
+  }
+});
+document.getElementById("cmSave").addEventListener("click", function(){
+  var empId = cellCtx.empId, iso = cellCtx.iso;
+  var existing = shiftFor(empId, iso);
+  var note = document.getElementById("cmNote").value.trim();
+  var entry;
+  if(cellCtx.mode === "dayoff"){
+    entry = { employeeId: empId, date: iso, type: "dayoff", start: "", end: "", breakMins: 0, templateName: "", color: "", note: note };
+  } else {
+    var s = document.getElementById("cmStart").value, e = document.getElementById("cmEnd").value;
+    if(!s || !e){ toast("Please enter both a start and an end time"); return; }
+    var tpl = templateById(document.getElementById("cmTemplate").value);
+    var fromTemplate = tpl && tpl.start === s && tpl.end === e && num(tpl.breakMins,0) === num(document.getElementById("cmBreak").value,0);
+    entry = {
+      employeeId: empId, date: iso, type: "shift", start: s, end: e,
+      breakMins: Math.max(0, num(document.getElementById("cmBreak").value, 0)),
+      templateName: fromTemplate ? tpl.name : "",
+      color: fromTemplate ? tpl.color : "#94A3B8",
+      note: note
+    };
+  }
+  if(existing){ entry.id = existing.id; Object.assign(existing, entry); }
+  else { entry.id = uid(); state.shifts.push(entry); }
+  saveState(); closeCellEditor(); renderAll();
+  toast(cellCtx.mode === "dayoff" ? "Day off saved" : "Shift saved");
+});
+
+/* ============================================================
+   LEAVE
+   ============================================================ */
+function fillEmployeeSelect(sel, includeArchived, selectedId){
+  var list = state.employees.filter(function(e){ return includeArchived || !e.archived; });
+  sel.innerHTML = list.length
+    ? list.map(function(e){ return '<option value="' + e.id + '"' + (e.id === selectedId ? " selected" : "") + '>' + esc(e.name) + (e.archived ? " (archived)" : "") + '</option>'; }).join("")
+    : '<option value="">No employees yet</option>';
+}
+function updateLeaveDays(){
+  var f = document.getElementById("lfFirst").value, l = document.getElementById("lfLast").value;
+  var el = document.getElementById("lfDays");
+  if(f && l){
+    if(l < f){ el.textContent = "Last day is before the first day"; return; }
+    var days = workingDays(f, l);
+    el.textContent = "= " + days + " working day" + (days === 1 ? "" : "s");
+  } else el.textContent = "";
+}
+["lfFirst","lfLast"].forEach(function(id){
+  document.getElementById(id).addEventListener("change", updateLeaveDays);
+});
+document.getElementById("leaveForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var empId = document.getElementById("lfEmployee").value;
+  var first = document.getElementById("lfFirst").value, last = document.getElementById("lfLast").value;
+  if(!empId){ toast("Add an employee first"); return; }
+  if(!first || !last){ toast("Pick the first and last day"); return; }
+  if(last < first){ toast("Last day must be after the first day"); return; }
+  state.leaves.push({
+    id: uid(), employeeId: empId,
+    type: document.getElementById("lfType").value,
+    firstDay: first, lastDay: last, status: "Pending",
+    note: document.getElementById("lfNote").value.trim()
+  });
+  saveState();
+  document.getElementById("lfNote").value = "";
+  updateLeaveDays(); renderAll(); toast("Leave request added as Pending");
+});
+
+function renderLeave(){
+  var year = new Date().getFullYear();
+  document.getElementById("leaveYearLine").textContent = "Balances for " + year + " · Remaining = entitlement − approved − pending";
+  document.getElementById("balanceTitle").textContent = "Leave balances — " + year;
+  fillEmployeeSelect(document.getElementById("lfEmployee"), false, document.getElementById("lfEmployee").value);
+  updateLeaveDays();
+
+  var actives = state.employees.slice().sort(function(a,b){ return a.name < b.name ? -1 : 1; });
+  var bc = document.getElementById("balanceContent");
+  if(actives.length === 0){
+    bc.innerHTML = '<div class="empty"><div class="empty-title">No employees yet</div><p>Add employees and their leave balances will appear here.</p></div>';
+  } else {
+    var rows = actives.map(function(emp){
+      var t = leaveYearTotals(emp.id, year);
+      var ent = num(emp.entitlement, 0);
+      var remaining = ent - t.approved - t.pending;
+      var usedPct = ent > 0 ? Math.min(100, Math.round(((t.approved + t.pending) / ent) * 100)) : 0;
+      return '<tr><td><strong>' + esc(emp.name) + '</strong>' + (emp.archived ? ' <span class="pill archived">Archived</span>' : "") +
+        '<div style="color:var(--muted);font-size:12.5px">' + esc(emp.role || "") + '</div></td>' +
+        '<td class="num">' + ent + '</td><td class="num">' + t.approved + '</td><td class="num">' + t.pending + '</td>' +
+        '<td class="num"><strong>' + remaining + '</strong></td>' +
+        '<td><div class="bar"><i style="width:' + usedPct + '%" class="' + (remaining < 0 ? "over" : "") + '"></i></div></td></tr>';
+    }).join("");
+    bc.innerHTML = '<div class="table-wrap" style="box-shadow:none"><table class="data"><thead><tr>' +
+      '<th>Employee</th><th class="num">Entitlement</th><th class="num">Approved</th><th class="num">Pending</th><th class="num">Remaining</th><th>Used</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+
+  var list = document.getElementById("leaveList");
+  if(state.leaves.length === 0){
+    list.innerHTML = '<div class="empty"><div class="empty-title">No leave requests yet</div><p>Use the form above to record the first one.</p></div>';
+    return;
+  }
+  var sorted = state.leaves.slice().sort(function(a,b){ return a.firstDay < b.firstDay ? 1 : -1; });
+  list.innerHTML = sorted.map(function(l){
+    var emp = employeeById(l.employeeId);
+    var days = workingDays(l.firstDay, l.lastDay);
+    var pillCls = l.status === "Approved" ? "approved" : (l.status === "Declined" ? "declined" : "pending");
+    return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="leave-row">' +
+      '<div class="lr-main"><span class="lr-name">' + esc(emp ? emp.name : "Former employee") + '</span> ' +
+      '<span class="pill leave-type">' + esc(l.type) + '</span> <span class="pill ' + pillCls + '">' + esc(l.status) + '</span>' +
+      '<div class="lr-dates">' + fmtDate(l.firstDay) + " – " + fmtDate(l.lastDay) + " · " + days + " working day" + (days === 1 ? "" : "s") + '</div>' +
+      (l.note ? '<div class="lr-note">“' + esc(l.note) + '”</div>' : "") + '</div>' +
+      '<div class="row-actions">' +
+      (l.status !== "Approved" ? '<button type="button" class="btn small" data-leave-act="approve" data-id="' + l.id + '">Approve</button>' : "") +
+      (l.status !== "Declined" ? '<button type="button" class="btn small" data-leave-act="decline" data-id="' + l.id + '">Decline</button>' : "") +
+      '<button type="button" class="btn small" data-leave-act="edit" data-id="' + l.id + '">Edit</button>' +
+      '<button type="button" class="btn small danger" data-leave-act="delete" data-id="' + l.id + '">Delete</button>' +
+      '</div></div></div>';
+  }).join("");
+  list.querySelectorAll("[data-leave-act]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-id"), act = btn.getAttribute("data-leave-act");
+      var leave = state.leaves.filter(function(x){ return x.id === id; })[0];
+      if(!leave) return;
+      if(act === "approve"){ leave.status = "Approved"; saveState(); renderAll(); toast("Leave approved"); }
+      else if(act === "decline"){ leave.status = "Declined"; saveState(); renderAll(); toast("Leave declined"); }
+      else if(act === "edit"){ openLeaveEdit(leave); }
+      else if(act === "delete"){
+        askConfirm("Delete this leave request?", "The request will be removed permanently and balances will update.", "Delete", function(){
+          state.leaves = state.leaves.filter(function(x){ return x.id !== id; });
+          saveState(); renderAll(); toast("Leave request deleted");
+        });
+      }
+    });
+  });
+}
+
+/* Leave edit modal */
+var editingLeaveId = null;
+function updateEditLeaveDays(){
+  var f = document.getElementById("lefFirst").value, l = document.getElementById("lefLast").value;
+  document.getElementById("lefDays").textContent = (f && l && l >= f) ? workingDays(f, l) + " working days" : "—";
+}
+["lefFirst","lefLast"].forEach(function(id){
+  document.getElementById(id).addEventListener("change", updateEditLeaveDays);
+});
+function openLeaveEdit(leave){
+  editingLeaveId = leave.id;
+  fillEmployeeSelect(document.getElementById("lefEmployee"), true, leave.employeeId);
+  document.getElementById("lefType").value = leave.type;
+  document.getElementById("lefFirst").value = leave.firstDay;
+  document.getElementById("lefLast").value = leave.lastDay;
+  document.getElementById("lefStatus").value = leave.status;
+  document.getElementById("lefNote").value = leave.note || "";
+  updateEditLeaveDays();
+  document.getElementById("leaveModalBack").classList.add("open");
+}
+document.getElementById("lefCancel").addEventListener("click", function(){ document.getElementById("leaveModalBack").classList.remove("open"); });
+document.getElementById("leaveEditForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var leave = state.leaves.filter(function(x){ return x.id === editingLeaveId; })[0];
+  if(!leave) return;
+  var first = document.getElementById("lefFirst").value, last = document.getElementById("lefLast").value;
+  if(last < first){ toast("Last day must be after the first day"); return; }
+  leave.employeeId = document.getElementById("lefEmployee").value;
+  leave.type = document.getElementById("lefType").value;
+  leave.firstDay = first; leave.lastDay = last;
+  leave.status = document.getElementById("lefStatus").value;
+  leave.note = document.getElementById("lefNote").value.trim();
+  saveState();
+  document.getElementById("leaveModalBack").classList.remove("open");
+  renderAll(); toast("Leave request updated");
+});
+
+/* ============================================================
+   EMPLOYEES
+   ============================================================ */
+function renderEmployees(){
+  var year = new Date().getFullYear();
+  var actives = activeEmployees();
+  document.getElementById("empCountLine").textContent =
+    actives.length + " active" + (state.employees.length - actives.length > 0 ? " · " + (state.employees.length - actives.length) + " archived" : "");
+  var container = document.getElementById("employeeContent");
+  if(state.employees.length === 0){
+    container.innerHTML = '<div class="empty"><div class="empty-title">No employees yet</div>' +
+      '<p>Add the people on your team — name, role, hourly rate and contracted hours — and they will appear on the rota.</p>' +
+      '<button type="button" class="btn primary" id="empEmptyAdd">Add your first employee</button></div>';
+    document.getElementById("empEmptyAdd").addEventListener("click", function(){ openEmployeeModal(null); });
+    return;
+  }
+  var sorted = state.employees.slice().sort(function(a,b){
+    if(!!a.archived !== !!b.archived) return a.archived ? 1 : -1;
+    return a.name < b.name ? -1 : 1;
+  });
+  container.innerHTML = '<div class="item-grid">' + sorted.map(function(emp){
+    var remaining = leaveRemaining(emp, year);
+    return '<div class="item-card"><div class="ic-head"><div style="flex:1">' +
+      '<div class="ic-title">' + esc(emp.name) + '</div>' +
+      '<div class="ic-sub">' + esc(emp.role || "No role set") + '</div></div>' +
+      (emp.archived ? '<span class="pill archived">Archived</span>' : '<span class="pill active">Active</span>') + '</div>' +
+      '<dl class="ic-rows">' +
+      '<div><dt>Hourly rate</dt><dd>' + money(num(emp.rate,0)) + ' /h</dd></div>' +
+      '<div><dt>Contracted</dt><dd>' + fmtHours(num(emp.contractedHours,0)) + ' h/week</dd></div>' +
+      '<div><dt>Leave remaining ' + year + '</dt><dd>' + remaining + ' of ' + num(emp.entitlement,0) + ' days</dd></div>' +
+      (emp.startDate ? '<div><dt>Started</dt><dd>' + fmtDate(emp.startDate) + '</dd></div>' : "") +
+      (emp.phone ? '<div><dt>Phone</dt><dd>' + esc(emp.phone) + '</dd></div>' : "") +
+      (emp.email ? '<div><dt>Email</dt><dd>' + esc(emp.email) + '</dd></div>' : "") +
+      (emp.notes ? '<div><dt>Notes</dt><dd style="font-weight:500">' + esc(emp.notes) + '</dd></div>' : "") +
+      '</dl>' +
+      '<div class="ic-actions">' +
+      '<button type="button" class="btn small" data-emp-act="edit" data-id="' + emp.id + '">Edit</button>' +
+      '<button type="button" class="btn small" data-emp-act="archive" data-id="' + emp.id + '">' + (emp.archived ? "Unarchive" : "Archive") + '</button>' +
+      '<button type="button" class="btn small danger" data-emp-act="delete" data-id="' + emp.id + '">Delete</button>' +
+      '</div></div>';
+  }).join("") + '</div>';
+  container.querySelectorAll("[data-emp-act]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-id"), act = btn.getAttribute("data-emp-act");
+      var emp = employeeById(id);
+      if(!emp) return;
+      if(act === "edit") openEmployeeModal(emp);
+      else if(act === "archive"){
+        emp.archived = !emp.archived; saveState(); renderAll();
+        toast(emp.archived ? emp.name + " archived — hidden from the rota" : emp.name + " is active again");
+      }
+      else if(act === "delete"){
+        askConfirm("Delete " + emp.name + "?", "This permanently removes the employee together with all of their shifts and leave requests.", "Delete employee", function(){
+          state.employees = state.employees.filter(function(x){ return x.id !== id; });
+          state.shifts = state.shifts.filter(function(x){ return x.employeeId !== id; });
+          state.leaves = state.leaves.filter(function(x){ return x.employeeId !== id; });
+          saveState(); renderAll(); toast("Employee deleted");
+        });
+      }
+    });
+  });
+}
+var editingEmpId = null;
+function openEmployeeModal(emp){
+  editingEmpId = emp ? emp.id : null;
+  document.getElementById("empModalTitle").textContent = emp ? "Edit employee" : "Add employee";
+  document.getElementById("efName").value = emp ? emp.name : "";
+  document.getElementById("efRole").value = emp ? (emp.role || "") : "";
+  document.getElementById("efRate").value = emp ? num(emp.rate,0) : "";
+  document.getElementById("efContracted").value = emp ? num(emp.contractedHours,0) : "";
+  document.getElementById("efEntitlement").value = emp ? num(emp.entitlement,0) : state.settings.defaultEntitlement;
+  document.getElementById("efStart").value = emp ? (emp.startDate || "") : "";
+  document.getElementById("efPhone").value = emp ? (emp.phone || "") : "";
+  document.getElementById("efEmail").value = emp ? (emp.email || "") : "";
+  document.getElementById("efNotes").value = emp ? (emp.notes || "") : "";
+  document.getElementById("empModalBack").classList.add("open");
+}
+document.getElementById("addEmployeeBtn").addEventListener("click", function(){ openEmployeeModal(null); });
+document.getElementById("efCancel").addEventListener("click", function(){ document.getElementById("empModalBack").classList.remove("open"); });
+document.getElementById("empForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var name = document.getElementById("efName").value.trim();
+  if(!name){ toast("Please enter a name"); return; }
+  var data = {
+    name: name,
+    role: document.getElementById("efRole").value.trim(),
+    rate: Math.max(0, num(document.getElementById("efRate").value, 0)),
+    contractedHours: Math.max(0, num(document.getElementById("efContracted").value, 0)),
+    entitlement: Math.max(0, num(document.getElementById("efEntitlement").value, state.settings.defaultEntitlement)),
+    startDate: document.getElementById("efStart").value,
+    phone: document.getElementById("efPhone").value.trim(),
+    email: document.getElementById("efEmail").value.trim(),
+    notes: document.getElementById("efNotes").value.trim()
+  };
+  if(editingEmpId){
+    var emp = employeeById(editingEmpId);
+    if(emp) Object.assign(emp, data);
+    toast("Employee updated");
+  } else {
+    data.id = uid(); data.archived = false;
+    state.employees.push(data);
+    toast("Employee added");
+  }
+  saveState();
+  document.getElementById("empModalBack").classList.remove("open");
+  renderAll();
+});
+
+/* ============================================================
+   TEMPLATES
+   ============================================================ */
+function renderTemplates(){
+  var container = document.getElementById("templateContent");
+  if(state.templates.length === 0){
+    container.innerHTML = '<div class="empty"><div class="empty-title">No shift templates yet</div>' +
+      '<p>Templates like “Early 07:00–15:00” let you fill the rota in one click instead of typing times every time.</p>' +
+      '<button type="button" class="btn primary" id="tplEmptyAdd">Add your first template</button></div>';
+    document.getElementById("tplEmptyAdd").addEventListener("click", function(){ openTemplateModal(null); });
+    return;
+  }
+  container.innerHTML = '<div class="item-grid">' + state.templates.map(function(t){
+    var ph = paidHours(t.start, t.end, t.breakMins);
+    var gross = Math.max(0, (function(){ var s = timeToMins(t.start), e = timeToMins(t.end); var d = e - s; if(e <= s && e !== s) d += 1440; if(s === e) d = 0; return d; })());
+    return '<div class="item-card"><div class="ic-head"><span class="swatch" style="background:' + esc(t.color || "#94A3B8") + '"></span>' +
+      '<div style="flex:1"><div class="ic-title">' + esc(t.name) + '</div>' +
+      '<div class="ic-sub">' + esc(t.start) + " – " + esc(t.end) + (timeToMins(t.end) <= timeToMins(t.start) && t.start !== t.end ? " (past midnight)" : "") + '</div></div></div>' +
+      '<dl class="ic-rows">' +
+      '<div><dt>Shift length</dt><dd>' + fmtHours(gross/60) + ' h</dd></div>' +
+      '<div><dt>Unpaid break</dt><dd>' + num(t.breakMins,0) + ' min</dd></div>' +
+      '<div><dt>Paid hours</dt><dd>' + fmtHours(ph) + ' h</dd></div>' +
+      '</dl>' +
+      '<div class="ic-actions">' +
+      '<button type="button" class="btn small" data-tpl-act="edit" data-id="' + t.id + '">Edit</button>' +
+      '<button type="button" class="btn small danger" data-tpl-act="delete" data-id="' + t.id + '">Delete</button>' +
+      '</div></div>';
+  }).join("") + '</div>';
+  container.querySelectorAll("[data-tpl-act]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-id"), act = btn.getAttribute("data-tpl-act");
+      var tpl = templateById(id);
+      if(!tpl) return;
+      if(act === "edit") openTemplateModal(tpl);
+      else if(act === "delete"){
+        askConfirm("Delete template “" + tpl.name + "”?", "Shifts already on the rota keep their times; only the reusable template is removed.", "Delete template", function(){
+          state.templates = state.templates.filter(function(x){ return x.id !== id; });
+          saveState(); renderAll(); toast("Template deleted");
+        });
+      }
+    });
+  });
+}
+var editingTplId = null;
+function updateTplPaid(){
+  var s = document.getElementById("tfStart").value, e = document.getElementById("tfEnd").value;
+  var b = num(document.getElementById("tfBreak").value, 0);
+  document.getElementById("tplPaidLine").textContent = (s && e)
+    ? "This template pays " + fmtHours(paidHours(s, e, b)) + " hours after the unpaid break."
+    : "Paid hours update as you type.";
+}
+["tfStart","tfEnd","tfBreak"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", updateTplPaid);
+  document.getElementById(id).addEventListener("change", updateTplPaid);
+});
+function openTemplateModal(tpl){
+  editingTplId = tpl ? tpl.id : null;
+  document.getElementById("tplModalTitle").textContent = tpl ? "Edit shift template" : "Add shift template";
+  document.getElementById("tfName").value = tpl ? tpl.name : "";
+  document.getElementById("tfStart").value = tpl ? tpl.start : "09:00";
+  document.getElementById("tfEnd").value = tpl ? tpl.end : "17:00";
+  document.getElementById("tfBreak").value = tpl ? num(tpl.breakMins,0) : 30;
+  document.getElementById("tfColor").value = tpl ? (tpl.color || "#1D6FF2") : "#1D6FF2";
+  updateTplPaid();
+  document.getElementById("tplModalBack").classList.add("open");
+}
+document.getElementById("addTemplateBtn").addEventListener("click", function(){ openTemplateModal(null); });
+document.getElementById("tfCancel").addEventListener("click", function(){ document.getElementById("tplModalBack").classList.remove("open"); });
+document.getElementById("tplForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var name = document.getElementById("tfName").value.trim();
+  if(!name){ toast("Please enter a template name"); return; }
+  var data = {
+    name: name,
+    start: document.getElementById("tfStart").value,
+    end: document.getElementById("tfEnd").value,
+    breakMins: Math.max(0, num(document.getElementById("tfBreak").value, 0)),
+    color: document.getElementById("tfColor").value || "#1D6FF2"
+  };
+  if(!data.start || !data.end){ toast("Please enter both times"); return; }
+  if(editingTplId){
+    var tpl = templateById(editingTplId);
+    if(tpl) Object.assign(tpl, data);
+    toast("Template updated");
+  } else {
+    data.id = uid(); state.templates.push(data);
+    toast("Template added");
+  }
+  saveState();
+  document.getElementById("tplModalBack").classList.remove("open");
+  renderAll();
+});
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function fillSettingsForm(){
+  var s = state.settings;
+  document.getElementById("sfBizName").value = s.businessName || "";
+  document.getElementById("sfAddress").value = s.address || "";
+  document.getElementById("sfPhone").value = s.phone || "";
+  document.getElementById("sfEmail").value = s.email || "";
+  document.getElementById("sfCurrency").value = s.currency || "USD";
+  document.getElementById("sfWeekStart").value = s.weekStart || "monday";
+  document.getElementById("sfEntitlement").value = s.defaultEntitlement;
+  document.getElementById("sfRotaNote").value = s.rotaNote || "";
+}
+document.getElementById("settingsForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  state.settings.businessName = document.getElementById("sfBizName").value.trim();
+  state.settings.address = document.getElementById("sfAddress").value.trim();
+  state.settings.phone = document.getElementById("sfPhone").value.trim();
+  state.settings.email = document.getElementById("sfEmail").value.trim();
+  state.settings.currency = document.getElementById("sfCurrency").value;
+  state.settings.weekStart = document.getElementById("sfWeekStart").value;
+  state.settings.defaultEntitlement = Math.max(0, num(document.getElementById("sfEntitlement").value, 25));
+  state.settings.rotaNote = document.getElementById("sfRotaNote").value.trim();
+  saveState(); renderAll(); toast("Settings saved");
+});
+document.getElementById("exportBtn").addEventListener("click", function(){
+  var payload = {
+    app: "AEUN Rota Planner", version: 1, exportedAt: new Date().toISOString(),
+    settings: state.settings, employees: state.employees, templates: state.templates,
+    shifts: state.shifts, leaves: state.leaves
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "aeun-rota-planner-backup-" + todayISO() + ".json";
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  toast("Backup downloaded");
+});
+document.getElementById("importBtn").addEventListener("click", function(){
+  document.getElementById("importFile").click();
+});
+document.getElementById("importFile").addEventListener("change", function(){
+  var file = this.files && this.files[0];
+  this.value = "";
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    var parsed;
+    try{ parsed = JSON.parse(String(reader.result)); }
+    catch(err){ toast("That file is not a valid backup"); return; }
+    if(!parsed || !Array.isArray(parsed.employees) || !Array.isArray(parsed.shifts)){
+      toast("That file does not look like an AEUN Rota Planner backup"); return;
+    }
+    askConfirm("Import this backup?", "It will replace everything currently saved — employees, templates, shifts, leave and settings.", "Import & replace", function(){
+      var base = defaultState();
+      base.settings = Object.assign(base.settings, parsed.settings || {});
+      base.employees = parsed.employees || [];
+      base.templates = parsed.templates || [];
+      base.shifts = parsed.shifts || [];
+      base.leaves = parsed.leaves || [];
+      state = base;
+      rotaAnchor = todayISO();
+      saveState(); fillSettingsForm(); renderAll();
+      toast("Backup imported");
+    });
+  };
+  reader.readAsText(file);
+});
+document.getElementById("eraseBtn").addEventListener("click", function(){
+  askConfirm("Erase all data?", "Every employee, shift, template, leave request and setting will be deleted from this browser. This cannot be undone.", "Erase everything", function(){
+    state = defaultState();
+    rotaAnchor = todayISO();
+    saveState(); fillSettingsForm(); renderAll();
+    toast("All data erased — starting empty");
+  });
+});
+document.getElementById("demoBtn").addEventListener("click", function(){
+  askConfirm("Load demo data?", "This replaces everything currently saved with the example café data.", "Load demo data", function(){
+    state = buildDemoData();
+    rotaAnchor = todayISO();
+    saveState(); fillSettingsForm(); renderAll();
+    toast("Demo data loaded — explore the rota");
+    showView("dashboard");
+  });
+});
+
+/* ============================================================
+   DEMO DATA — generated relative to today so it always looks alive
+   ============================================================ */
+function buildDemoData(){
+  var demo = defaultState();
+  demo.settings.businessName = "The Corner Café";
+  demo.settings.address = "14 Market Street, Springfield";
+  demo.settings.phone = "(555) 014-2288";
+  demo.settings.email = "hello@thecornercafe.example";
+  demo.settings.currency = "USD";
+  demo.settings.weekStart = "monday";
+  demo.settings.defaultEntitlement = 25;
+  demo.settings.rotaNote = "Please arrive 10 minutes before your shift. Swap requests go through Maya.";
+
+  var emps = [
+    { name: "Maya Rahman", role: "Manager", rate: 18.50, contractedHours: 40, entitlement: 25, phone: "(555) 010-1101", email: "maya@thecornercafe.example", notes: "Key holder. Opens the café." },
+    { name: "Tom Becker", role: "Barista", rate: 14.00, contractedHours: 37.5, entitlement: 25, phone: "(555) 010-1102", email: "tom@thecornercafe.example", notes: "" },
+    { name: "Sofia Rossi", role: "Barista", rate: 13.75, contractedHours: 30, entitlement: 25, phone: "(555) 010-1103", email: "sofia@thecornercafe.example", notes: "Latte art trainer." },
+    { name: "James O'Neill", role: "Chef", rate: 17.25, contractedHours: 40, entitlement: 28, phone: "(555) 010-1104", email: "james@thecornercafe.example", notes: "" },
+    { name: "Priya Nair", role: "Server", rate: 12.90, contractedHours: 25, entitlement: 25, phone: "(555) 010-1105", email: "priya@thecornercafe.example", notes: "Weekends preferred." },
+    { name: "Leo Fischer", role: "Kitchen Assistant", rate: 12.50, contractedHours: 20, entitlement: 20, phone: "(555) 010-1106", email: "leo@thecornercafe.example", notes: "Student — evenings only during term." }
+  ];
+  var startBase = addDaysISO(todayISO(), -300);
+  emps.forEach(function(e, i){
+    e.id = uid() + "e" + i;
+    e.startDate = addDaysISO(startBase, i * 23);
+    e.archived = false;
+    demo.employees.push(e);
+  });
+  var E = {}; demo.employees.forEach(function(e){ E[e.name] = e; });
+
+  var tpls = [
+    { name: "Early", start: "07:00", end: "15:00", breakMins: 30, color: "#00C2A8" },
+    { name: "Day", start: "09:00", end: "17:00", breakMins: 60, color: "#1D6FF2" },
+    { name: "Late", start: "15:00", end: "23:00", breakMins: 30, color: "#FFB020" },
+    { name: "Night", start: "22:00", end: "06:00", breakMins: 60, color: "#475569" }
+  ];
+  tpls.forEach(function(t, i){ t.id = uid() + "t" + i; demo.templates.push(t); });
+  var T = {}; demo.templates.forEach(function(t){ T[t.name] = t; });
+
+  function addShift(empName, iso, tplName, note){
+    var t = T[tplName];
+    demo.shifts.push({
+      id: uid() + Math.random().toString(36).slice(2,6),
+      employeeId: E[empName].id, date: iso, type: "shift",
+      start: t.start, end: t.end, breakMins: t.breakMins,
+      templateName: t.name, color: t.color, note: note || ""
+    });
+  }
+  function addDayOff(empName, iso){
+    demo.shifts.push({
+      id: uid() + Math.random().toString(36).slice(2,6),
+      employeeId: E[empName].id, date: iso, type: "dayoff",
+      start: "", end: "", breakMins: 0, templateName: "", color: "", note: ""
+    });
+  }
+
+  var dates = weekDates(todayISO(), "monday"); /* Mon..Sun of the current week */
+  /* Maya — Manager, Day shift Mon–Fri */
+  [0,1,2,3,4].forEach(function(i){ addShift("Maya Rahman", dates[i], "Day"); });
+  /* Tom — Early Mon/Tue/Thu/Fri, Day on Saturday */
+  addShift("Tom Becker", dates[0], "Early"); addShift("Tom Becker", dates[1], "Early");
+  addShift("Tom Becker", dates[3], "Early"); addShift("Tom Becker", dates[4], "Early");
+  addShift("Tom Becker", dates[5], "Day");
+  addDayOff("Tom Becker", dates[2]);
+  /* Sofia — Late Mon/Tue, then approved leave Wed–Thu, Late Fri */
+  addShift("Sofia Rossi", dates[0], "Late"); addShift("Sofia Rossi", dates[1], "Late");
+  addShift("Sofia Rossi", dates[4], "Late");
+  /* James — Chef, Early Mon–Fri */
+  [0,1,2,3,4].forEach(function(i){ addShift("James O'Neill", dates[i], "Early"); });
+  /* Priya — Day Wed–Sat */
+  addShift("Priya Nair", dates[2], "Day"); addShift("Priya Nair", dates[3], "Day");
+  addShift("Priya Nair", dates[4], "Day"); addShift("Priya Nair", dates[5], "Day");
+  /* Leo — Late Mon/Wed/Fri, Night Saturday */
+  addShift("Leo Fischer", dates[0], "Late"); addShift("Leo Fischer", dates[2], "Late");
+  addShift("Leo Fischer", dates[4], "Late"); addShift("Leo Fischer", dates[5], "Night");
+
+  /* A few entries last week */
+  var lastWeek = dates.map(function(iso){ return addDaysISO(iso, -7); });
+  addShift("Maya Rahman", lastWeek[0], "Day"); addShift("Maya Rahman", lastWeek[1], "Day"); addShift("Maya Rahman", lastWeek[2], "Day");
+  addShift("Tom Becker", lastWeek[0], "Early"); addShift("Tom Becker", lastWeek[1], "Early");
+  addShift("James O'Neill", lastWeek[3], "Early"); addShift("James O'Neill", lastWeek[4], "Early");
+  addShift("Priya Nair", lastWeek[5], "Day");
+
+  var today = todayISO();
+  function addLeave(empName, type, first, last, status, note){
+    demo.leaves.push({ id: uid() + Math.random().toString(36).slice(2,6), employeeId: E[empName].id, type: type, firstDay: first, lastDay: last, status: status, note: note || "" });
+  }
+  /* Approved, covering part of the current week (Wed–Thu) */
+  addLeave("Sofia Rossi", "Annual leave", dates[2], dates[3], "Approved", "Short break with family");
+  /* Approved, upcoming */
+  addLeave("James O'Neill", "Annual leave", addDaysISO(today, 14), addDaysISO(today, 18), "Approved", "Visiting family");
+  /* Two pending */
+  addLeave("Priya Nair", "Annual leave", addDaysISO(today, 21), addDaysISO(today, 25), "Pending", "Trip home");
+  addLeave("Leo Fischer", "Other", addDaysISO(today, 10), addDaysISO(today, 10), "Pending", "University open day");
+  /* One declined */
+  addLeave("Tom Becker", "Annual leave", addDaysISO(today, -20), addDaysISO(today, -16), "Declined", "Too short notice — rota already published");
+
+  return demo;
+}
+
+/* ============================================================
+   PRINTING
+   ============================================================ */
+function buildPrintRota(){
+  var ws = state.settings.weekStart;
+  var dates = weekDates(rotaAnchor, ws);
+  var actives = activeEmployees();
+  var s = state.settings;
+  var html = "";
+  html += "<h1>" + esc(s.businessName || "Weekly Rota") + "</h1>";
+  if(s.businessName) html += '<p class="p-sub"><strong>Weekly Rota</strong></p>';
+  if(s.address) html += '<p class="p-sub">' + esc(s.address) + "</p>";
+  var contact = [s.phone, s.email].filter(Boolean).join(" · ");
+  if(contact) html += '<p class="p-sub">' + esc(contact) + "</p>";
+  html += '<p class="p-sub">Week: ' + fmtDate(dates[0]) + " – " + fmtDate(dates[6]) + "</p>";
+
+  html += "<table><thead><tr><th>Employee</th>";
+  dates.forEach(function(iso){
+    var d = fromISO(iso);
+    html += "<th>" + DAY_SHORT[d.getDay()] + " " + d.getDate() + " " + MONTH_SHORT[d.getMonth()] + "</th>";
+  });
+  html += "<th>Total</th></tr></thead><tbody>";
+  if(actives.length === 0){
+    html += '<tr><td colspan="9">No active employees.</td></tr>';
+  }
+  actives.forEach(function(emp){
+    html += "<tr><td><strong>" + esc(emp.name) + "</strong>" + (emp.role ? "<br>" + esc(emp.role) : "") + "</td>";
+    dates.forEach(function(iso){
+      var leave = approvedLeaveOn(emp.id, iso);
+      if(leave){ html += "<td>On leave</td>"; return; }
+      var sh = shiftFor(emp.id, iso);
+      if(!sh) html += "<td>—</td>";
+      else if(sh.type === "dayoff") html += "<td>Day off</td>";
+      else html += "<td>" + esc(sh.start) + "–" + esc(sh.end) + "<br>" + fmtHours(paidHours(sh.start, sh.end, sh.breakMins)) + "h paid" + (sh.note ? "<br>" + esc(sh.note) : "") + "</td>";
+    });
+    var wh = employeeWeekHours(emp.id, dates);
+    var wCost = 0;
+    state.shifts.forEach(function(sh){
+      if(sh.employeeId === emp.id && sh.type !== "dayoff" && dates.indexOf(sh.date) !== -1) wCost += shiftCost(sh, emp);
+    });
+    html += "<td><strong>" + fmtHours(wh) + " h</strong><br>" + money(wCost) + "</td></tr>";
+  });
+  var totals = weekTotals(dates);
+  html += "</tbody></table>";
+  html += '<p class="p-note"><strong>Week total:</strong> ' + fmtHours(totals.hours) + " paid hours · Estimated labour cost " + money(totals.cost) + " (estimate only — not payroll).</p>";
+  if(s.rotaNote) html += '<p class="p-note">' + esc(s.rotaNote) + "</p>";
+  html += '<div class="p-foot"><span>Generated with AEUN Rota Planner</span><span>' + fmtDate(todayISO()) + "</span></div>";
+  return html;
+}
+function buildPrintLeave(){
+  var year = new Date().getFullYear();
+  var s = state.settings;
+  var html = "";
+  html += "<h1>" + esc(s.businessName || "Leave Summary") + "</h1>";
+  if(s.businessName) html += '<p class="p-sub"><strong>Leave Summary — ' + year + "</strong></p>";
+  html += "<h2>Leave balances — " + year + "</h2>";
+  html += "<table><thead><tr><th>Employee</th><th>Entitlement (days)</th><th>Approved</th><th>Pending</th><th>Remaining</th></tr></thead><tbody>";
+  if(state.employees.length === 0) html += '<tr><td colspan="5">No employees.</td></tr>';
+  state.employees.slice().sort(function(a,b){ return a.name < b.name ? -1 : 1; }).forEach(function(emp){
+    var t = leaveYearTotals(emp.id, year);
+    var remaining = num(emp.entitlement,0) - t.approved - t.pending;
+    html += "<tr><td>" + esc(emp.name) + (emp.archived ? " (archived)" : "") + "</td><td>" + num(emp.entitlement,0) + "</td><td>" + t.approved + "</td><td>" + t.pending + "</td><td>" + remaining + "</td></tr>";
+  });
+  html += "</tbody></table>";
+  html += "<h2>Upcoming approved leave</h2>";
+  var upcoming = state.leaves.filter(function(l){ return l.status === "Approved" && l.lastDay >= todayISO(); })
+    .sort(function(a,b){ return a.firstDay < b.firstDay ? -1 : 1; });
+  if(upcoming.length === 0){
+    html += '<p class="p-sub">No upcoming approved leave.</p>';
+  } else {
+    html += "<table><thead><tr><th>Employee</th><th>Type</th><th>First day</th><th>Last day</th><th>Working days</th></tr></thead><tbody>";
+    upcoming.forEach(function(l){
+      var emp = employeeById(l.employeeId);
+      html += "<tr><td>" + esc(emp ? emp.name : "Former employee") + "</td><td>" + esc(l.type) + "</td><td>" + fmtDate(l.firstDay) + "</td><td>" + fmtDate(l.lastDay) + "</td><td>" + workingDays(l.firstDay, l.lastDay) + "</td></tr>";
+    });
+    html += "</tbody></table>";
+  }
+  html += '<div class="p-foot"><span>Generated with AEUN Rota Planner</span><span>' + fmtDate(todayISO()) + "</span></div>";
+  return html;
+}
+function doPrint(kind){
+  var area = document.getElementById("printArea");
+  var tools = '<div class="sheet-tools no-print"><span><strong>Print sheet ready.</strong> Use your browser&rsquo;s Print command (Ctrl+P on Windows, Cmd+P on Mac) — only this sheet prints.</span>' +
+    '<button type="button" class="btn small" id="sheetClose">Close preview</button></div>';
+  area.innerHTML = tools + (kind === "rota" ? buildPrintRota() : buildPrintLeave());
+  area.classList.add("show-sheet");
+  var closeBtn = document.getElementById("sheetClose");
+  if(closeBtn) closeBtn.addEventListener("click", function(){ area.classList.remove("show-sheet"); area.innerHTML = ""; });
+  area.scrollIntoView({ behavior: "smooth", block: "start" });
+  toast("Print sheet ready below — use your browser's Print command");
+}
+document.getElementById("printRotaBtn").addEventListener("click", function(){ doPrint("rota"); });
+document.getElementById("leavePrintBtn").addEventListener("click", function(){ doPrint("leave"); });
+document.getElementById("dashPrintLeave").addEventListener("click", function(){ doPrint("leave"); });
+
+/* ---------- Close modals on backdrop click ---------- */
+document.querySelectorAll(".modal-back").forEach(function(back){
+  back.addEventListener("click", function(e){
+    if(e.target === back && back.id !== "confirmBack") back.classList.remove("open");
+  });
+});
+
+/* ---------- Render ---------- */
+function renderAll(){
+  updatePendingBadge();
+  if(currentView === "dashboard") renderDashboard();
+  else if(currentView === "rota") renderRota();
+  else if(currentView === "leave") renderLeave();
+  else if(currentView === "employees") renderEmployees();
+  else if(currentView === "templates") renderTemplates();
+  else if(currentView === "settings") fillSettingsForm();
+}
+fillSettingsForm();
+renderAll();
+</script>
+  </body>
+</html>
